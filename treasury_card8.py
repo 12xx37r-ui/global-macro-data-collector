@@ -7,6 +7,7 @@ import math
 import os
 import statistics
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -148,48 +149,49 @@ def fetch_fred_individual(session: requests.Session, series_id: str) -> list[dic
 
 
 def fetch_fred_all(session: requests.Session, series_ids: list[str]) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
-    """Fetch FRED efficiently and defensively.
+    """Fetch each official FRED series concurrently and retry through the API.
 
-    Primary path uses small multi-series CSV batches to avoid dozens of sequential
-    GitHub-runner requests. Missing series are retried individually, then through
-    the authenticated FRED API when FRED_API_KEY is configured.
+    FRED's graph CSV endpoint can return malformed multi-series rows on GitHub
+    runners.  Card 8 therefore uses bounded concurrent *single-series* requests.
+    This removes the parser warning while remaining fast and fully official.
     """
     result = {sid: [] for sid in series_ids}
     errors: list[str] = []
-    chunk_size = 8
-    for i in range(0, len(series_ids), chunk_size):
-        chunk = series_ids[i:i+chunk_size]
-        try:
-            r = session.get(FRED_CSV_BASE, params={"id": ",".join(chunk), "cosd": "1990-01-01"}, timeout=(15, 75))
-            r.raise_for_status()
-            parsed = parse_fred_csv(r.text, chunk)
-            for sid in chunk:
-                if parsed.get(sid):
-                    result[sid] = parsed[sid]
-        except Exception as exc:
-            errors.append("FRED batch " + ",".join(chunk) + ": " + str(exc))
-
     api_key = os.getenv("FRED_API_KEY", "").strip()
-    for sid in [x for x in series_ids if not result.get(x)]:
+
+    def fetch_one(sid: str) -> tuple[str, list[dict[str, Any]], list[str]]:
+        local_errors: list[str] = []
         try:
-            result[sid] = fetch_fred_individual(session, sid)
-            continue
+            return sid, fetch_fred_individual(session, sid), local_errors
         except Exception as exc:
-            errors.append(f"{sid} CSV retry: {exc}")
+            local_errors.append(f"{sid} CSV retry: {exc}")
         if api_key:
             try:
-                result[sid] = fetch_fred_api(session, sid, api_key)
+                return sid, fetch_fred_api(session, sid, api_key), local_errors
             except Exception as exc:
-                errors.append(f"{sid} API retry: {exc}")
+                local_errors.append(f"{sid} API retry: {exc}")
+        return sid, [], local_errors
 
-    # Direct FRED spread can occasionally lag/fail independently. Reconstruct it
-    # exactly from official DGS10 and DGS2 observations rather than aborting.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(fetch_one, sid): sid for sid in series_ids}
+        for fut in as_completed(futures):
+            sid = futures[fut]
+            try:
+                got_sid, rows, local_errors = fut.result()
+                result[got_sid] = rows
+                if not rows:
+                    errors.extend(local_errors)
+            except Exception as exc:
+                errors.append(f"{sid} concurrent fetch: {exc}")
+
+    # Exact reconstruction from official component series is allowed only when
+    # the direct spread series is unavailable and both components are present.
     if not result.get("T10Y2Y") and result.get("DGS10") and result.get("DGS2"):
         a = {x["date"]: float(x["value"]) for x in result["DGS10"]}
         b = {x["date"]: float(x["value"]) for x in result["DGS2"]}
         dates = sorted(set(a).intersection(b))
         result["T10Y2Y"] = [{"date": d, "value": round(a[d]-b[d], 6)} for d in dates]
-        errors.append("T10Y2Y: direct series unavailable; reconstructed from DGS10-DGS2")
+        errors.append("T10Y2Y: direct series unavailable; reconstructed exactly from DGS10-DGS2")
     return result, errors
 
 
@@ -259,18 +261,44 @@ def candidate_forecasts(train: list[float], h: int, structural_delta: float = 0.
     last = train[-1]
     def delta(k: int) -> float:
         return (last - train[-1-k]) / k if n > k else 0.0
-    d5, d21, d63, d126 = delta(5), delta(21), delta(63), delta(126)
+    d5, d21, d63, d126, d252 = delta(5), delta(21), delta(63), delta(126), delta(252)
     mean63 = mean(train[-63:]) if n >= 63 else mean(train)
+    mean126 = mean(train[-126:]) if n >= 126 else mean(train)
     mean252 = mean(train[-252:]) if n >= 252 else mean(train)
     cap = 1.75 if h <= 21 else 2.5
     return [
         ("persistence", last),
         ("short_trend", last + clamp(0.55*d5 + 0.30*d21 + 0.15*d63, -0.025, 0.025) * h),
         ("medium_trend", last + clamp(0.15*d5 + 0.40*d21 + 0.30*d63 + 0.15*d126, -0.018, 0.018) * h),
+        ("long_trend", last + clamp(0.15*d63 + 0.35*d126 + 0.50*d252, -0.009, 0.009) * h),
         ("mean_reversion_3m", last + clamp((mean63-last)*0.16, -0.025, 0.025) * min(h/21, 4)),
+        ("mean_reversion_6m", last + clamp((mean126-last)*0.11, -0.020, 0.020) * min(h/21, 6)),
         ("mean_reversion_1y", last + clamp((mean252-last)*0.08, -0.018, 0.018) * min(h/21, 8)),
-        ("structural_blend", last + clamp((0.30*d21+0.25*d63)*h + structural_delta, -cap, cap)),
+        ("structural_blend", last + clamp((0.20*d21+0.25*d63+0.25*d126+0.30*d252)*h + structural_delta, -cap, cap)),
     ]
+
+
+def _normal_cdf(z: float) -> float:
+    return 0.5 * (1.0 + math.erf(z / math.sqrt(2.0)))
+
+
+def dm_test_squared_errors(model_errors: list[float], baseline_errors: list[float]) -> dict[str, Any]:
+    """Approximate two-sided Diebold-Mariano test with Newey-West lag 0.
+
+    The OOS origins overlap at long horizons, so the result is disclosed as an
+    approximate significance diagnostic rather than a definitive proof.
+    """
+    n = min(len(model_errors), len(baseline_errors))
+    if n < 30:
+        return {"statistic": None, "p_value": None, "significant_10pct": False}
+    d = [baseline_errors[i]**2 - model_errors[i]**2 for i in range(n)]
+    md = mean(d)
+    var = sum((x-md)**2 for x in d) / max(1, n-1)
+    if var <= 0:
+        return {"statistic": None, "p_value": None, "significant_10pct": False}
+    stat = md / math.sqrt(var/n)
+    p = 2.0 * (1.0 - _normal_cdf(abs(stat)))
+    return {"statistic": stat, "p_value": p, "significant_10pct": p < 0.10 and md > 0}
 
 
 def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict[str, Any]:
@@ -278,24 +306,36 @@ def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict
     if len(vals) < first + h + 20:
         return {"forecast": vals[-1], "model": "persistence_insufficient_history", "samples": 0,
                 "rmse": None, "baseline_rmse": None, "skill_pct": None,
-                "direction_accuracy": None, "residuals": [], "fallback_used": True}
+                "direction_accuracy": None, "active_direction_accuracy": None,
+                "active_direction_coverage": 0.0, "abstention_rate": 1.0,
+                "dm_test": {"statistic": None, "p_value": None, "significant_10pct": False},
+                "residuals": [], "fallback_used": True}
     scores: dict[str, list[float]] = {}
     dir_hits: dict[str, list[int]] = {}
+    dir_cases: dict[str, int] = {}
     residuals: dict[str, list[float]] = {}
+    baseline_residuals: list[float] = []
+    all_direction_cases = 0
     for o in range(first, len(vals)-h):
         train = vals[:o+1]
         actual = vals[o+h]
         base = train[-1]
+        baseline_residuals.append(base-actual)
+        actual_move = actual-base
+        if abs(actual_move) >= 0.10:
+            all_direction_cases += 1
         for name, pred in candidate_forecasts(train, h, structural_delta=0.0):
             scores.setdefault(name, []).append((pred-actual)**2)
             residuals.setdefault(name, []).append(pred-actual)
-            if abs(actual-base) >= 0.10:
-                dir_hits.setdefault(name, []).append(int((pred-base)*(actual-base) > 0))
+            predicted_move = pred-base
+            # Direction is evaluated only when both actual and model signal are active.
+            if abs(actual_move) >= 0.10 and abs(predicted_move) >= 0.025:
+                dir_cases[name] = dir_cases.get(name, 0) + 1
+                dir_hits.setdefault(name, []).append(int(predicted_move*actual_move > 0))
     best = min(scores, key=lambda k: mean(scores[k]))
     baseline_rmse = math.sqrt(mean(scores["persistence"]))
     best_rmse = math.sqrt(mean(scores[best]))
     skill = (1-best_rmse/baseline_rmse)*100 if baseline_rmse > 0 else 0.0
-    # Objective safety: no model is allowed to be worse than persistence.
     if skill <= 0:
         best = "persistence"
         best_rmse = baseline_rmse
@@ -305,11 +345,18 @@ def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict
         fallback = False
     final_map = dict(candidate_forecasts(vals, h, structural_delta))
     pred = final_map.get(best, vals[-1])
+    active_cases = dir_cases.get(best, 0)
     hit = mean(dir_hits.get(best, [])) if dir_hits.get(best) else math.nan
+    active_coverage = active_cases / all_direction_cases if all_direction_cases else 0.0
+    dm = dm_test_squared_errors(residuals[best], baseline_residuals)
     return {
         "forecast": pred, "model": best, "samples": len(scores[best]),
         "rmse": best_rmse, "baseline_rmse": baseline_rmse, "skill_pct": skill,
         "direction_accuracy": hit if finite(hit) else None,
+        "active_direction_accuracy": hit if finite(hit) else None,
+        "active_direction_coverage": active_coverage,
+        "abstention_rate": 1.0-active_coverage,
+        "dm_test": dm,
         "residuals": residuals[best], "fallback_used": fallback,
     }
 
@@ -365,18 +412,43 @@ def grade_strength(current: float, forecast: float, adverse_when_up: bool) -> di
     return {"grade": "약약" if strong else "약강", "arrow": "↑" if delta > 0 else "↓", "signal": "bad"}
 
 
-def horizon_gate(result: dict[str, Any], minimum: int) -> dict[str, Any]:
+def horizon_gate(result: dict[str, Any], minimum: int, horizon: str | None = None) -> dict[str, Any]:
     samples = int(result.get("samples") or 0)
     skill = float(result.get("skill_pct") or 0)
-    da = result.get("direction_accuracy")
-    interval_ok = result.get("interval80_coverage") is None or 0.70 <= result["interval80_coverage"] <= 0.90
-    passed = samples >= minimum and skill > 0 and (da is None or da >= 0.50) and interval_ok
+    da = result.get("active_direction_accuracy")
+    active_coverage = float(result.get("active_direction_coverage") or 0)
+    dm = result.get("dm_test") or {}
+    interval_ok = result.get("interval80_coverage") is None or 0.75 <= result["interval80_coverage"] <= 0.85
+    # Material improvement thresholds prevent tiny positive skill from being
+    # mislabeled as institutional-grade. Longer horizons require more skill.
+    min_skill = {"5d": 0.25, "1m": 0.50, "3m": 1.50, "6m": 2.00, "12m": 3.00}.get(horizon or "", 1.0)
+    min_active_coverage = {"5d": 0.25, "1m": 0.30, "3m": 0.35, "6m": 0.35, "12m": 0.30}.get(horizon or "", 0.30)
+    dm_ok = bool(dm.get("significant_10pct"))
+    passed = (
+        samples >= minimum and
+        skill >= min_skill and
+        da is not None and da >= 0.52 and
+        active_coverage >= min_active_coverage and
+        interval_ok and dm_ok and
+        not bool(result.get("fallback_used"))
+    )
     reasons = []
     if samples < minimum: reasons.append(f"OOS 표본 {samples}개로 기준 {minimum}개 미달")
-    if skill <= 0: reasons.append("지속성 기준모형 대비 개선 없음")
-    if da is not None and da < 0.50: reasons.append("방향 적중률 50% 미달")
-    if not interval_ok: reasons.append("80% 예상범위 보정 기준 이탈")
-    return {"passed": passed, "level": "준기관급" if passed else "참고용", "reasons": reasons}
+    if skill < min_skill: reasons.append(f"지속성 대비 RMSE 개선 {skill:.2f}%로 최소 {min_skill:.2f}% 미달")
+    if da is None: reasons.append("활성 방향예측 표본 없음")
+    elif da < 0.52: reasons.append(f"활성 방향 적중률 {da*100:.1f}%로 52% 미달")
+    if active_coverage < min_active_coverage: reasons.append(f"활성 방향예측 비중 {active_coverage*100:.1f}%로 기준 미달")
+    if not interval_ok: reasons.append("80% 예상범위 보정 기준 75~85% 이탈")
+    if not dm_ok: reasons.append("지속성 대비 예측력 개선의 통계적 유의성 미확인")
+    if result.get("fallback_used"): reasons.append("지속성 안전모형으로 후퇴")
+    return {
+        "passed": passed,
+        "level": "준기관급" if passed else "참고용",
+        "reasons": reasons,
+        "thresholds": {"min_skill_pct": min_skill, "min_direction_accuracy": 0.52,
+                       "min_active_direction_coverage": min_active_coverage,
+                       "dm_p_value_max": 0.10, "interval80_coverage": [0.75, 0.85]},
+    }
 
 
 def main() -> None:
@@ -419,7 +491,7 @@ def main() -> None:
             res["current"] = current[sid]["value"]
             res["direction"] = "up" if res["forecast"] > res["current"]+0.025 else "down" if res["forecast"] < res["current"]-0.025 else "flat"
             res["investment_environment"] = grade_strength(res["current"], res["forecast"], adverse_when_up=(sid != "T10Y2Y"))
-            gate = horizon_gate(res, cfg["min_samples"])
+            gate = horizon_gate(res, cfg["min_samples"], horizon)
             res["quality_gate"] = gate
             target_passes.append(gate["passed"])
             forecasts[horizon]["targets"][sid] = res
@@ -445,8 +517,8 @@ def main() -> None:
     future_regime = "금리부담 완화" if overall == "good" else "금리부담 확대" if overall == "bad" else "금리환경 중립"
 
     payload = {
-        "schema_version": "1.0.0",
-        "engine_version": "card8-1.1.0-objective-oos-resilient-fetch",
+        "schema_version": "1.1.0",
+        "engine_version": "card8-1.2.0-strict-oos-significance-gate",
         "status": "ok",
         "card": 8,
         "title": "미국채 금리·실질금리·수익률곡선",
@@ -484,10 +556,10 @@ def main() -> None:
         "model_specification": {
             "targets": TARGETS,
             "horizons": HORIZONS,
-            "candidate_models": ["persistence", "short_trend", "medium_trend", "mean_reversion_3m", "mean_reversion_1y", "structural_blend"],
-            "selection": "expanding_walk_forward_candidate_selection",
+            "candidate_models": ["persistence", "short_trend", "medium_trend", "long_trend", "mean_reversion_3m", "mean_reversion_6m", "mean_reversion_1y", "structural_blend"],
+            "selection": "expanding_walk_forward_candidate_selection_with_material_skill_and_dm_gate",
             "benchmark": "persistence_no_change",
-            "safety": "negative-skill models automatically fall back to persistence",
+            "safety": "non-positive-skill models automatically fall back to persistence; tiny positive skill cannot pass strict gate",
             "structural_inputs": ["Fed engine policy path", "core PCE momentum", "10y breakeven", "10y term premium", "NFCI", "HY OAS", "unemployment"],
         },
         "source_status": {
