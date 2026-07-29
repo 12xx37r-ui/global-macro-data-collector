@@ -2,14 +2,14 @@
   "schema_version": "1.0",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-07-29T15:35:36.631189+00:00",
-  "current": 40.50477959588218,
+  "generated_at_utc": "2026-07-29T18:43:04.162659+00:00",
+  "current": 40.43476288140092,
   "current_date": "2026-07-01",
-  "forecast_3m": 44.10477959588218,
-  "forecast_6m": 46.50477959588218,
+  "forecast_3m": 44.03476288140092,
+  "forecast_6m": 46.43476288140092,
   "forecast_range80_3m": [
-    37.51642311459349,
-    50.69313607717086
+    37.44640640011224,
+    50.62311936268961
   ],
   "future_direction": "up",
   "market_signal": "bad",
@@ -18,93 +18,93 @@
   "investment_conclusion": "원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 41.70477959588218,
+      "forecast": 41.634762881400924,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 3.4779511363639193,
-      "baseline_rmse": 3.602246081719329,
-      "skill_pct": 3.450484573671453,
+      "rmse": 3.478509094473416,
+      "baseline_rmse": 3.6026560894834234,
+      "skill_pct": 3.4459851822217225,
       "direction_accuracy": 0.6491228070175439,
       "fallback_used": false,
       "range80": [
-        38.25888752341161,
-        45.15067166835275
+        38.18887080893035,
+        45.080654953871495
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 2.1158876061530703,
-          "p_value": 0.03435436777253642,
+          "statistic": 2.112939659978594,
+          "p_value": 0.034605932769425696,
           "significant_10pct": true
         }
       }
     },
     "3m": {
-      "forecast": 44.10477959588218,
+      "forecast": 44.03476288140092,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 5.3209050276260825,
-      "baseline_rmse": 6.032795757179039,
-      "skill_pct": 11.800345282795377,
+      "rmse": 5.322169969664927,
+      "baseline_rmse": 6.0341435340405445,
+      "skill_pct": 11.799082344646694,
       "direction_accuracy": 0.7410714285714286,
       "fallback_used": false,
       "range80": [
-        37.51642311459349,
-        50.69313607717086
+        37.44640640011224,
+        50.62311936268961
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 4.070472516564502,
-          "p_value": 4.6917876281638016e-05,
+          "statistic": 4.06979250895401,
+          "p_value": 4.705502678392648e-05,
           "significant_10pct": true
         }
       }
     },
     "6m": {
-      "forecast": 46.50477959588218,
+      "forecast": 46.43476288140092,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.182856262259097,
-      "baseline_rmse": 5.995153406238468,
-      "skill_pct": 13.549230335525797,
+      "rmse": 5.183465300288956,
+      "baseline_rmse": 5.9957970923560024,
+      "skill_pct": 13.548353614278941,
       "direction_accuracy": 0.7580645161290323,
       "fallback_used": false,
       "range80": [
-        40.13366194934643,
-        52.87589724241792
+        40.06364523486518,
+        52.805880527936665
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 3.9699372856890554,
-          "p_value": 7.189155196685171e-05,
+          "statistic": 3.970411608593837,
+          "p_value": 7.174857124381262e-05,
           "significant_10pct": true
         }
       }
     },
     "12m": {
-      "forecast": 48.50477959588218,
+      "forecast": 48.43476288140092,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.342625813577305,
-      "baseline_rmse": 6.293534053566318,
-      "skill_pct": 15.10928886529449,
+      "rmse": 5.343196314111148,
+      "baseline_rmse": 6.294089354116426,
+      "skill_pct": 15.107714341287192,
       "direction_accuracy": 0.7647058823529411,
       "fallback_used": false,
       "range80": [
-        41.35431948887138,
-        55.65523970289297
+        41.28430277439013,
+        55.585222988411715
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 3.622712393311069,
-          "p_value": 0.00029152991012981744,
+          "statistic": 3.6229889686563927,
+          "p_value": 0.00029121824674271934,
           "significant_10pct": true
         }
       }
@@ -150,12 +150,12 @@
     "DCOILWTICO": {
       "ok": true,
       "fresh": true,
-      "age_days": 9,
+      "age_days": 2,
       "max_age_days": 120,
       "label": "WTI 유가",
       "latest": {
-        "date": "2026-07-20",
-        "value": 84.38
+        "date": "2026-07-27",
+        "value": 84.25
       },
       "url": "https://fred.stlouisfed.org/series/DCOILWTICO",
       "collection_source": "FRED"
@@ -163,12 +163,12 @@
     "DCOILBRENTEU": {
       "ok": true,
       "fresh": true,
-      "age_days": 9,
+      "age_days": 2,
       "max_age_days": 120,
       "label": "브렌트유",
       "latest": {
-        "date": "2026-07-20",
-        "value": 86.99
+        "date": "2026-07-27",
+        "value": 91.82
       },
       "url": "https://fred.stlouisfed.org/series/DCOILBRENTEU",
       "collection_source": "FRED"
@@ -176,12 +176,12 @@
     "DHHNGSP": {
       "ok": true,
       "fresh": true,
-      "age_days": 9,
+      "age_days": 2,
       "max_age_days": 120,
       "label": "미국 천연가스",
       "latest": {
-        "date": "2026-07-20",
-        "value": 2.8
+        "date": "2026-07-27",
+        "value": 2.63
       },
       "url": "https://fred.stlouisfed.org/series/DHHNGSP",
       "collection_source": "FRED"
