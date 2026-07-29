@@ -1,0 +1,180 @@
+{
+  "schema_version": "1.0",
+  "card": 12,
+  "title": "선물시장 종합신호",
+  "generated_at_utc": "2026-07-29T03:39:16.905169+00:00",
+  "current": {
+    "ES=F": {
+      "value": 7457.75,
+      "date": "2026-07-29"
+    },
+    "NQ=F": {
+      "value": 27791.0,
+      "date": "2026-07-29"
+    },
+    "RTY=F": {
+      "value": 2957.60009765625,
+      "date": "2026-07-29"
+    },
+    "ZT=F": {
+      "value": 102.8203125,
+      "date": "2026-07-29"
+    },
+    "ZF=F": {
+      "value": 106.296875,
+      "date": "2026-07-29"
+    },
+    "ZN=F": {
+      "value": 108.734375,
+      "date": "2026-07-29"
+    },
+    "ZB=F": {
+      "value": 110.71875,
+      "date": "2026-07-29"
+    },
+    "CL=F": {
+      "value": 82.37000274658203,
+      "date": "2026-07-29"
+    },
+    "GC=F": {
+      "value": 4025.10009765625,
+      "date": "2026-07-29"
+    },
+    "HG=F": {
+      "value": 6.321000099182129,
+      "date": "2026-07-29"
+    },
+    "BTC=F": {
+      "value": 63850.0,
+      "date": "2026-07-29"
+    }
+  },
+  "group_scores": {
+    "equity": 0.0029199078155375258,
+    "rates": -0.7850293360459754,
+    "commodities": 0.048164076105273214,
+    "dollar": null,
+    "crypto": -0.43456308660195414
+  },
+  "market_signal": "neutral",
+  "current_regime": "선물시장 혼조",
+  "future_regime": "추세지속 가능성 점검",
+  "investment_conclusion": "주가지수·국채·원자재·달러 선물의 방향과 변동성을 교차검증합니다.",
+  "data_quality": {
+    "completeness": 91.7,
+    "warnings": [
+      "DX=F: 404 Client Error: Not Found for url: https://query1.finance.yahoo.com/v8/finance/chart/DX%3DF?interval=1d&range=10y&events=history"
+    ]
+  },
+  "source_status": {
+    "ES=F": {
+      "ok": true,
+      "label": "S&P500 선물",
+      "latest": {
+        "value": 7457.75,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "NQ=F": {
+      "ok": true,
+      "label": "나스닥100 선물",
+      "latest": {
+        "value": 27791.0,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "RTY=F": {
+      "ok": true,
+      "label": "러셀2000 선물",
+      "latest": {
+        "value": 2957.60009765625,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "ZT=F": {
+      "ok": true,
+      "label": "미국 2년 국채선물",
+      "latest": {
+        "value": 102.8203125,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "ZF=F": {
+      "ok": true,
+      "label": "미국 5년 국채선물",
+      "latest": {
+        "value": 106.296875,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "ZN=F": {
+      "ok": true,
+      "label": "미국 10년 국채선물",
+      "latest": {
+        "value": 108.734375,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "ZB=F": {
+      "ok": true,
+      "label": "미국 30년 국채선물",
+      "latest": {
+        "value": 110.71875,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "CL=F": {
+      "ok": true,
+      "label": "WTI 원유선물",
+      "latest": {
+        "value": 82.37000274658203,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "GC=F": {
+      "ok": true,
+      "label": "금선물",
+      "latest": {
+        "value": 4025.10009765625,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "HG=F": {
+      "ok": true,
+      "label": "구리선물",
+      "latest": {
+        "value": 6.321000099182129,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    },
+    "DX=F": {
+      "ok": false,
+      "label": "달러인덱스선물",
+      "latest": null,
+      "source": "Yahoo Finance delayed futures"
+    },
+    "BTC=F": {
+      "ok": true,
+      "label": "비트코인선물",
+      "latest": {
+        "value": 63850.0,
+        "date": "2026-07-29"
+      },
+      "source": "Yahoo Finance delayed futures"
+    }
+  },
+  "limitations": [
+    "무료 지연 선물자료이며 거래소 실시간 유료 시세를 대체하지 않습니다.",
+    "미국 정책금리 경로는 미국엔진 결과를 읽기 전용으로 사용합니다."
+  ]
+}

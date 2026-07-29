@@ -1,0 +1,249 @@
+{
+  "schema_version": "1.0",
+  "card": 9,
+  "title": "글로벌 고용·소비 경기",
+  "generated_at_utc": "2026-07-29T03:39:12.938273+00:00",
+  "current": 46.77703411446342,
+  "current_date": "2026-06-01",
+  "forecast_3m": 46.724040226738055,
+  "forecast_6m": 46.67104633901269,
+  "forecast_range80_3m": [
+    42.34453814887575,
+    51.10354230460036
+  ],
+  "future_direction": "flat",
+  "market_signal": "neutral",
+  "current_regime": "고용·소비 보통",
+  "future_regime": "보합",
+  "investment_conclusion": "고용과 소비의 향후 방향을 경기민감주·내수·신용위험 판단에 반영합니다.",
+  "forecasts": {
+    "1m": {
+      "forecast": 46.86666283383629,
+      "model": "mean_reversion_24m",
+      "samples": 180,
+      "rmse": 4.422491642512353,
+      "baseline_rmse": 4.5147951227431316,
+      "skill_pct": 2.0444666418151125,
+      "direction_accuracy": 0.8095238095238095,
+      "fallback_used": false,
+      "range80": [
+        43.980487258740574,
+        49.752838408932
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 1.7808508555878313,
+          "p_value": 0.07493681886628778,
+          "significant_10pct": true
+        }
+      }
+    },
+    "3m": {
+      "forecast": 46.724040226738055,
+      "model": "mean_reversion_12m",
+      "samples": 180,
+      "rmse": 7.509712076042666,
+      "baseline_rmse": 8.089170255684078,
+      "skill_pct": 7.1633821680813226,
+      "direction_accuracy": 0.7596153846153846,
+      "fallback_used": false,
+      "range80": [
+        42.34453814887575,
+        51.10354230460036
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 2.705723606244608,
+          "p_value": 0.006815574608098451,
+          "significant_10pct": true
+        }
+      }
+    },
+    "6m": {
+      "forecast": 46.67104633901269,
+      "model": "mean_reversion_12m",
+      "samples": 180,
+      "rmse": 6.803406500123872,
+      "baseline_rmse": 7.854908288610627,
+      "skill_pct": 13.3865571672097,
+      "direction_accuracy": 0.752,
+      "fallback_used": false,
+      "range80": [
+        41.82984122070819,
+        51.51225145731719
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 2.809454760602129,
+          "p_value": 0.00496254930889628,
+          "significant_10pct": true
+        }
+      }
+    },
+    "12m": {
+      "forecast": 47.494063869446364,
+      "model": "mean_reversion_24m",
+      "samples": 180,
+      "rmse": 6.963427120588365,
+      "baseline_rmse": 8.234855382565723,
+      "skill_pct": 15.439594296569425,
+      "direction_accuracy": 0.7413793103448276,
+      "fallback_used": false,
+      "range80": [
+        42.61514018492224,
+        52.37298755397049
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 2.8164764548567627,
+          "p_value": 0.004855360172055789,
+          "significant_10pct": true
+        }
+      }
+    }
+  },
+  "data_quality": {
+    "completeness": 100.0,
+    "core_completeness": 100.0,
+    "missing_core": [],
+    "warnings": [],
+    "release_lag_policy": "월간·주간 자료는 공표시차를 보수적으로 반영",
+    "real_time_vintage": false
+  },
+  "source_status": {
+    "UNRATE": {
+      "ok": true,
+      "label": "미국 실업률",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 4.2
+      },
+      "url": "https://fred.stlouisfed.org/series/UNRATE"
+    },
+    "PAYEMS": {
+      "ok": true,
+      "label": "미국 비농업고용",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 158984.0
+      },
+      "url": "https://fred.stlouisfed.org/series/PAYEMS"
+    },
+    "ICSA": {
+      "ok": true,
+      "label": "미국 신규실업수당",
+      "latest": {
+        "date": "2026-07-18",
+        "value": 187000.0
+      },
+      "url": "https://fred.stlouisfed.org/series/ICSA"
+    },
+    "CCSA": {
+      "ok": true,
+      "label": "미국 계속실업수당",
+      "latest": {
+        "date": "2026-07-11",
+        "value": 1796000.0
+      },
+      "url": "https://fred.stlouisfed.org/series/CCSA"
+    },
+    "JTSJOL": {
+      "ok": true,
+      "label": "미국 구인건수",
+      "latest": {
+        "date": "2026-05-01",
+        "value": 7594.0
+      },
+      "url": "https://fred.stlouisfed.org/series/JTSJOL"
+    },
+    "CES0500000003": {
+      "ok": true,
+      "label": "미국 시간당임금",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 37.64
+      },
+      "url": "https://fred.stlouisfed.org/series/CES0500000003"
+    },
+    "RSAFS": {
+      "ok": true,
+      "label": "미국 소매판매",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 768553.0
+      },
+      "url": "https://fred.stlouisfed.org/series/RSAFS"
+    },
+    "PCE": {
+      "ok": true,
+      "label": "미국 개인소비지출",
+      "latest": {
+        "date": "2026-05-01",
+        "value": 22059.8
+      },
+      "url": "https://fred.stlouisfed.org/series/PCE"
+    },
+    "UMCSENT": {
+      "ok": true,
+      "label": "미시간 소비심리",
+      "latest": {
+        "date": "2026-05-01",
+        "value": 44.8
+      },
+      "url": "https://fred.stlouisfed.org/series/UMCSENT"
+    },
+    "TOTALSL": {
+      "ok": true,
+      "label": "미국 소비자신용",
+      "latest": {
+        "date": "2026-05-01",
+        "value": 5154538.86
+      },
+      "url": "https://fred.stlouisfed.org/series/TOTALSL"
+    },
+    "PSAVERT": {
+      "ok": true,
+      "label": "미국 개인저축률",
+      "latest": {
+        "date": "2026-05-01",
+        "value": 3.0
+      },
+      "url": "https://fred.stlouisfed.org/series/PSAVERT"
+    },
+    "OECDSLRTTO01IXOBSAM": {
+      "ok": true,
+      "label": "OECD 소매판매량",
+      "latest": {
+        "date": "2023-12-01",
+        "value": 118.3839
+      },
+      "url": "https://fred.stlouisfed.org/series/OECDSLRTTO01IXOBSAM"
+    }
+  },
+  "model_specification": {
+    "selection": "expanding walk-forward",
+    "benchmark": "persistence",
+    "inputs": [
+      "UNRATE",
+      "PAYEMS",
+      "ICSA",
+      "CCSA",
+      "JTSJOL",
+      "CES0500000003",
+      "RSAFS",
+      "PCE",
+      "UMCSENT",
+      "TOTALSL",
+      "PSAVERT",
+      "OECDSLRTTO01IXOBSAM"
+    ]
+  }
+}

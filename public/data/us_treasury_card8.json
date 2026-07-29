@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-07-29T02:41:37.272650+00:00",
+  "generated_at_utc": "2026-07-29T03:39:11.703667+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -133,6 +133,52 @@
   "current_regime": "장기금리·실질금리 부담",
   "future_regime": "금리환경 중립",
   "market_signal": "neutral",
+  "treasury_futures_context": {
+    "available": true,
+    "source": "Yahoo Finance 무료 지연 국채선물",
+    "current": {
+      "ZT=F": {
+        "label": "2년 국채선물",
+        "value": 102.8203125,
+        "date": "2026-07-29",
+        "return21d_pct": -0.3709311127933379,
+        "return63d_pct": -0.7952361210567971,
+        "realized_vol": 0.08476854167650015,
+        "score": -0.4141238429615843
+      },
+      "ZF=F": {
+        "label": "5년 국채선물",
+        "value": 106.296875,
+        "date": "2026-07-29",
+        "return21d_pct": -0.9680471650047262,
+        "return63d_pct": -1.5912049761319214,
+        "realized_vol": 0.19386398878619143,
+        "score": -0.7499737126448728
+      },
+      "ZN=F": {
+        "label": "10년 국채선물",
+        "value": 108.734375,
+        "date": "2026-07-29",
+        "return21d_pct": -1.3187748156551327,
+        "return63d_pct": -1.9168428470754062,
+        "realized_vol": 0.2904134975458216,
+        "score": -0.8166233216225527
+      },
+      "ZB=F": {
+        "label": "30년 국채선물",
+        "value": 110.71875,
+        "date": "2026-07-29",
+        "return21d_pct": -3.011223651793049,
+        "return63d_pct": -2.4772914946325386,
+        "realized_vol": 0.5092297823023417,
+        "score": -1.11736333432067
+      }
+    },
+    "composite_score": -0.7745210528874199,
+    "yield_direction": "up",
+    "errors": [],
+    "limitation": "무료 지연 선물자료이며 CME 실시간 유료 시세를 대체하지 않습니다."
+  },
   "investment_conclusion": "미국채 금리환경 변화가 작아 자산배분은 중립적으로 유지하는 구간입니다.",
   "forecasts": {
     "5d": {
@@ -1336,6 +1382,7 @@
     "safety": "non-positive-skill models automatically fall back to persistence; tiny positive skill cannot pass strict gate",
     "structural_inputs": [
       "Fed engine policy path",
+      "Treasury futures direction/volatility cross-check",
       "core PCE momentum",
       "10y breakeven",
       "10y term premium",
@@ -1612,6 +1659,7 @@
     "예측은 확률적 범위이며 단일 금리값을 보장하지 않습니다.",
     "미국 정책금리 경로는 미국엔진 기존 출력값만 읽고 카드8에서 재계산하지 않습니다.",
     "Treasury 분기 리펀딩·경매 일정은 기간프리미엄과 수급의 정성적 보조근거이며 임의 수치로 대체하지 않습니다.",
-    "실시간 원본 빈티지가 없는 계열은 그 사실을 품질정보에 명시합니다."
+    "실시간 원본 빈티지가 없는 계열은 그 사실을 품질정보에 명시합니다.",
+    "국채선물은 방향·변동성 교차검증에 사용하며, 검증 미통과 기간을 준기관급으로 승격시키지 않습니다."
   ]
 }

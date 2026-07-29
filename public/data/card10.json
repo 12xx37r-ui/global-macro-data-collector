@@ -1,0 +1,238 @@
+{
+  "schema_version": "1.0",
+  "card": 10,
+  "title": "원자재·에너지·공급망 압력",
+  "generated_at_utc": "2026-07-29T03:39:15.393865+00:00",
+  "current": 59.49522040411782,
+  "current_date": "2026-07-01",
+  "forecast_3m": 55.89522040411782,
+  "forecast_6m": 52.29522040411783,
+  "forecast_range80_3m": [
+    49.432789842587155,
+    62.35765096564849
+  ],
+  "future_direction": "down",
+  "market_signal": "bad",
+  "current_regime": "공급·원가 우호",
+  "future_regime": "압력확대",
+  "investment_conclusion": "원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.",
+  "forecasts": {
+    "1m": {
+      "forecast": 58.49522040411782,
+      "model": "mean_reversion_24m",
+      "samples": 180,
+      "rmse": 3.585572544417799,
+      "baseline_rmse": 3.703061443463163,
+      "skill_pct": 3.1727504617230062,
+      "direction_accuracy": 0.6666666666666666,
+      "fallback_used": false,
+      "range80": [
+        54.97870100335581,
+        62.01173980487984
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 2.7281231527279113,
+          "p_value": 0.006369582293225484,
+          "significant_10pct": true
+        }
+      }
+    },
+    "3m": {
+      "forecast": 55.89522040411782,
+      "model": "mean_reversion_12m",
+      "samples": 180,
+      "rmse": 5.945147877200001,
+      "baseline_rmse": 6.75921983244638,
+      "skill_pct": 12.04387452141411,
+      "direction_accuracy": 0.7657657657657657,
+      "fallback_used": false,
+      "range80": [
+        49.432789842587155,
+        62.35765096564849
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 4.364820024640963,
+          "p_value": 1.2722746381310657e-05,
+          "significant_10pct": true
+        }
+      }
+    },
+    "6m": {
+      "forecast": 52.29522040411783,
+      "model": "mean_reversion_12m",
+      "samples": 180,
+      "rmse": 5.378706094669119,
+      "baseline_rmse": 6.579803090023544,
+      "skill_pct": 18.254299998362523,
+      "direction_accuracy": 0.8529411764705882,
+      "fallback_used": false,
+      "range80": [
+        46.43718256031421,
+        58.15325824792144
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 4.569636169004449,
+          "p_value": 4.885716420321984e-06,
+          "significant_10pct": true
+        }
+      }
+    },
+    "12m": {
+      "forecast": 51.49522040411782,
+      "model": "mean_reversion_24m",
+      "samples": 180,
+      "rmse": 5.224895322642157,
+      "baseline_rmse": 6.447640434892444,
+      "skill_pct": 18.96422613198474,
+      "direction_accuracy": 0.8432835820895522,
+      "fallback_used": false,
+      "range80": [
+        44.97317584904254,
+        58.017264959193106
+      ],
+      "quality_gate": {
+        "passed": true,
+        "level": "준기관급",
+        "dm_test": {
+          "statistic": 5.1179947201173634,
+          "p_value": 3.08801245463286e-07,
+          "significant_10pct": true
+        }
+      }
+    }
+  },
+  "data_quality": {
+    "completeness": 81.8,
+    "core_completeness": 80.0,
+    "missing_core": [
+      "GSCPI"
+    ],
+    "warnings": [
+      "GSCPI CSV retry: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI&cosd=1990-01-01",
+      "WPUFD4 CSV retry: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=WPUFD4&cosd=1990-01-01"
+    ],
+    "release_lag_policy": "월간·주간 자료는 공표시차를 보수적으로 반영",
+    "real_time_vintage": false
+  },
+  "source_status": {
+    "PALLFNFINDEXM": {
+      "ok": true,
+      "label": "IMF 글로벌 원자재 종합지수",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 194.85223866222
+      },
+      "url": "https://fred.stlouisfed.org/series/PALLFNFINDEXM"
+    },
+    "PNRGINDEXM": {
+      "ok": true,
+      "label": "IMF 글로벌 에너지지수",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 198.7977403690703
+      },
+      "url": "https://fred.stlouisfed.org/series/PNRGINDEXM"
+    },
+    "DCOILWTICO": {
+      "ok": true,
+      "label": "WTI 유가",
+      "latest": {
+        "date": "2026-07-20",
+        "value": 84.38
+      },
+      "url": "https://fred.stlouisfed.org/series/DCOILWTICO"
+    },
+    "DCOILBRENTEU": {
+      "ok": true,
+      "label": "브렌트유",
+      "latest": {
+        "date": "2026-07-20",
+        "value": 86.99
+      },
+      "url": "https://fred.stlouisfed.org/series/DCOILBRENTEU"
+    },
+    "DHHNGSP": {
+      "ok": true,
+      "label": "미국 천연가스",
+      "latest": {
+        "date": "2026-07-20",
+        "value": 2.8
+      },
+      "url": "https://fred.stlouisfed.org/series/DHHNGSP"
+    },
+    "PCOPPUSDM": {
+      "ok": true,
+      "label": "글로벌 구리가격",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 13552.04090909091
+      },
+      "url": "https://fred.stlouisfed.org/series/PCOPPUSDM"
+    },
+    "PALUMUSDM": {
+      "ok": true,
+      "label": "글로벌 알루미늄가격",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 3438.847272727273
+      },
+      "url": "https://fred.stlouisfed.org/series/PALUMUSDM"
+    },
+    "PIORECRUSDM": {
+      "ok": true,
+      "label": "글로벌 철광석가격",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 103.7909090909091
+      },
+      "url": "https://fred.stlouisfed.org/series/PIORECRUSDM"
+    },
+    "PWHEAMTUSDM": {
+      "ok": true,
+      "label": "글로벌 밀가격",
+      "latest": {
+        "date": "2026-06-01",
+        "value": 199.6482875619048
+      },
+      "url": "https://fred.stlouisfed.org/series/PWHEAMTUSDM"
+    },
+    "GSCPI": {
+      "ok": false,
+      "label": "뉴욕연은 글로벌 공급망압력",
+      "latest": null,
+      "url": "https://fred.stlouisfed.org/series/GSCPI"
+    },
+    "WPUFD4": {
+      "ok": false,
+      "label": "미국 최종수요 생산자물가",
+      "latest": null,
+      "url": "https://fred.stlouisfed.org/series/WPUFD4"
+    }
+  },
+  "model_specification": {
+    "selection": "expanding walk-forward",
+    "benchmark": "persistence",
+    "inputs": [
+      "PALLFNFINDEXM",
+      "PNRGINDEXM",
+      "DCOILWTICO",
+      "DCOILBRENTEU",
+      "DHHNGSP",
+      "PCOPPUSDM",
+      "PALUMUSDM",
+      "PIORECRUSDM",
+      "PWHEAMTUSDM",
+      "GSCPI",
+      "WPUFD4"
+    ]
+  }
+}
