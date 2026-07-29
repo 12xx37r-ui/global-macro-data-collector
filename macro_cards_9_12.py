@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import requests
+import xlrd
 from openpyxl import load_workbook
 
 from treasury_card8 import (
@@ -64,36 +65,100 @@ GSCPI_FRED_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI"
 GSCPI_CACHE_PATH = OUT_DIR / "cache" / "gscpi_official.json"
 
 
-def _validate_xlsx_response(r: requests.Response) -> None:
+XLSX_MAGIC = b"PK\x03\x04"
+XLS_MAGIC = b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
+
+
+def _detect_excel_format(r: requests.Response) -> str:
     content_type = (r.headers.get("content-type") or "").lower()
     body = r.content or b""
     if len(body) < 1024:
         raise ValueError(f"download too small ({len(body)} bytes)")
-    if body[:2] != b"PK":
-        preview = body[:80].decode("utf-8", errors="ignore").replace("\n", " ")
-        raise ValueError(f"not an XLSX/ZIP response; content-type={content_type}; preview={preview!r}")
+    if body.startswith(XLSX_MAGIC):
+        return "xlsx"
+    if body.startswith(XLS_MAGIC):
+        return "xls"
+    preview = body[:80].decode("utf-8", errors="ignore").replace("\n", " ")
+    raise ValueError(f"not a supported Excel response; content-type={content_type}; preview={preview!r}")
 
 
-def _parse_gscpi_workbook(content: bytes) -> list[dict[str, Any]]:
+def _coerce_date_text(value: Any) -> str | None:
+    if value is None:
+        return None
+    if hasattr(value, "date"):
+        try:
+            return value.date().isoformat()
+        except Exception:
+            pass
+    text = str(value).strip()
+    if not text:
+        return None
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%b-%Y", "%b %Y", "%Y-%m", "%Y/%m"):
+        try:
+            return datetime.strptime(text, fmt).date().replace(day=1).isoformat() if "%d" not in fmt else datetime.strptime(text, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return None
+
+
+def _finalize_gscpi_rows(out: list[dict[str, Any]], source_label: str) -> list[dict[str, Any]]:
+    dedup = {x["date"]: x for x in out if x.get("date") and finite(x.get("value"))}
+    result = [dedup[k] for k in sorted(dedup)]
+    if len(result) < 36:
+        raise ValueError(f"{source_label} contained only {len(result)} usable observations")
+    return result
+
+
+def _parse_gscpi_xlsx(content: bytes) -> list[dict[str, Any]]:
     wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
     out: list[dict[str, Any]] = []
     for ws in wb.worksheets:
         for row in ws.iter_rows(values_only=True):
             if not row or len(row) < 2:
                 continue
-            # Official workbook layouts have changed; locate a date-like cell and a finite numeric cell.
-            date_value = next((x for x in row if hasattr(x, "date")), None)
+            date_text = next((_coerce_date_text(x) for x in row if _coerce_date_text(x)), None)
             numeric_values = [x for x in row if finite(x)]
-            if date_value is None or not numeric_values:
+            if date_text is None or not numeric_values:
                 continue
-            value = float(numeric_values[-1])
-            out.append({"date": date_value.date().isoformat(), "value": value})
-    # Deduplicate and sort because some workbook versions contain charts/helper sheets.
-    dedup = {x["date"]: x for x in out}
-    result = [dedup[k] for k in sorted(dedup)]
-    if len(result) < 36:
-        raise ValueError(f"official workbook contained only {len(result)} usable observations")
-    return result
+            out.append({"date": date_text, "value": float(numeric_values[-1])})
+    return _finalize_gscpi_rows(out, "official XLSX workbook")
+
+
+def _parse_gscpi_xls(content: bytes) -> list[dict[str, Any]]:
+    book = xlrd.open_workbook(file_contents=content, on_demand=True)
+    out: list[dict[str, Any]] = []
+    try:
+        for sheet in book.sheets():
+            for row_index in range(sheet.nrows):
+                cells = sheet.row(row_index)
+                if len(cells) < 2:
+                    continue
+                date_text = None
+                numeric_values: list[float] = []
+                for cell in cells:
+                    if cell.ctype == xlrd.XL_CELL_DATE:
+                        try:
+                            date_text = xlrd.xldate_as_datetime(cell.value, book.datemode).date().isoformat()
+                        except Exception:
+                            pass
+                    elif cell.ctype == xlrd.XL_CELL_NUMBER and finite(cell.value):
+                        numeric_values.append(float(cell.value))
+                    elif cell.ctype == xlrd.XL_CELL_TEXT and date_text is None:
+                        date_text = _coerce_date_text(cell.value)
+                if date_text is None or not numeric_values:
+                    continue
+                out.append({"date": date_text, "value": numeric_values[-1]})
+    finally:
+        book.release_resources()
+    return _finalize_gscpi_rows(out, "official XLS workbook")
+
+
+def _parse_gscpi_workbook(content: bytes, excel_format: str) -> list[dict[str, Any]]:
+    if excel_format == "xlsx":
+        return _parse_gscpi_xlsx(content)
+    if excel_format == "xls":
+        return _parse_gscpi_xls(content)
+    raise ValueError(f"unsupported Excel format: {excel_format}")
 
 
 def _fetch_gscpi_fred_csv(session: requests.Session) -> list[dict[str, Any]]:
@@ -139,10 +204,10 @@ def fetch_gscpi_official(session: requests.Session) -> tuple[list[dict[str, Any]
             },
         )
         r.raise_for_status()
-        _validate_xlsx_response(r)
-        rows = _parse_gscpi_workbook(r.content)
+        excel_format = _detect_excel_format(r)
+        rows = _parse_gscpi_workbook(r.content, excel_format)
         _write_gscpi_cache(rows)
-        return rows, "New York Fed official workbook"
+        return rows, f"New York Fed official {excel_format.upper()} workbook"
     except Exception as exc:
         errors.append(f"official workbook: {exc}")
     try:
