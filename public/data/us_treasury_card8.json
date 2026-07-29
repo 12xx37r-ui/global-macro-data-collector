@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-07-29T15:04:41.623935+00:00",
+  "generated_at_utc": "2026-07-29T15:09:26.829920+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -139,21 +139,21 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 102.7734375,
+        "value": 102.76171875,
         "date": "2026-07-29",
-        "return21d_pct": -0.416351249053748,
-        "return63d_pct": -0.8404628198846686,
-        "realized_vol": 0.0851161923940301,
-        "score": -0.44990714858845654
+        "return21d_pct": -0.42770628311884495,
+        "return63d_pct": -0.8517694945916365,
+        "realized_vol": 0.08526332447414871,
+        "score": -0.45877767726093566
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.1640625,
+        "value": 106.15625,
         "date": "2026-07-29",
-        "return21d_pct": -1.0917825169226236,
-        "return63d_pct": -1.7141617242875773,
-        "realized_vol": 0.19492351698170723,
-        "score": -0.8263753000201398
+        "return21d_pct": -1.099061067035445,
+        "return63d_pct": -1.7213944741790832,
+        "realized_vol": 0.19502518315220546,
+        "score": -0.8307981029592946
       },
       "ZN=F": {
         "label": "10년 국채선물",
@@ -166,18 +166,18 @@
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 110.40625,
+        "value": 110.375,
         "date": "2026-07-29",
-        "return21d_pct": -3.284971256501501,
-        "return63d_pct": -2.7525461051472577,
-        "realized_vol": 0.5106278387541862,
-        "score": -1.223840841659868
+        "return21d_pct": -3.312346016972356,
+        "return63d_pct": -2.7800715661987385,
+        "realized_vol": 0.5109034244551349,
+        "score": -1.2342706515134751
       }
     },
-    "composite_score": -0.8550769422308022,
+    "composite_score": -0.8610077275971125,
     "yield_direction": "up",
     "errors": [],
-    "limitation": "무료 지연 선물자료이며 CME 실시간 유료 시세를 대체하지 않습니다."
+    "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
   },
   "investment_conclusion": "미국채 금리환경 변화가 작아 자산배분은 중립적으로 유지하는 구간입니다.",
   "forecasts": {
