@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json, math, os, statistics, io
+import json, math, os, statistics, io, csv
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -29,7 +29,7 @@ CARD9_SERIES = {
     'UMCSENT': {'label':'미시간 소비심리','core':False,'adverse_up':False},
     'TOTALSL': {'label':'미국 소비자신용','core':False,'adverse_up':False},
     'PSAVERT': {'label':'미국 개인저축률','core':False,'adverse_up':False},
-    'OECDSLRTTO01IXOBSAM': {'label':'OECD 소매판매량','core':False,'adverse_up':False},
+    'OECDSLRTTO01IXOBSAM': {'label':'OECD 소매판매량','core':False,'adverse_up':False,'max_age_days':180},
 }
 
 # Card 10: commodities, energy, supply chain.
@@ -43,7 +43,7 @@ CARD10_SERIES = {
     'PALUMUSDM': {'label':'글로벌 알루미늄가격','core':False,'adverse_up':False},
     'PIORECRUSDM': {'label':'글로벌 철광석가격','core':False,'adverse_up':False},
     'PWHEAMTUSDM': {'label':'글로벌 밀가격','core':False,'adverse_up':True},
-    'GSCPI': {'label':'뉴욕연은 글로벌 공급망압력','core':True,'adverse_up':True,'direct':True},
+    'GSCPI': {'label':'뉴욕연은 글로벌 공급망압력','core':True,'adverse_up':True,'direct':True,'max_age_days':120},
     'PPIFIS': {'label':'미국 최종수요 생산자물가','core':True,'adverse_up':True},
 }
 
@@ -51,7 +51,7 @@ CARD10_SERIES = {
 YAHOO_SYMBOLS = {
     'ES=F':'S&P500 선물','NQ=F':'나스닥100 선물','RTY=F':'러셀2000 선물',
     'ZT=F':'미국 2년 국채선물','ZF=F':'미국 5년 국채선물','ZN=F':'미국 10년 국채선물','ZB=F':'미국 30년 국채선물',
-    'CL=F':'WTI 원유선물','GC=F':'금선물','HG=F':'구리선물','DX=F':'달러인덱스선물','BTC=F':'비트코인선물',
+    'CL=F':'WTI 원유선물','GC=F':'금선물','HG=F':'구리선물','DX-Y.NYB':'미국 달러인덱스(현물 대체신호)','BTC=F':'비트코인선물',
 }
 
 HORIZONS = {'5d':5,'1m':21,'3m':63,'6m':126,'12m':252}
@@ -60,39 +60,113 @@ HORIZONS = {'5d':5,'1m':21,'3m':63,'6m':126,'12m':252}
 def now_iso(): return datetime.now(timezone.utc).isoformat()
 
 GSCPI_XLSX_URL = "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx"
+GSCPI_FRED_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI"
+GSCPI_CACHE_PATH = OUT_DIR / "cache" / "gscpi_official.json"
 
-def fetch_gscpi_official(session: requests.Session) -> list[dict[str, Any]]:
-    r = session.get(GSCPI_XLSX_URL, timeout=(15, 60))
-    r.raise_for_status()
-    wb = load_workbook(io.BytesIO(r.content), read_only=True, data_only=True)
-    ws = wb.active
-    out = []
-    for row in ws.iter_rows(values_only=True):
-        if not row or len(row) < 2:
-            continue
-        d, v = row[0], row[1]
-        if not finite(v):
-            continue
-        if hasattr(d, "date"):
-            ds = d.date().isoformat()
-        else:
-            ds = str(d)[:10]
-            if len(ds) < 7 or not ds[:4].isdigit():
+
+def _validate_xlsx_response(r: requests.Response) -> None:
+    content_type = (r.headers.get("content-type") or "").lower()
+    body = r.content or b""
+    if len(body) < 1024:
+        raise ValueError(f"download too small ({len(body)} bytes)")
+    if body[:2] != b"PK":
+        preview = body[:80].decode("utf-8", errors="ignore").replace("\n", " ")
+        raise ValueError(f"not an XLSX/ZIP response; content-type={content_type}; preview={preview!r}")
+
+
+def _parse_gscpi_workbook(content: bytes) -> list[dict[str, Any]]:
+    wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
+    out: list[dict[str, Any]] = []
+    for ws in wb.worksheets:
+        for row in ws.iter_rows(values_only=True):
+            if not row or len(row) < 2:
                 continue
-        out.append({"date": ds, "value": float(v)})
-    if not out:
-        raise ValueError("GSCPI official workbook contained no observations")
+            # Official workbook layouts have changed; locate a date-like cell and a finite numeric cell.
+            date_value = next((x for x in row if hasattr(x, "date")), None)
+            numeric_values = [x for x in row if finite(x)]
+            if date_value is None or not numeric_values:
+                continue
+            value = float(numeric_values[-1])
+            out.append({"date": date_value.date().isoformat(), "value": value})
+    # Deduplicate and sort because some workbook versions contain charts/helper sheets.
+    dedup = {x["date"]: x for x in out}
+    result = [dedup[k] for k in sorted(dedup)]
+    if len(result) < 36:
+        raise ValueError(f"official workbook contained only {len(result)} usable observations")
+    return result
+
+
+def _fetch_gscpi_fred_csv(session: requests.Session) -> list[dict[str, Any]]:
+    r = session.get(GSCPI_FRED_CSV_URL, timeout=(15, 60), headers={"Accept": "text/csv,*/*"})
+    r.raise_for_status()
+    text = r.text
+    if "DATE" not in text.upper() or "GSCPI" not in text.upper():
+        raise ValueError("FRED fallback did not return a GSCPI CSV")
+    out = []
+    for row in csv.DictReader(io.StringIO(text)):
+        value = row.get("GSCPI")
+        if value not in (None, "", ".") and finite(value):
+            out.append({"date": row.get("DATE"), "value": float(value)})
+    if len(out) < 36:
+        raise ValueError(f"FRED fallback contained only {len(out)} observations")
     return out
 
-def fetch_card10_data(session: requests.Session) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
+
+def _write_gscpi_cache(rows: list[dict[str, Any]]) -> None:
+    GSCPI_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    GSCPI_CACHE_PATH.write_text(json.dumps({"saved_at_utc": now_iso(), "rows": rows}, ensure_ascii=False), encoding="utf-8")
+
+
+def _read_gscpi_cache() -> list[dict[str, Any]]:
+    try:
+        payload = json.loads(GSCPI_CACHE_PATH.read_text(encoding="utf-8"))
+        rows = payload.get("rows") or []
+        return rows if len(rows) >= 36 else []
+    except Exception:
+        return []
+
+
+def fetch_gscpi_official(session: requests.Session) -> tuple[list[dict[str, Any]], str]:
+    errors = []
+    try:
+        r = session.get(
+            GSCPI_XLSX_URL,
+            timeout=(15, 60),
+            allow_redirects=True,
+            headers={
+                "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream;q=0.9,*/*;q=0.5",
+                "Referer": "https://www.newyorkfed.org/research/policy/gscpi",
+            },
+        )
+        r.raise_for_status()
+        _validate_xlsx_response(r)
+        rows = _parse_gscpi_workbook(r.content)
+        _write_gscpi_cache(rows)
+        return rows, "New York Fed official workbook"
+    except Exception as exc:
+        errors.append(f"official workbook: {exc}")
+    try:
+        rows = _fetch_gscpi_fred_csv(session)
+        _write_gscpi_cache(rows)
+        return rows, "FRED CSV fallback"
+    except Exception as exc:
+        errors.append(f"FRED CSV fallback: {exc}")
+    cached = _read_gscpi_cache()
+    if cached:
+        return cached, "local cache from last successful official collection"
+    raise RuntimeError("; ".join(errors))
+
+
+def fetch_card10_data(session: requests.Session) -> tuple[dict[str, list[dict[str, Any]]], list[str], dict[str, str]]:
     fred_ids = [sid for sid, meta in CARD10_SERIES.items() if not meta.get("direct")]
     data, errors = fetch_fred_all(session, fred_ids)
+    source_overrides: dict[str, str] = {}
     try:
-        data["GSCPI"] = fetch_gscpi_official(session)
+        data["GSCPI"], source_overrides["GSCPI"] = fetch_gscpi_official(session)
     except Exception as exc:
         data["GSCPI"] = []
-        errors.append(f"GSCPI official workbook: {exc}")
-    return data, errors
+        errors.append(f"GSCPI collection failed after official, fallback and cache attempts: {exc}")
+    return data, errors, source_overrides
 
 def aligned_group_index(histories: dict[str, list[dict[str, Any]]], symbols: list[str]) -> list[dict[str, Any]]:
     maps = {}
@@ -259,23 +333,25 @@ def build_card9(session:requests.Session)->dict[str,Any]:
     }
 
 def build_card10(session:requests.Session)->dict[str,Any]:
-    data,errors=fetch_card10_data(session)
-    hist=composite_history(data,CARD10_SERIES,'commodity')
+    data,errors,source_overrides=fetch_card10_data(session)
+    favorable_hist=composite_history(data,CARD10_SERIES,'commodity')
+    # Public card semantics: higher value means greater commodity/energy/supply-chain pressure.
+    hist=[{'date':x['date'],'value':100-float(x['value'])} for x in favorable_hist]
     vals=values(hist)
     if len(vals)<60: raise RuntimeError('Card10 composite history insufficient')
     forecasts={}
     for key,months in [('1m',1),('3m',3),('6m',6),('12m',12)]: forecasts[key]=walk_forward(vals,months,60 if months<=6 else 45)
     current=vals[-1]; f3=forecasts['3m']['forecast']; delta=f3-current
-    # Composite higher = more favorable (less inflationary pressure / healthier industrial demand)
-    signal='good' if delta>.8 else 'bad' if delta<-.8 else 'neutral'
+    # Pressure index semantics: a rise is adverse, a decline is favorable.
+    signal='bad' if delta>.8 else 'good' if delta<-.8 else 'neutral'
     return {
         'schema_version':'1.0','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
-        'market_signal':signal,'current_regime':'공급·원가 우호' if current>=55 else '공급·원가 부담' if current<45 else '중립',
+        'market_signal':signal,'current_regime':'공급·원가 부담' if current>=55 else '공급·원가 우호' if current<45 else '중립',
         'future_regime':'압력완화' if signal=='good' else '압력확대' if signal=='bad' else '보합',
         'investment_conclusion':'원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.',
-        'forecasts':forecasts,'data_quality':quality(data,CARD10_SERIES,errors),'source_status':source_status(data,CARD10_SERIES),
+        'forecasts':forecasts,'data_quality':quality(data,CARD10_SERIES,errors),'source_status':source_status(data,CARD10_SERIES,source_overrides),
         'model_specification':{'selection':'expanding walk-forward','benchmark':'persistence','inputs':list(CARD10_SERIES)},
     }
 
@@ -296,7 +372,7 @@ def build_card12(session:requests.Session)->dict[str,Any]:
         try: histories[sym]=yahoo_history(session,sym)
         except Exception as e: histories[sym]=[]; errors.append(f'{sym}: {e}')
     current={sym:{'value':latest(rows)['value'],'date':latest(rows)['date']} for sym,rows in histories.items() if rows}
-    groups={'equity':['ES=F','NQ=F','RTY=F'],'rates':['ZT=F','ZF=F','ZN=F','ZB=F'],'commodities':['CL=F','GC=F','HG=F'],'dollar':['DX=F'],'crypto':['BTC=F']}
+    groups={'equity':['ES=F','NQ=F','RTY=F'],'rates':['ZT=F','ZF=F','ZN=F','ZB=F'],'commodities':['CL=F','GC=F','HG=F'],'dollar':['DX-Y.NYB'],'crypto':['BTC=F']}
     group_scores={}
     for g,syms in groups.items():
         comps=[]
@@ -319,44 +395,146 @@ def build_card12(session:requests.Session)->dict[str,Any]:
             'predictive_validation':predictive,
             'investment_conclusion':'현재 선물시장 신호와 장기 순차 OOS를 통과한 기간별 방향예측을 분리해 사용합니다.',
             'data_quality':{'completeness':round(100*sum(bool(v) for v in histories.values())/len(histories),1),'warnings':errors},
-            'source_status':{sym:{'ok':bool(histories[sym]),'label':YAHOO_SYMBOLS[sym],'latest':current.get(sym),'source':'Yahoo Finance delayed futures'} for sym in histories},
-            'limitations':['무료 지연 선물자료이며 거래소 실시간 유료 시세를 대체하지 않습니다.','선물가격은 미래 현물가격의 단순 예측값이 아닙니다.','검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다.']}
+            'source_status':{sym:{'ok':bool(histories[sym]),'label':YAHOO_SYMBOLS[sym],'latest':current.get(sym),'source':('Yahoo Finance delayed index proxy' if sym=='DX-Y.NYB' else 'Yahoo Finance delayed futures')} for sym in histories},
+            'limitations':['무료 지연 선물자료와 달러인덱스 대체신호를 사용하며 거래소 실시간 유료 시세를 대체하지 않습니다.','선물가격은 미래 현물가격의 단순 예측값이 아닙니다.','검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다.']}
 
-def quality(data,spec,errors):
-    core=[k for k,v in spec.items() if v.get('core')]
-    return {'completeness':round(100*sum(bool(data.get(k)) for k in spec)/len(spec),1),
-            'core_completeness':round(100*sum(bool(data.get(k)) for k in core)/len(core),1),
-            'missing_core':[k for k in core if not data.get(k)],'warnings':errors,
-            'release_lag_policy':'월간·주간 자료는 공표시차를 보수적으로 반영','real_time_vintage':False}
+def _age_days(date_text: str | None) -> int | None:
+    try:
+        d = datetime.fromisoformat(str(date_text)[:10]).date()
+        return (datetime.now(timezone.utc).date() - d).days
+    except Exception:
+        return None
 
-def source_status(data,spec):
-    return {sid:{'ok':bool(data.get(sid)),'label':meta['label'],'latest':latest(data.get(sid,[])),'url':f'https://fred.stlouisfed.org/series/{sid}'} for sid,meta in spec.items()}
+
+def quality(data, spec, errors):
+    core = [k for k, v in spec.items() if v.get('core')]
+    stale = []
+    fresh_ok = []
+    core_fresh_ok = []
+    for sid, meta in spec.items():
+        row = latest(data.get(sid, []))
+        age = _age_days((row or {}).get('date')) if row else None
+        max_age = int(meta.get('max_age_days', 120))
+        is_fresh = bool(row) and age is not None and age <= max_age
+        fresh_ok.append(is_fresh)
+        if meta.get('core'):
+            core_fresh_ok.append(is_fresh)
+        if row and not is_fresh:
+            stale.append({'series': sid, 'latest_date': row.get('date'), 'age_days': age, 'max_age_days': max_age})
+    warnings = list(errors)
+    warnings.extend([f"{x['series']} 최신성이 기준 초과: {x['latest_date']} ({x['age_days']}일 경과)" for x in stale])
+    return {
+        'completeness': round(100 * sum(fresh_ok) / len(spec), 1),
+        'raw_collection_completeness': round(100 * sum(bool(data.get(k)) for k in spec) / len(spec), 1),
+        'core_completeness': round(100 * sum(core_fresh_ok) / len(core), 1),
+        'missing_core': [k for k in core if not data.get(k)],
+        'stale_series': stale,
+        'warnings': warnings,
+        'release_lag_policy': '월간·주간 자료는 공표시차와 계열별 최신성 기준을 함께 반영',
+        'real_time_vintage': False,
+    }
+
+
+def source_status(data, spec, source_overrides=None):
+    source_overrides = source_overrides or {}
+    out = {}
+    for sid, meta in spec.items():
+        row = latest(data.get(sid, []))
+        age = _age_days((row or {}).get('date')) if row else None
+        max_age = int(meta.get('max_age_days', 120))
+        out[sid] = {
+            'ok': bool(data.get(sid)),
+            'fresh': bool(row) and age is not None and age <= max_age,
+            'age_days': age,
+            'max_age_days': max_age,
+            'label': meta['label'],
+            'latest': row,
+            'url': GSCPI_XLSX_URL if sid == 'GSCPI' else f'https://fred.stlouisfed.org/series/{sid}',
+            'collection_source': source_overrides.get(sid, 'FRED'),
+        }
+    return out
 
 def load_json(path:Path)->dict[str,Any]:
     try:return json.loads(path.read_text(encoding='utf-8'))
     except:return {}
 
-def build_card11(card8,card9,card10,card12)->dict[str,Any]:
-    signals=[]
-    for c,w in [(card8,1.2),(card9,1.2),(card10,1.0),(card12,.8)]:
-        s=c.get('market_signal')
-        signals.append((1 if s=='good' else -1 if s=='bad' else 0,w))
-    score=sum(s*w for s,w in signals)/sum(w for _,w in signals)*100
-    signal='good' if score>=20 else 'bad' if score<=-20 else 'neutral'
-    return {'schema_version':'1.0','card':11,'title':'글로벌 경기국면 최종판정·투자환경','generated_at_utc':now_iso(),
-            'score':round(score,1),'market_signal':signal,
-            'current_regime':'확장·위험선호' if signal=='good' else '수축·위험회피' if signal=='bad' else '혼합·중립',
-            'future_regime':'우호적 투자환경' if signal=='good' else '불리한 투자환경' if signal=='bad' else '중립적 투자환경',
-            'asset_environment':{
-                'global_equities':'우호' if signal=='good' else '불리' if signal=='bad' else '중립',
-                'long_treasuries':'우호' if card8.get('market_signal')=='good' else '중립',
-                'gold':'우호' if card8.get('market_signal')=='good' or card10.get('market_signal')=='bad' else '중립',
-                'commodities':'우호' if card10.get('market_signal')=='good' and card9.get('market_signal')=='good' else '중립',
-                'cash_short_duration':'우호' if signal=='bad' else '중립',
-            },
-            'inputs':{'card8':card8.get('market_signal'),'card9':card9.get('market_signal'),'card10':card10.get('market_signal'),'card12':card12.get('market_signal')},
-            'quality_gate':{'passed':all(c.get('data_quality',{}).get('core_completeness',100)>=85 for c in (card8,card9,card10)),'level':'준기관급 통합판정'},
-            'investment_conclusion':'카드별 방향·완전성·검증 통과 범위를 합쳐 자산군의 상대적 우호도를 판단합니다.'}
+def _card8_validation(card8: dict[str, Any]) -> dict[str, Any]:
+    gates = card8.get('quality_gates') or {}
+    passed = []
+    for horizon, gate in gates.items():
+        targets = gate.get('passed_targets') or []
+        if targets:
+            passed.append({'horizon': horizon, 'targets': targets})
+    return {'passed': bool(passed), 'passed_horizons': passed, 'reason': '3·6개월 핵심금리 검증 통과 여부'}
+
+
+def _generic_forecast_validation(card: dict[str, Any]) -> dict[str, Any]:
+    passed = [h for h, fc in (card.get('forecasts') or {}).items() if (fc.get('quality_gate') or {}).get('passed')]
+    return {'passed': bool(passed), 'passed_horizons': passed}
+
+
+def _card12_validation(card12: dict[str, Any]) -> dict[str, Any]:
+    pv = card12.get('predictive_validation') or {}
+    passed = pv.get('passed_horizons') or []
+    return {'passed': bool(passed), 'passed_horizons': passed}
+
+
+def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
+    validations = {
+        'card8': _card8_validation(card8),
+        'card9': _generic_forecast_validation(card9),
+        'card10': _generic_forecast_validation(card10),
+        'card12': _card12_validation(card12),
+    }
+    signals = []
+    weights = {'card8': 1.2, 'card9': 1.2, 'card10': 1.0, 'card12': 0.8}
+    cards = {'card8': card8, 'card9': card9, 'card10': card10, 'card12': card12}
+    for key, c in cards.items():
+        s = c.get('market_signal')
+        direction = 1 if s == 'good' else -1 if s == 'bad' else 0
+        # A card contributes at full weight only when it has at least one validated horizon.
+        confidence = 1.0 if validations[key]['passed'] else 0.5
+        signals.append((direction, weights[key] * confidence))
+    denom = sum(w for _, w in signals) or 1.0
+    score = sum(s * w for s, w in signals) / denom * 100
+    signal = 'good' if score >= 20 else 'bad' if score <= -20 else 'neutral'
+
+    quality_checks = {
+        'card8_validation': validations['card8']['passed'],
+        'card9_validation': validations['card9']['passed'],
+        'card10_validation': validations['card10']['passed'],
+        'card12_validation': validations['card12']['passed'],
+        'card8_data': card8.get('data_quality', {}).get('core_completeness', 0) >= 85,
+        'card9_data': card9.get('data_quality', {}).get('core_completeness', 0) >= 85,
+        'card10_data': card10.get('data_quality', {}).get('core_completeness', 0) >= 85,
+        'card12_data': card12.get('data_quality', {}).get('completeness', 0) >= 80,
+    }
+    quality_passed = all(quality_checks.values())
+    quality_level = '준기관급 통합판정' if quality_passed else '조건부 통합판정'
+
+    input_details = {
+        'card8': {'label': '미국채 금리·실질금리', 'signal': card8.get('market_signal'), 'validation': validations['card8']},
+        'card9': {'label': '글로벌 고용·소비', 'signal': card9.get('market_signal'), 'validation': validations['card9']},
+        'card10': {'label': '원자재·에너지·공급망 압력', 'signal': card10.get('market_signal'), 'validation': validations['card10']},
+        'card12': {'label': '선물시장 현재신호·방향예측', 'signal': card12.get('market_signal'), 'validation': validations['card12']},
+    }
+    return {
+        'schema_version': '1.1', 'card': 11, 'title': '글로벌 경기국면 최종판정·투자환경', 'generated_at_utc': now_iso(),
+        'score': round(score, 1), 'market_signal': signal,
+        'current_regime': '확장·위험선호' if signal == 'good' else '수축·위험회피' if signal == 'bad' else '혼합·중립',
+        'future_regime': '우호적 투자환경' if signal == 'good' else '불리한 투자환경' if signal == 'bad' else '중립적 투자환경',
+        'asset_environment': {
+            'global_equities': '우호' if signal == 'good' else '불리' if signal == 'bad' else '중립',
+            'long_treasuries': '우호' if card8.get('market_signal') == 'good' else '중립',
+            'gold': '우호' if card8.get('market_signal') == 'good' or card10.get('market_signal') == 'bad' else '중립',
+            'commodities': '우호' if card10.get('market_signal') == 'good' and card9.get('market_signal') == 'good' else '중립',
+            'cash_short_duration': '우호' if signal == 'bad' else '중립',
+        },
+        'inputs': {k: v.get('market_signal') for k, v in cards.items()},
+        'input_details': input_details,
+        'quality_gate': {'passed': quality_passed, 'level': quality_level, 'checks': quality_checks},
+        'investment_conclusion': '검증을 통과한 하위 카드 신호와 최신성·완전성을 함께 반영해 자산군의 상대적 우호도를 판단합니다.',
+    }
 
 def main():
     session=build_http_session(); OUT_DIR.mkdir(parents=True,exist_ok=True)
