@@ -82,6 +82,19 @@ def _detect_excel_format(r: requests.Response) -> str:
     raise ValueError(f"not a supported Excel response; content-type={content_type}; preview={preview!r}")
 
 
+def _validate_xlsx_response(r: requests.Response) -> bytes:
+    """Backward-compatible integrity-test helper.
+
+    Accepts only a genuine XLSX/ZIP response and returns its bytes.
+    The production GSCPI collector uses ``_detect_excel_format`` so it can
+    also accept the New York Fed's legacy XLS binary response.
+    """
+    excel_format = _detect_excel_format(r)
+    if excel_format != "xlsx":
+        raise ValueError(f"expected XLSX response, received {excel_format.upper()}")
+    return r.content
+
+
 def _coerce_date_text(value: Any) -> str | None:
     if value is None:
         return None
