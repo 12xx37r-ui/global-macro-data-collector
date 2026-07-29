@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-07-29T15:09:28.256673+00:00",
+  "generated_at_utc": "2026-07-29T15:18:31.610895+00:00",
   "current": 46.77703411446342,
   "current_date": "2026-06-01",
   "forecast_3m": 46.724040226738055,
@@ -111,121 +111,180 @@
     }
   },
   "data_quality": {
-    "completeness": 100.0,
+    "completeness": 91.7,
+    "raw_collection_completeness": 100.0,
     "core_completeness": 100.0,
     "missing_core": [],
-    "warnings": [],
-    "release_lag_policy": "월간·주간 자료는 공표시차를 보수적으로 반영",
+    "stale_series": [
+      {
+        "series": "OECDSLRTTO01IXOBSAM",
+        "latest_date": "2023-12-01",
+        "age_days": 971,
+        "max_age_days": 180
+      }
+    ],
+    "warnings": [
+      "OECDSLRTTO01IXOBSAM 최신성이 기준 초과: 2023-12-01 (971일 경과)"
+    ],
+    "release_lag_policy": "월간·주간 자료는 공표시차와 계열별 최신성 기준을 함께 반영",
     "real_time_vintage": false
   },
   "source_status": {
     "UNRATE": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "미국 실업률",
       "latest": {
         "date": "2026-06-01",
         "value": 4.2
       },
-      "url": "https://fred.stlouisfed.org/series/UNRATE"
+      "url": "https://fred.stlouisfed.org/series/UNRATE",
+      "collection_source": "FRED"
     },
     "PAYEMS": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "미국 비농업고용",
       "latest": {
         "date": "2026-06-01",
         "value": 158984.0
       },
-      "url": "https://fred.stlouisfed.org/series/PAYEMS"
+      "url": "https://fred.stlouisfed.org/series/PAYEMS",
+      "collection_source": "FRED"
     },
     "ICSA": {
       "ok": true,
+      "fresh": true,
+      "age_days": 11,
+      "max_age_days": 120,
       "label": "미국 신규실업수당",
       "latest": {
         "date": "2026-07-18",
         "value": 187000.0
       },
-      "url": "https://fred.stlouisfed.org/series/ICSA"
+      "url": "https://fred.stlouisfed.org/series/ICSA",
+      "collection_source": "FRED"
     },
     "CCSA": {
       "ok": true,
+      "fresh": true,
+      "age_days": 18,
+      "max_age_days": 120,
       "label": "미국 계속실업수당",
       "latest": {
         "date": "2026-07-11",
         "value": 1796000.0
       },
-      "url": "https://fred.stlouisfed.org/series/CCSA"
+      "url": "https://fred.stlouisfed.org/series/CCSA",
+      "collection_source": "FRED"
     },
     "JTSJOL": {
       "ok": true,
+      "fresh": true,
+      "age_days": 89,
+      "max_age_days": 120,
       "label": "미국 구인건수",
       "latest": {
         "date": "2026-05-01",
         "value": 7594.0
       },
-      "url": "https://fred.stlouisfed.org/series/JTSJOL"
+      "url": "https://fred.stlouisfed.org/series/JTSJOL",
+      "collection_source": "FRED"
     },
     "CES0500000003": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "미국 시간당임금",
       "latest": {
         "date": "2026-06-01",
         "value": 37.64
       },
-      "url": "https://fred.stlouisfed.org/series/CES0500000003"
+      "url": "https://fred.stlouisfed.org/series/CES0500000003",
+      "collection_source": "FRED"
     },
     "RSAFS": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "미국 소매판매",
       "latest": {
         "date": "2026-06-01",
         "value": 768553.0
       },
-      "url": "https://fred.stlouisfed.org/series/RSAFS"
+      "url": "https://fred.stlouisfed.org/series/RSAFS",
+      "collection_source": "FRED"
     },
     "PCE": {
       "ok": true,
+      "fresh": true,
+      "age_days": 89,
+      "max_age_days": 120,
       "label": "미국 개인소비지출",
       "latest": {
         "date": "2026-05-01",
         "value": 22059.8
       },
-      "url": "https://fred.stlouisfed.org/series/PCE"
+      "url": "https://fred.stlouisfed.org/series/PCE",
+      "collection_source": "FRED"
     },
     "UMCSENT": {
       "ok": true,
+      "fresh": true,
+      "age_days": 89,
+      "max_age_days": 120,
       "label": "미시간 소비심리",
       "latest": {
         "date": "2026-05-01",
         "value": 44.8
       },
-      "url": "https://fred.stlouisfed.org/series/UMCSENT"
+      "url": "https://fred.stlouisfed.org/series/UMCSENT",
+      "collection_source": "FRED"
     },
     "TOTALSL": {
       "ok": true,
+      "fresh": true,
+      "age_days": 89,
+      "max_age_days": 120,
       "label": "미국 소비자신용",
       "latest": {
         "date": "2026-05-01",
         "value": 5154538.86
       },
-      "url": "https://fred.stlouisfed.org/series/TOTALSL"
+      "url": "https://fred.stlouisfed.org/series/TOTALSL",
+      "collection_source": "FRED"
     },
     "PSAVERT": {
       "ok": true,
+      "fresh": true,
+      "age_days": 89,
+      "max_age_days": 120,
       "label": "미국 개인저축률",
       "latest": {
         "date": "2026-05-01",
         "value": 3.0
       },
-      "url": "https://fred.stlouisfed.org/series/PSAVERT"
+      "url": "https://fred.stlouisfed.org/series/PSAVERT",
+      "collection_source": "FRED"
     },
     "OECDSLRTTO01IXOBSAM": {
       "ok": true,
+      "fresh": false,
+      "age_days": 971,
+      "max_age_days": 180,
       "label": "OECD 소매판매량",
       "latest": {
         "date": "2023-12-01",
         "value": 118.3839
       },
-      "url": "https://fred.stlouisfed.org/series/OECDSLRTTO01IXOBSAM"
+      "url": "https://fred.stlouisfed.org/series/OECDSLRTTO01IXOBSAM",
+      "collection_source": "FRED"
     }
   },
   "model_specification": {

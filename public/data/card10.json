@@ -2,23 +2,23 @@
   "schema_version": "1.0",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-07-29T15:09:31.548506+00:00",
-  "current": 59.49522040411782,
+  "generated_at_utc": "2026-07-29T15:18:35.914208+00:00",
+  "current": 40.50477959588218,
   "current_date": "2026-07-01",
-  "forecast_3m": 55.89522040411782,
-  "forecast_6m": 52.29522040411783,
+  "forecast_3m": 44.10477959588218,
+  "forecast_6m": 47.70477959588217,
   "forecast_range80_3m": [
-    48.98599368290269,
-    62.804447125332956
+    37.195552874667044,
+    51.01400631709731
   ],
-  "future_direction": "down",
+  "future_direction": "up",
   "market_signal": "bad",
   "current_regime": "공급·원가 우호",
   "future_regime": "압력확대",
   "investment_conclusion": "원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 58.49522040411782,
+      "forecast": 41.50477959588218,
       "model": "mean_reversion_24m",
       "samples": 180,
       "rmse": 3.4400376563008352,
@@ -27,8 +27,8 @@
       "direction_accuracy": 0.6046511627906976,
       "fallback_used": false,
       "range80": [
-        55.050614950150766,
-        61.93982585808488
+        38.06017414191512,
+        44.949385049849234
       ],
       "quality_gate": {
         "passed": true,
@@ -41,7 +41,7 @@
       }
     },
     "3m": {
-      "forecast": 55.89522040411782,
+      "forecast": 44.10477959588218,
       "model": "mean_reversion_12m",
       "samples": 180,
       "rmse": 6.0168246430167045,
@@ -50,8 +50,8 @@
       "direction_accuracy": 0.7410714285714286,
       "fallback_used": false,
       "range80": [
-        48.98599368290269,
-        62.804447125332956
+        37.195552874667044,
+        51.01400631709731
       ],
       "quality_gate": {
         "passed": true,
@@ -64,7 +64,7 @@
       }
     },
     "6m": {
-      "forecast": 52.29522040411783,
+      "forecast": 47.70477959588217,
       "model": "mean_reversion_12m",
       "samples": 180,
       "rmse": 5.821825791753811,
@@ -73,8 +73,8 @@
       "direction_accuracy": 0.803030303030303,
       "fallback_used": false,
       "range80": [
-        45.588085140792195,
-        59.00235566744346
+        40.99764433255654,
+        54.411914859207805
       ],
       "quality_gate": {
         "passed": true,
@@ -87,7 +87,7 @@
       }
     },
     "12m": {
-      "forecast": 51.49522040411782,
+      "forecast": 48.50477959588218,
       "model": "mean_reversion_24m",
       "samples": 180,
       "rmse": 5.79789254882338,
@@ -96,8 +96,8 @@
       "direction_accuracy": 0.7887323943661971,
       "fallback_used": false,
       "range80": [
-        43.94164773000983,
-        59.04879307822582
+        40.95120692177418,
+        56.05835226999017
       ],
       "quality_gate": {
         "passed": true,
@@ -112,112 +112,158 @@
   },
   "data_quality": {
     "completeness": 90.9,
+    "raw_collection_completeness": 90.9,
     "core_completeness": 83.3,
     "missing_core": [
       "GSCPI"
     ],
+    "stale_series": [],
     "warnings": [
-      "GSCPI official workbook: File is not a zip file"
+      "GSCPI collection failed after official, fallback and cache attempts: official workbook: not an XLSX/ZIP response; content-type=application/vnd.ms-excel; preview='\\x11ࡱ\\x1a\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00>\\x00\\x03\\x00\\t\\x00\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x05\\x00\\x00\\x00C\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10\\x00\\x00D\\x01\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00>\\x01\\x00\\x00'; FRED CSV fallback: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI"
     ],
-    "release_lag_policy": "월간·주간 자료는 공표시차를 보수적으로 반영",
+    "release_lag_policy": "월간·주간 자료는 공표시차와 계열별 최신성 기준을 함께 반영",
     "real_time_vintage": false
   },
   "source_status": {
     "PALLFNFINDEXM": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "IMF 글로벌 원자재 종합지수",
       "latest": {
         "date": "2026-06-01",
         "value": 194.85223866222
       },
-      "url": "https://fred.stlouisfed.org/series/PALLFNFINDEXM"
+      "url": "https://fred.stlouisfed.org/series/PALLFNFINDEXM",
+      "collection_source": "FRED"
     },
     "PNRGINDEXM": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "IMF 글로벌 에너지지수",
       "latest": {
         "date": "2026-06-01",
         "value": 198.7977403690703
       },
-      "url": "https://fred.stlouisfed.org/series/PNRGINDEXM"
+      "url": "https://fred.stlouisfed.org/series/PNRGINDEXM",
+      "collection_source": "FRED"
     },
     "DCOILWTICO": {
       "ok": true,
+      "fresh": true,
+      "age_days": 9,
+      "max_age_days": 120,
       "label": "WTI 유가",
       "latest": {
         "date": "2026-07-20",
         "value": 84.38
       },
-      "url": "https://fred.stlouisfed.org/series/DCOILWTICO"
+      "url": "https://fred.stlouisfed.org/series/DCOILWTICO",
+      "collection_source": "FRED"
     },
     "DCOILBRENTEU": {
       "ok": true,
+      "fresh": true,
+      "age_days": 9,
+      "max_age_days": 120,
       "label": "브렌트유",
       "latest": {
         "date": "2026-07-20",
         "value": 86.99
       },
-      "url": "https://fred.stlouisfed.org/series/DCOILBRENTEU"
+      "url": "https://fred.stlouisfed.org/series/DCOILBRENTEU",
+      "collection_source": "FRED"
     },
     "DHHNGSP": {
       "ok": true,
+      "fresh": true,
+      "age_days": 9,
+      "max_age_days": 120,
       "label": "미국 천연가스",
       "latest": {
         "date": "2026-07-20",
         "value": 2.8
       },
-      "url": "https://fred.stlouisfed.org/series/DHHNGSP"
+      "url": "https://fred.stlouisfed.org/series/DHHNGSP",
+      "collection_source": "FRED"
     },
     "PCOPPUSDM": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "글로벌 구리가격",
       "latest": {
         "date": "2026-06-01",
         "value": 13552.04090909091
       },
-      "url": "https://fred.stlouisfed.org/series/PCOPPUSDM"
+      "url": "https://fred.stlouisfed.org/series/PCOPPUSDM",
+      "collection_source": "FRED"
     },
     "PALUMUSDM": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "글로벌 알루미늄가격",
       "latest": {
         "date": "2026-06-01",
         "value": 3438.847272727273
       },
-      "url": "https://fred.stlouisfed.org/series/PALUMUSDM"
+      "url": "https://fred.stlouisfed.org/series/PALUMUSDM",
+      "collection_source": "FRED"
     },
     "PIORECRUSDM": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "글로벌 철광석가격",
       "latest": {
         "date": "2026-06-01",
         "value": 103.7909090909091
       },
-      "url": "https://fred.stlouisfed.org/series/PIORECRUSDM"
+      "url": "https://fred.stlouisfed.org/series/PIORECRUSDM",
+      "collection_source": "FRED"
     },
     "PWHEAMTUSDM": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "글로벌 밀가격",
       "latest": {
         "date": "2026-06-01",
         "value": 199.6482875619048
       },
-      "url": "https://fred.stlouisfed.org/series/PWHEAMTUSDM"
+      "url": "https://fred.stlouisfed.org/series/PWHEAMTUSDM",
+      "collection_source": "FRED"
     },
     "GSCPI": {
       "ok": false,
+      "fresh": false,
+      "age_days": null,
+      "max_age_days": 120,
       "label": "뉴욕연은 글로벌 공급망압력",
       "latest": null,
-      "url": "https://fred.stlouisfed.org/series/GSCPI"
+      "url": "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx",
+      "collection_source": "FRED"
     },
     "PPIFIS": {
       "ok": true,
+      "fresh": true,
+      "age_days": 58,
+      "max_age_days": 120,
       "label": "미국 최종수요 생산자물가",
       "latest": {
         "date": "2026-06-01",
         "value": 156.566
       },
-      "url": "https://fred.stlouisfed.org/series/PPIFIS"
+      "url": "https://fred.stlouisfed.org/series/PPIFIS",
+      "collection_source": "FRED"
     }
   },
   "model_specification": {

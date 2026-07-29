@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-07-29T15:09:35.135771+00:00",
+  "generated_at_utc": "2026-07-29T15:18:40.100715+00:00",
   "score": -42.9,
   "market_signal": "bad",
   "current_regime": "수축·위험회피",
@@ -20,9 +20,86 @@
     "card10": "bad",
     "card12": "bad"
   },
+  "input_details": {
+    "card8": {
+      "label": "미국채 금리·실질금리",
+      "signal": "neutral",
+      "validation": {
+        "passed": true,
+        "passed_horizons": [
+          {
+            "horizon": "3m",
+            "targets": [
+              "DGS2",
+              "DGS10",
+              "DFII10"
+            ]
+          },
+          {
+            "horizon": "6m",
+            "targets": [
+              "DGS2",
+              "DGS10",
+              "DFII10"
+            ]
+          }
+        ],
+        "reason": "3·6개월 핵심금리 검증 통과 여부"
+      }
+    },
+    "card9": {
+      "label": "글로벌 고용·소비",
+      "signal": "neutral",
+      "validation": {
+        "passed": true,
+        "passed_horizons": [
+          "1m",
+          "3m",
+          "6m",
+          "12m"
+        ]
+      }
+    },
+    "card10": {
+      "label": "원자재·에너지·공급망 압력",
+      "signal": "bad",
+      "validation": {
+        "passed": true,
+        "passed_horizons": [
+          "1m",
+          "3m",
+          "6m",
+          "12m"
+        ]
+      }
+    },
+    "card12": {
+      "label": "선물시장 현재신호·방향예측",
+      "signal": "bad",
+      "validation": {
+        "passed": true,
+        "passed_horizons": [
+          "equity:3m",
+          "rates:1m",
+          "rates:3m",
+          "crypto:1m"
+        ]
+      }
+    }
+  },
   "quality_gate": {
     "passed": false,
-    "level": "준기관급 통합판정"
+    "level": "조건부 통합판정",
+    "checks": {
+      "card8_validation": true,
+      "card9_validation": true,
+      "card10_validation": true,
+      "card12_validation": true,
+      "card8_data": true,
+      "card9_data": true,
+      "card10_data": false,
+      "card12_data": true
+    }
   },
-  "investment_conclusion": "카드별 방향·완전성·검증 통과 범위를 합쳐 자산군의 상대적 우호도를 판단합니다."
+  "investment_conclusion": "검증을 통과한 하위 카드 신호와 최신성·완전성을 함께 반영해 자산군의 상대적 우호도를 판단합니다."
 }
