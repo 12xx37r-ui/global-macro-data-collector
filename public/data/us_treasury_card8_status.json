@@ -1,0 +1,54 @@
+{
+  "generated_at_utc": "2026-07-29T02:30:59.656711+00:00",
+  "ok": true,
+  "production_level": "기간별 게이트 적용",
+  "quality_gates": {
+    "5d": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS10",
+        "DFII10",
+        "T10Y2Y"
+      ]
+    },
+    "1m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS10",
+        "T10Y2Y"
+      ]
+    },
+    "3m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
+      ]
+    },
+    "6m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
+      ]
+    },
+    "12m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": []
+    }
+  },
+  "completeness": 100.0,
+  "core_completeness": 100.0,
+  "warnings": [
+    "FRED batch DFII30,T5YIE,T10YIE,T5YIFR,T10Y2Y,T10Y3M,THREEFYTP10,DFF: new-line character seen in unquoted field - do you need to open the file with newline=''?",
+    "FRED batch SOFR,PCEPILFE,CPILFESL,UNRATE,PAYEMS,ICSA,NFCI,BAMLH0A0HYM2: new-line character seen in unquoted field - do you need to open the file with newline=''?",
+    "FRED batch VIXCLS,WALCL,WRESBAL,WTREGEN,RRPONTSYD: new-line character seen in unquoted field - do you need to open the file with newline=''?"
+  ]
+}

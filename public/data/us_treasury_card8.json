@@ -1,0 +1,1231 @@
+{
+  "schema_version": "1.0.0",
+  "engine_version": "card8-1.1.0-objective-oos-resilient-fetch",
+  "status": "ok",
+  "card": 8,
+  "title": "미국채 금리·실질금리·수익률곡선",
+  "generated_at_utc": "2026-07-29T02:30:59.656711+00:00",
+  "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+  "current": {
+    "DGS3MO": {
+      "value": 3.96,
+      "date": "2026-07-27"
+    },
+    "DGS2": {
+      "value": 4.31,
+      "date": "2026-07-27"
+    },
+    "DGS5": {
+      "value": 4.4,
+      "date": "2026-07-27"
+    },
+    "DGS10": {
+      "value": 4.65,
+      "date": "2026-07-27"
+    },
+    "DGS30": {
+      "value": 5.12,
+      "date": "2026-07-27"
+    },
+    "DFII5": {
+      "value": 2.22,
+      "date": "2026-07-27"
+    },
+    "DFII10": {
+      "value": 2.44,
+      "date": "2026-07-27"
+    },
+    "DFII20": {
+      "value": 2.76,
+      "date": "2026-07-27"
+    },
+    "DFII30": {
+      "value": 2.95,
+      "date": "2026-07-27"
+    },
+    "T5YIE": {
+      "value": 2.16,
+      "date": "2026-07-28"
+    },
+    "T10YIE": {
+      "value": 2.2,
+      "date": "2026-07-28"
+    },
+    "T5YIFR": {
+      "value": 2.24,
+      "date": "2026-07-28"
+    },
+    "T10Y2Y": {
+      "value": 0.35,
+      "date": "2026-07-28"
+    },
+    "T10Y3M": {
+      "value": 0.71,
+      "date": "2026-07-28"
+    },
+    "THREEFYTP10": {
+      "value": 0.8376,
+      "date": "2026-07-24"
+    },
+    "DFF": {
+      "value": 3.63,
+      "date": "2026-07-27"
+    },
+    "SOFR": {
+      "value": 3.64,
+      "date": "2026-07-27"
+    },
+    "PCEPILFE": {
+      "value": 130.082,
+      "date": "2026-05-01"
+    },
+    "CPILFESL": {
+      "value": 336.065,
+      "date": "2026-06-01"
+    },
+    "UNRATE": {
+      "value": 4.2,
+      "date": "2026-06-01"
+    },
+    "PAYEMS": {
+      "value": 158984.0,
+      "date": "2026-06-01"
+    },
+    "ICSA": {
+      "value": 187000.0,
+      "date": "2026-07-18"
+    },
+    "NFCI": {
+      "value": -0.552,
+      "date": "2026-07-17"
+    },
+    "BAMLH0A0HYM2": {
+      "value": 2.81,
+      "date": "2026-07-27"
+    },
+    "VIXCLS": {
+      "value": 18.67,
+      "date": "2026-07-27"
+    },
+    "WALCL": {
+      "value": 6747378.0,
+      "date": "2026-07-22"
+    },
+    "WRESBAL": {
+      "value": 3062149.0,
+      "date": "2026-07-22"
+    },
+    "WTREGEN": {
+      "value": 829623.0,
+      "date": "2026-07-22"
+    },
+    "RRPONTSYD": {
+      "value": 1.126,
+      "date": "2026-07-28"
+    }
+  },
+  "derived_current": {
+    "nominal10_minus_real10_breakeven": 2.21,
+    "curve_10y_2y": 0.35,
+    "curve_10y_3m": 0.71,
+    "term_premium_10y": 0.8376
+  },
+  "current_regime": "장기금리·실질금리 부담",
+  "future_regime": "금리환경 중립",
+  "market_signal": "neutral",
+  "investment_conclusion": "미국채 금리환경 변화가 작아 자산배분은 중립적으로 유지하는 구간입니다.",
+  "forecasts": {
+    "5d": {
+      "label": "단기 1~5거래일",
+      "targets": {
+        "DGS2": {
+          "forecast": 4.31,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.13964160475222911,
+          "baseline_rmse": 0.13964160475222911,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5411111111111111,
+          "interval80_coverage": 0.8011111111111111,
+          "range50": [
+            4.2299999999999995,
+            4.39
+          ],
+          "range80": [
+            4.159999999999999,
+            4.46
+          ],
+          "structural_overlay": 0.0010581551776917444,
+          "current": 4.31,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        },
+        "DGS10": {
+          "forecast": 4.645714285714286,
+          "model": "mean_reversion_1y",
+          "samples": 900,
+          "rmse": 0.12534738607362,
+          "baseline_rmse": 0.12559989384284262,
+          "skill_pct": 0.20104138745417055,
+          "direction_accuracy": 0.5223463687150838,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8,
+          "range50": [
+            4.565227135298564,
+            4.726201436130008
+          ],
+          "range80": [
+            4.489241572184429,
+            4.802186999244142
+          ],
+          "structural_overlay": 0.002335906539343668,
+          "current": 4.65,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "DFII10": {
+          "forecast": 2.4357142857142855,
+          "model": "mean_reversion_1y",
+          "samples": 900,
+          "rmse": 0.10248101085068623,
+          "baseline_rmse": 0.10259033959285728,
+          "skill_pct": 0.10656826227979366,
+          "direction_accuracy": 0.5136054421768708,
+          "fallback_used": false,
+          "interval50_coverage": 0.51,
+          "interval80_coverage": 0.8,
+          "range50": [
+            2.3699999999999997,
+            2.5014285714285713
+          ],
+          "range80": [
+            2.309937263794406,
+            2.561491307634165
+          ],
+          "structural_overlay": 0.0007493437499999991,
+          "current": 2.44,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "T10Y2Y": {
+          "forecast": 0.3522373393801965,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.08483603821784154,
+          "baseline_rmse": 0.08518867947744649,
+          "skill_pct": 0.41395319397844466,
+          "direction_accuracy": 0.5212121212121212,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8,
+          "range50": [
+            0.307031746031746,
+            0.39744293272864706
+          ],
+          "range80": [
+            0.2572982615268329,
+            0.44717641723356016
+          ],
+          "structural_overlay": 0.00139317601102508,
+          "current": 0.35,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        }
+      }
+    },
+    "1m": {
+      "label": "중기 약 1개월",
+      "targets": {
+        "DGS2": {
+          "forecast": 4.31,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.2761885426861714,
+          "baseline_rmse": 0.2761885426861714,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5088888888888888,
+          "interval80_coverage": 0.8,
+          "range50": [
+            4.159999999999999,
+            4.46
+          ],
+          "range80": [
+            3.9779999999999993,
+            4.642
+          ],
+          "structural_overlay": 0.004232620710766978,
+          "current": 4.31,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        },
+        "DGS10": {
+          "forecast": 4.632000000000001,
+          "model": "mean_reversion_1y",
+          "samples": 900,
+          "rmse": 0.2424936287240993,
+          "baseline_rmse": 0.2437425782345884,
+          "skill_pct": 0.5124051446141031,
+          "direction_accuracy": 0.53,
+          "fallback_used": false,
+          "interval50_coverage": 0.5044444444444445,
+          "interval80_coverage": 0.8,
+          "range50": [
+            4.48,
+            4.784000000000001
+          ],
+          "range80": [
+            4.3193898412698415,
+            4.94461015873016
+          ],
+          "structural_overlay": 0.009343626157374671,
+          "current": 4.65,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "DFII10": {
+          "forecast": 2.422,
+          "model": "mean_reversion_1y",
+          "samples": 900,
+          "rmse": 0.19685599274634474,
+          "baseline_rmse": 0.19690522254797274,
+          "skill_pct": 0.02500177546891358,
+          "direction_accuracy": 0.4903339191564148,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8011111111111111,
+          "range50": [
+            2.2899063492063494,
+            2.554093650793651
+          ],
+          "range80": [
+            2.16,
+            2.684
+          ],
+          "structural_overlay": 0.0029973749999999966,
+          "current": 2.44,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "방향 적중률 50% 미달"
+            ]
+          }
+        },
+        "T10Y2Y": {
+          "forecast": 0.3593968253968254,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.1549335907446177,
+          "baseline_rmse": 0.15685839332198823,
+          "skill_pct": 1.227095685864521,
+          "direction_accuracy": 0.6236559139784946,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8,
+          "range50": [
+            0.2812920634920635,
+            0.4375015873015873
+          ],
+          "range80": [
+            0.16629587301587295,
+            0.5524977777777778
+          ],
+          "structural_overlay": 0.00557270404410032,
+          "current": 0.35,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        }
+      }
+    },
+    "3m": {
+      "label": "중기 약 3개월",
+      "targets": {
+        "DGS2": {
+          "forecast": 4.234999999999999,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.4482216615705147,
+          "baseline_rmse": 0.45849269956625865,
+          "skill_pct": 2.240174817496665,
+          "direction_accuracy": 0.5736636245110821,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8022222222222222,
+          "range50": [
+            3.9192666666666662,
+            4.550733333333333
+          ],
+          "range80": [
+            3.679999999999999,
+            4.79
+          ],
+          "structural_overlay": 0.09999786213230098,
+          "current": 4.31,
+          "direction": "down",
+          "investment_environment": {
+            "grade": "약중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "DGS10": {
+          "forecast": 4.578533333333334,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.3877642222587009,
+          "baseline_rmse": 0.39849438864026404,
+          "skill_pct": 2.6926769077417756,
+          "direction_accuracy": 0.6044880785413744,
+          "fallback_used": false,
+          "interval50_coverage": 0.5077777777777778,
+          "interval80_coverage": 0.8,
+          "range50": [
+            4.323533333333334,
+            4.8335333333333335
+          ],
+          "range80": [
+            4.06239619047619,
+            5.094670476190477
+          ],
+          "structural_overlay": 0.061980878472124044,
+          "current": 4.65,
+          "direction": "down",
+          "investment_environment": {
+            "grade": "약중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "DFII10": {
+          "forecast": 2.3649999999999998,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.315215201756982,
+          "baseline_rmse": 0.32512612937135643,
+          "skill_pct": 3.048333160283856,
+          "direction_accuracy": 0.6290322580645161,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8,
+          "range50": [
+            2.145390476190476,
+            2.5846095238095237
+          ],
+          "range80": [
+            1.96619619047619,
+            2.7638038095238096
+          ],
+          "structural_overlay": 0.038092125000000004,
+          "current": 2.44,
+          "direction": "down",
+          "investment_environment": {
+            "grade": "약중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "T10Y2Y": {
+          "forecast": 0.35,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.23529319771061993,
+          "baseline_rmse": 0.23529319771061993,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5155555555555555,
+          "interval80_coverage": 0.8011111111111111,
+          "range50": [
+            0.19999999999999996,
+            0.5
+          ],
+          "range80": [
+            0.06999999999999995,
+            0.63
+          ],
+          "structural_overlay": -0.036631887867699074,
+          "current": 0.35,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        }
+      }
+    },
+    "6m": {
+      "label": "장기 약 6개월",
+      "targets": {
+        "DGS2": {
+          "forecast": 4.21,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.5674490538829108,
+          "baseline_rmse": 0.5828428414056209,
+          "skill_pct": 2.6411558020658754,
+          "direction_accuracy": 0.6787003610108303,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8,
+          "range50": [
+            3.829965079365079,
+            4.5900349206349205
+          ],
+          "range80": [
+            3.5500000000000003,
+            4.87
+          ],
+          "structural_overlay": 0.32787492426460174,
+          "current": 4.31,
+          "direction": "down",
+          "investment_environment": {
+            "grade": "약중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "DGS10": {
+          "forecast": 4.554711111111112,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.4253339905908911,
+          "baseline_rmse": 0.4525882357188608,
+          "skill_pct": 6.021863357689994,
+          "direction_accuracy": 0.6898817345597897,
+          "fallback_used": false,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8011111111111111,
+          "range50": [
+            4.2908349206349214,
+            4.818587301587302
+          ],
+          "range80": [
+            4.084711111111112,
+            5.024711111111111
+          ],
+          "structural_overlay": 0.17369255694424798,
+          "current": 4.65,
+          "direction": "down",
+          "investment_environment": {
+            "grade": "약중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "DFII10": {
+          "forecast": 2.34,
+          "model": "mean_reversion_3m",
+          "samples": 900,
+          "rmse": 0.4068290605087778,
+          "baseline_rmse": 0.4170006661332276,
+          "skill_pct": 2.4392300661697397,
+          "direction_accuracy": 0.6258411843876177,
+          "fallback_used": false,
+          "interval50_coverage": 0.5011111111111111,
+          "interval80_coverage": 0.8,
+          "range50": [
+            2.13,
+            2.55
+          ],
+          "range80": [
+            1.943862857142857,
+            2.736137142857143
+          ],
+          "structural_overlay": 0.11881064999999992,
+          "current": 2.44,
+          "direction": "down",
+          "investment_environment": {
+            "grade": "강약",
+            "arrow": "↓",
+            "signal": "good"
+          },
+          "quality_gate": {
+            "passed": true,
+            "level": "준기관급",
+            "reasons": []
+          }
+        },
+        "T10Y2Y": {
+          "forecast": 0.35,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.330434898614269,
+          "baseline_rmse": 0.330434898614269,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5022222222222222,
+          "interval80_coverage": 0.8066666666666666,
+          "range50": [
+            0.11999999999999994,
+            0.5800000000000001
+          ],
+          "range80": [
+            -0.10000000000000003,
+            0.8
+          ],
+          "structural_overlay": -0.15141217573539797,
+          "current": 0.35,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        }
+      }
+    },
+    "12m": {
+      "label": "장기 약 12개월",
+      "targets": {
+        "DGS2": {
+          "forecast": 4.31,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 1.1977408363711706,
+          "baseline_rmse": 1.1977408363711706,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5011111111111111,
+          "interval80_coverage": 0.8,
+          "range50": [
+            3.63,
+            4.989999999999999
+          ],
+          "range80": [
+            2.8999999999999995,
+            5.72
+          ],
+          "structural_overlay": 0.4002853242646019,
+          "current": 4.31,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        },
+        "DGS10": {
+          "forecast": 4.65,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.7508193302430797,
+          "baseline_rmse": 0.7508193302430797,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5044444444444445,
+          "interval80_coverage": 0.8,
+          "range50": [
+            4.21,
+            5.090000000000001
+          ],
+          "range80": [
+            3.7800000000000002,
+            5.5200000000000005
+          ],
+          "structural_overlay": 0.20185215694424807,
+          "current": 4.65,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        },
+        "DFII10": {
+          "forecast": 2.44,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.8333309999967333,
+          "baseline_rmse": 0.8333309999967333,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5,
+          "interval80_coverage": 0.8,
+          "range50": [
+            2.08,
+            2.8
+          ],
+          "range80": [
+            1.4679999999999995,
+            3.4120000000000004
+          ],
+          "structural_overlay": 0.14294744999999998,
+          "current": 2.44,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        },
+        "T10Y2Y": {
+          "forecast": 0.35,
+          "model": "persistence",
+          "samples": 900,
+          "rmse": 0.6427773072119665,
+          "baseline_rmse": 0.6427773072119665,
+          "skill_pct": 0.0,
+          "direction_accuracy": 0.0,
+          "fallback_used": true,
+          "interval50_coverage": 0.5022222222222222,
+          "interval80_coverage": 0.8,
+          "range50": [
+            -0.15000000000000002,
+            0.85
+          ],
+          "range80": [
+            -0.4420000000000005,
+            1.1420000000000003
+          ],
+          "structural_overlay": -0.1956629757353981,
+          "current": 0.35,
+          "direction": "flat",
+          "investment_environment": {
+            "grade": "강중립",
+            "arrow": "−",
+            "signal": "neutral"
+          },
+          "quality_gate": {
+            "passed": false,
+            "level": "참고용",
+            "reasons": [
+              "지속성 기준모형 대비 개선 없음",
+              "방향 적중률 50% 미달"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "quality_gates": {
+    "5d": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS10",
+        "DFII10",
+        "T10Y2Y"
+      ]
+    },
+    "1m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS10",
+        "T10Y2Y"
+      ]
+    },
+    "3m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
+      ]
+    },
+    "6m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
+      ]
+    },
+    "12m": {
+      "passed": false,
+      "level": "부분통과/참고용",
+      "passed_targets": []
+    }
+  },
+  "production_level": "기간별 게이트 적용",
+  "data_quality": {
+    "completeness": 100.0,
+    "core_completeness": 100.0,
+    "missing_core": [],
+    "fed_engine_available": true,
+    "release_lag_policy": "시장계열은 관측일 기준, 월간 거시는 최소 1개월·산업/고용 보조자료는 공표시차를 보수적으로 반영",
+    "real_time_vintage": false,
+    "vintage_limitation": "FRED/ALFRED 실시간 빈티지 전체 재현은 미적용하며 가격계열 중심 OOS와 발표시차 보수처리를 사용"
+  },
+  "model_specification": {
+    "targets": [
+      "DGS2",
+      "DGS10",
+      "DFII10",
+      "T10Y2Y"
+    ],
+    "horizons": {
+      "5d": {
+        "steps": 5,
+        "label": "단기 1~5거래일",
+        "min_samples": 180
+      },
+      "1m": {
+        "steps": 21,
+        "label": "중기 약 1개월",
+        "min_samples": 150
+      },
+      "3m": {
+        "steps": 63,
+        "label": "중기 약 3개월",
+        "min_samples": 100
+      },
+      "6m": {
+        "steps": 126,
+        "label": "장기 약 6개월",
+        "min_samples": 70
+      },
+      "12m": {
+        "steps": 252,
+        "label": "장기 약 12개월",
+        "min_samples": 45
+      }
+    },
+    "candidate_models": [
+      "persistence",
+      "short_trend",
+      "medium_trend",
+      "mean_reversion_3m",
+      "mean_reversion_1y",
+      "structural_blend"
+    ],
+    "selection": "expanding_walk_forward_candidate_selection",
+    "benchmark": "persistence_no_change",
+    "safety": "negative-skill models automatically fall back to persistence",
+    "structural_inputs": [
+      "Fed engine policy path",
+      "core PCE momentum",
+      "10y breakeven",
+      "10y term premium",
+      "NFCI",
+      "HY OAS",
+      "unemployment"
+    ]
+  },
+  "source_status": {
+    "DGS3MO": {
+      "ok": true,
+      "label": "미국 3개월 국채금리",
+      "latest": {
+        "value": 3.96,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DGS3MO"
+    },
+    "DGS2": {
+      "ok": true,
+      "label": "미국 2년 국채금리",
+      "latest": {
+        "value": 4.31,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DGS2"
+    },
+    "DGS5": {
+      "ok": true,
+      "label": "미국 5년 국채금리",
+      "latest": {
+        "value": 4.4,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DGS5"
+    },
+    "DGS10": {
+      "ok": true,
+      "label": "미국 10년 국채금리",
+      "latest": {
+        "value": 4.65,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DGS10"
+    },
+    "DGS30": {
+      "ok": true,
+      "label": "미국 30년 국채금리",
+      "latest": {
+        "value": 5.12,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DGS30"
+    },
+    "DFII5": {
+      "ok": true,
+      "label": "미국 5년 실질금리",
+      "latest": {
+        "value": 2.22,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DFII5"
+    },
+    "DFII10": {
+      "ok": true,
+      "label": "미국 10년 실질금리",
+      "latest": {
+        "value": 2.44,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DFII10"
+    },
+    "DFII20": {
+      "ok": true,
+      "label": "미국 20년 실질금리",
+      "latest": {
+        "value": 2.76,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DFII20"
+    },
+    "DFII30": {
+      "ok": true,
+      "label": "미국 30년 실질금리",
+      "latest": {
+        "value": 2.95,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DFII30"
+    },
+    "T5YIE": {
+      "ok": true,
+      "label": "5년 기대인플레이션",
+      "latest": {
+        "value": 2.16,
+        "date": "2026-07-28"
+      },
+      "url": "https://fred.stlouisfed.org/series/T5YIE"
+    },
+    "T10YIE": {
+      "ok": true,
+      "label": "10년 기대인플레이션",
+      "latest": {
+        "value": 2.2,
+        "date": "2026-07-28"
+      },
+      "url": "https://fred.stlouisfed.org/series/T10YIE"
+    },
+    "T5YIFR": {
+      "ok": true,
+      "label": "5년후 5년 기대인플레이션",
+      "latest": {
+        "value": 2.24,
+        "date": "2026-07-28"
+      },
+      "url": "https://fred.stlouisfed.org/series/T5YIFR"
+    },
+    "T10Y2Y": {
+      "ok": true,
+      "label": "10년-2년 금리차",
+      "latest": {
+        "value": 0.35,
+        "date": "2026-07-28"
+      },
+      "url": "https://fred.stlouisfed.org/series/T10Y2Y"
+    },
+    "T10Y3M": {
+      "ok": true,
+      "label": "10년-3개월 금리차",
+      "latest": {
+        "value": 0.71,
+        "date": "2026-07-28"
+      },
+      "url": "https://fred.stlouisfed.org/series/T10Y3M"
+    },
+    "THREEFYTP10": {
+      "ok": true,
+      "label": "10년 기간프리미엄",
+      "latest": {
+        "value": 0.8376,
+        "date": "2026-07-24"
+      },
+      "url": "https://fred.stlouisfed.org/series/THREEFYTP10"
+    },
+    "DFF": {
+      "ok": true,
+      "label": "유효 연방기금금리",
+      "latest": {
+        "value": 3.63,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/DFF"
+    },
+    "SOFR": {
+      "ok": true,
+      "label": "SOFR",
+      "latest": {
+        "value": 3.64,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/SOFR"
+    },
+    "PCEPILFE": {
+      "ok": true,
+      "label": "근원 PCE",
+      "latest": {
+        "value": 130.082,
+        "date": "2026-05-01"
+      },
+      "url": "https://fred.stlouisfed.org/series/PCEPILFE"
+    },
+    "CPILFESL": {
+      "ok": true,
+      "label": "근원 CPI",
+      "latest": {
+        "value": 336.065,
+        "date": "2026-06-01"
+      },
+      "url": "https://fred.stlouisfed.org/series/CPILFESL"
+    },
+    "UNRATE": {
+      "ok": true,
+      "label": "실업률",
+      "latest": {
+        "value": 4.2,
+        "date": "2026-06-01"
+      },
+      "url": "https://fred.stlouisfed.org/series/UNRATE"
+    },
+    "PAYEMS": {
+      "ok": true,
+      "label": "비농업고용",
+      "latest": {
+        "value": 158984.0,
+        "date": "2026-06-01"
+      },
+      "url": "https://fred.stlouisfed.org/series/PAYEMS"
+    },
+    "ICSA": {
+      "ok": true,
+      "label": "신규실업수당",
+      "latest": {
+        "value": 187000.0,
+        "date": "2026-07-18"
+      },
+      "url": "https://fred.stlouisfed.org/series/ICSA"
+    },
+    "NFCI": {
+      "ok": true,
+      "label": "시카고연은 금융여건",
+      "latest": {
+        "value": -0.552,
+        "date": "2026-07-17"
+      },
+      "url": "https://fred.stlouisfed.org/series/NFCI"
+    },
+    "BAMLH0A0HYM2": {
+      "ok": true,
+      "label": "미국 하이일드 OAS",
+      "latest": {
+        "value": 2.81,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
+    },
+    "VIXCLS": {
+      "ok": true,
+      "label": "VIX",
+      "latest": {
+        "value": 18.67,
+        "date": "2026-07-27"
+      },
+      "url": "https://fred.stlouisfed.org/series/VIXCLS"
+    },
+    "WALCL": {
+      "ok": true,
+      "label": "연준 총자산",
+      "latest": {
+        "value": 6747378.0,
+        "date": "2026-07-22"
+      },
+      "url": "https://fred.stlouisfed.org/series/WALCL"
+    },
+    "WRESBAL": {
+      "ok": true,
+      "label": "은행 준비금",
+      "latest": {
+        "value": 3062149.0,
+        "date": "2026-07-22"
+      },
+      "url": "https://fred.stlouisfed.org/series/WRESBAL"
+    },
+    "WTREGEN": {
+      "ok": true,
+      "label": "재무부 일반계정",
+      "latest": {
+        "value": 829623.0,
+        "date": "2026-07-22"
+      },
+      "url": "https://fred.stlouisfed.org/series/WTREGEN"
+    },
+    "RRPONTSYD": {
+      "ok": true,
+      "label": "ON RRP",
+      "latest": {
+        "value": 1.126,
+        "date": "2026-07-28"
+      },
+      "url": "https://fred.stlouisfed.org/series/RRPONTSYD"
+    }
+  },
+  "warnings": [
+    "FRED batch DFII30,T5YIE,T10YIE,T5YIFR,T10Y2Y,T10Y3M,THREEFYTP10,DFF: new-line character seen in unquoted field - do you need to open the file with newline=''?",
+    "FRED batch SOFR,PCEPILFE,CPILFESL,UNRATE,PAYEMS,ICSA,NFCI,BAMLH0A0HYM2: new-line character seen in unquoted field - do you need to open the file with newline=''?",
+    "FRED batch VIXCLS,WALCL,WRESBAL,WTREGEN,RRPONTSYD: new-line character seen in unquoted field - do you need to open the file with newline=''?"
+  ],
+  "limitations": [
+    "예측은 확률적 범위이며 단일 금리값을 보장하지 않습니다.",
+    "미국 정책금리 경로는 미국엔진 기존 출력값만 읽고 카드8에서 재계산하지 않습니다.",
+    "Treasury 분기 리펀딩·경매 일정은 기간프리미엄과 수급의 정성적 보조근거이며 임의 수치로 대체하지 않습니다.",
+    "실시간 원본 빈티지가 없는 계열은 그 사실을 품질정보에 명시합니다."
+  ]
+}
