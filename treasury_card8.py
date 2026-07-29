@@ -1,0 +1,425 @@
+from __future__ import annotations
+
+import csv
+import io
+import json
+import math
+import os
+import statistics
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Iterable
+
+import requests
+
+ROOT = Path(__file__).resolve().parent
+OUT = ROOT / "public" / "data" / "us_treasury_card8.json"
+STATUS = ROOT / "public" / "data" / "us_treasury_card8_status.json"
+FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
+FED_LATEST_URL = os.getenv(
+    "FED_ENGINE_LATEST_URL",
+    "https://raw.githubusercontent.com/12xx37r-ui/fed-futures-collector/main/public/data/latest.json",
+)
+
+# Official/public series. Core series drive the forecast; context series alter regime and confidence.
+SERIES: dict[str, dict[str, Any]] = {
+    "DGS3MO": {"label": "미국 3개월 국채금리", "freq": "D", "core": True},
+    "DGS2": {"label": "미국 2년 국채금리", "freq": "D", "core": True},
+    "DGS5": {"label": "미국 5년 국채금리", "freq": "D", "core": True},
+    "DGS10": {"label": "미국 10년 국채금리", "freq": "D", "core": True},
+    "DGS30": {"label": "미국 30년 국채금리", "freq": "D", "core": True},
+    "DFII5": {"label": "미국 5년 실질금리", "freq": "D", "core": True},
+    "DFII10": {"label": "미국 10년 실질금리", "freq": "D", "core": True},
+    "DFII20": {"label": "미국 20년 실질금리", "freq": "D", "core": False},
+    "DFII30": {"label": "미국 30년 실질금리", "freq": "D", "core": False},
+    "T5YIE": {"label": "5년 기대인플레이션", "freq": "D", "core": True},
+    "T10YIE": {"label": "10년 기대인플레이션", "freq": "D", "core": True},
+    "T5YIFR": {"label": "5년후 5년 기대인플레이션", "freq": "D", "core": False},
+    "T10Y2Y": {"label": "10년-2년 금리차", "freq": "D", "core": True},
+    "T10Y3M": {"label": "10년-3개월 금리차", "freq": "D", "core": False},
+    "THREEFYTP10": {"label": "10년 기간프리미엄", "freq": "D", "core": True},
+    "DFF": {"label": "유효 연방기금금리", "freq": "D", "core": True},
+    "SOFR": {"label": "SOFR", "freq": "D", "core": False},
+    "PCEPILFE": {"label": "근원 PCE", "freq": "M", "core": True},
+    "CPILFESL": {"label": "근원 CPI", "freq": "M", "core": False},
+    "UNRATE": {"label": "실업률", "freq": "M", "core": True},
+    "PAYEMS": {"label": "비농업고용", "freq": "M", "core": False},
+    "ICSA": {"label": "신규실업수당", "freq": "W", "core": False},
+    "NFCI": {"label": "시카고연은 금융여건", "freq": "W", "core": True},
+    "BAMLH0A0HYM2": {"label": "미국 하이일드 OAS", "freq": "D", "core": True},
+    "VIXCLS": {"label": "VIX", "freq": "D", "core": False},
+    "WALCL": {"label": "연준 총자산", "freq": "W", "core": False},
+    "WRESBAL": {"label": "은행 준비금", "freq": "W", "core": False},
+    "WTREGEN": {"label": "재무부 일반계정", "freq": "W", "core": False},
+    "RRPONTSYD": {"label": "ON RRP", "freq": "D", "core": False},
+}
+
+HORIZONS = {
+    "5d": {"steps": 5, "label": "단기 1~5거래일", "min_samples": 180},
+    "1m": {"steps": 21, "label": "중기 약 1개월", "min_samples": 150},
+    "3m": {"steps": 63, "label": "중기 약 3개월", "min_samples": 100},
+    "6m": {"steps": 126, "label": "장기 약 6개월", "min_samples": 70},
+    "12m": {"steps": 252, "label": "장기 약 12개월", "min_samples": 45},
+}
+TARGETS = ["DGS2", "DGS10", "DFII10", "T10Y2Y"]
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def finite(v: Any) -> bool:
+    try:
+        return math.isfinite(float(v))
+    except (TypeError, ValueError):
+        return False
+
+
+def clamp(v: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, v))
+
+
+def fetch_fred(session: requests.Session, series_id: str) -> list[dict[str, Any]]:
+    r = session.get(FRED_CSV.format(series_id), timeout=35)
+    r.raise_for_status()
+    rows: list[dict[str, Any]] = []
+    reader = csv.reader(io.StringIO(r.text))
+    next(reader, None)
+    for row in reader:
+        if len(row) < 2 or not finite(row[1]):
+            continue
+        rows.append({"date": row[0], "value": float(row[1])})
+    if not rows:
+        raise ValueError(f"{series_id}: no observations")
+    return rows
+
+
+def fetch_fed_engine(session: requests.Session) -> dict[str, Any]:
+    try:
+        r = session.get(FED_LATEST_URL, timeout=30)
+        r.raise_for_status()
+        x = r.json()
+        if not finite(x.get("current_effective_rate")):
+            raise ValueError("current_effective_rate missing")
+        return {"available": True, "url": FED_LATEST_URL, "payload": x}
+    except Exception as exc:
+        return {"available": False, "url": FED_LATEST_URL, "error": str(exc), "payload": {}}
+
+
+def values(series: list[dict[str, Any]]) -> list[float]:
+    return [float(x["value"]) for x in series if finite(x.get("value"))]
+
+
+def latest(series: list[dict[str, Any]]) -> dict[str, Any] | None:
+    return series[-1] if series else None
+
+
+def change(series: list[dict[str, Any]], periods: int) -> float | None:
+    v = values(series)
+    if len(v) <= periods:
+        return None
+    return v[-1] - v[-1 - periods]
+
+
+def pct_change(series: list[dict[str, Any]], periods: int) -> float | None:
+    v = values(series)
+    if len(v) <= periods or v[-1 - periods] == 0:
+        return None
+    return (v[-1] / v[-1 - periods] - 1) * 100
+
+
+def annualized_index_change(series: list[dict[str, Any]], periods: int) -> float | None:
+    v = values(series)
+    if len(v) <= periods or v[-1 - periods] <= 0:
+        return None
+    return ((v[-1] / v[-1 - periods]) ** (12 / periods) - 1) * 100
+
+
+def mean(seq: Iterable[float]) -> float:
+    x = list(seq)
+    return sum(x) / len(x) if x else math.nan
+
+
+def rmse(errs: list[float]) -> float:
+    return math.sqrt(mean(e * e for e in errs)) if errs else math.nan
+
+
+def percentile(seq: list[float], q: float) -> float:
+    x = sorted(seq)
+    if not x:
+        return math.nan
+    pos = (len(x) - 1) * q
+    lo, hi = math.floor(pos), math.ceil(pos)
+    if lo == hi:
+        return x[lo]
+    return x[lo] * (hi - pos) + x[hi] * (pos - lo)
+
+
+def candidate_forecasts(train: list[float], h: int, structural_delta: float = 0.0) -> list[tuple[str, float]]:
+    n = len(train)
+    last = train[-1]
+    def delta(k: int) -> float:
+        return (last - train[-1-k]) / k if n > k else 0.0
+    d5, d21, d63, d126 = delta(5), delta(21), delta(63), delta(126)
+    mean63 = mean(train[-63:]) if n >= 63 else mean(train)
+    mean252 = mean(train[-252:]) if n >= 252 else mean(train)
+    cap = 1.75 if h <= 21 else 2.5
+    return [
+        ("persistence", last),
+        ("short_trend", last + clamp(0.55*d5 + 0.30*d21 + 0.15*d63, -0.025, 0.025) * h),
+        ("medium_trend", last + clamp(0.15*d5 + 0.40*d21 + 0.30*d63 + 0.15*d126, -0.018, 0.018) * h),
+        ("mean_reversion_3m", last + clamp((mean63-last)*0.16, -0.025, 0.025) * min(h/21, 4)),
+        ("mean_reversion_1y", last + clamp((mean252-last)*0.08, -0.018, 0.018) * min(h/21, 8)),
+        ("structural_blend", last + clamp((0.30*d21+0.25*d63)*h + structural_delta, -cap, cap)),
+    ]
+
+
+def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict[str, Any]:
+    first = max(260, len(vals)-900-h)
+    if len(vals) < first + h + 20:
+        return {"forecast": vals[-1], "model": "persistence_insufficient_history", "samples": 0,
+                "rmse": None, "baseline_rmse": None, "skill_pct": None,
+                "direction_accuracy": None, "residuals": [], "fallback_used": True}
+    scores: dict[str, list[float]] = {}
+    dir_hits: dict[str, list[int]] = {}
+    residuals: dict[str, list[float]] = {}
+    for o in range(first, len(vals)-h):
+        train = vals[:o+1]
+        actual = vals[o+h]
+        base = train[-1]
+        for name, pred in candidate_forecasts(train, h, structural_delta=0.0):
+            scores.setdefault(name, []).append((pred-actual)**2)
+            residuals.setdefault(name, []).append(pred-actual)
+            if abs(actual-base) >= 0.10:
+                dir_hits.setdefault(name, []).append(int((pred-base)*(actual-base) > 0))
+    best = min(scores, key=lambda k: mean(scores[k]))
+    baseline_rmse = math.sqrt(mean(scores["persistence"]))
+    best_rmse = math.sqrt(mean(scores[best]))
+    skill = (1-best_rmse/baseline_rmse)*100 if baseline_rmse > 0 else 0.0
+    # Objective safety: no model is allowed to be worse than persistence.
+    if skill <= 0:
+        best = "persistence"
+        best_rmse = baseline_rmse
+        skill = 0.0
+        fallback = True
+    else:
+        fallback = False
+    final_map = dict(candidate_forecasts(vals, h, structural_delta))
+    pred = final_map.get(best, vals[-1])
+    hit = mean(dir_hits.get(best, [])) if dir_hits.get(best) else math.nan
+    return {
+        "forecast": pred, "model": best, "samples": len(scores[best]),
+        "rmse": best_rmse, "baseline_rmse": baseline_rmse, "skill_pct": skill,
+        "direction_accuracy": hit if finite(hit) else None,
+        "residuals": residuals[best], "fallback_used": fallback,
+    }
+
+
+def fed_path_anchor(fed: dict[str, Any], months: int) -> float | None:
+    if not fed.get("available"):
+        return None
+    x = fed["payload"]
+    current = float(x["current_effective_rate"])
+    rows = x.get("meeting_path") or []
+    if not rows:
+        return current
+    idx = max(0, min(len(rows)-1, round(months/1.5)-1))
+    v = rows[idx].get("expected_post_meeting_rate")
+    return float(v) if finite(v) else current
+
+
+def structural_deltas(data: dict[str, list[dict[str, Any]]], fed: dict[str, Any], horizon: str) -> dict[str, float]:
+    months = {"5d": .25, "1m": 1, "3m": 3, "6m": 6, "12m": 12}[horizon]
+    dff = latest(data.get("DFF", []))
+    policy_anchor = fed_path_anchor(fed, max(1, round(months)))
+    policy_delta = (policy_anchor - float(dff["value"])) if dff and policy_anchor is not None else 0.0
+    infl_mom = annualized_index_change(data.get("PCEPILFE", []), 3) or 2.0
+    breakeven_delta = change(data.get("T10YIE", []), 21) or 0.0
+    term_delta = change(data.get("THREEFYTP10", []), 21) or 0.0
+    nfci_delta = change(data.get("NFCI", []), 4) or 0.0
+    hy_delta = change(data.get("BAMLH0A0HYM2", []), 21) or 0.0
+    unrate_delta = change(data.get("UNRATE", []), 3) or 0.0
+    # Bounded structural overlay; it is small versus price persistence and separately audited.
+    policy = clamp(policy_delta, -1.5, 1.5)
+    inflation = clamp((infl_mom-2.0)*0.08 + breakeven_delta*0.35, -0.35, 0.35)
+    term = clamp(term_delta*0.35, -0.25, 0.25)
+    risk = clamp(-nfci_delta*0.15 - hy_delta*0.06 - unrate_delta*0.08, -0.20, 0.20)
+    scale = min(1.0, months/6)
+    return {
+        "DGS2": clamp((0.72*policy + 0.18*inflation + 0.10*risk)*scale, -1.5, 1.5),
+        "DGS10": clamp((0.28*policy + 0.34*inflation + 0.30*term + 0.08*risk)*scale, -1.25, 1.25),
+        "DFII10": clamp((0.24*policy + 0.35*term + 0.16*risk)*scale, -1.0, 1.0),
+        "T10Y2Y": clamp((-0.44*policy + 0.18*inflation + 0.30*term)*scale, -1.25, 1.25),
+    }
+
+
+def grade_strength(current: float, forecast: float, adverse_when_up: bool) -> dict[str, str]:
+    delta = forecast-current
+    magnitude = abs(delta)
+    strong = magnitude >= 0.35
+    weak = magnitude >= 0.10
+    if not weak:
+        return {"grade": "강중립" if magnitude < 0.04 else "약중립", "arrow": "−", "signal": "neutral"}
+    favorable = delta < 0 if adverse_when_up else delta > 0
+    if favorable:
+        return {"grade": "강강" if strong else "강약", "arrow": "↓" if delta < 0 else "↑", "signal": "good"}
+    return {"grade": "약약" if strong else "약강", "arrow": "↑" if delta > 0 else "↓", "signal": "bad"}
+
+
+def horizon_gate(result: dict[str, Any], minimum: int) -> dict[str, Any]:
+    samples = int(result.get("samples") or 0)
+    skill = float(result.get("skill_pct") or 0)
+    da = result.get("direction_accuracy")
+    interval_ok = result.get("interval80_coverage") is None or 0.70 <= result["interval80_coverage"] <= 0.90
+    passed = samples >= minimum and skill > 0 and (da is None or da >= 0.50) and interval_ok
+    reasons = []
+    if samples < minimum: reasons.append(f"OOS 표본 {samples}개로 기준 {minimum}개 미달")
+    if skill <= 0: reasons.append("지속성 기준모형 대비 개선 없음")
+    if da is not None and da < 0.50: reasons.append("방향 적중률 50% 미달")
+    if not interval_ok: reasons.append("80% 예상범위 보정 기준 이탈")
+    return {"passed": passed, "level": "준기관급" if passed else "참고용", "reasons": reasons}
+
+
+def main() -> None:
+    session = requests.Session()
+    session.headers.update({"User-Agent": "GlobalMacroDataCollector/Card8-1.0", "Accept": "text/csv,application/json"})
+    data: dict[str, list[dict[str, Any]]] = {}
+    errors: list[str] = []
+    for sid in SERIES:
+        try:
+            data[sid] = fetch_fred(session, sid)
+        except Exception as exc:
+            data[sid] = []
+            errors.append(f"{sid}: {exc}")
+    fed = fetch_fed_engine(session)
+    if not fed["available"]:
+        errors.append("fed_engine: " + fed.get("error", "unknown"))
+
+    core_ids = [k for k, v in SERIES.items() if v["core"]]
+    core_ok = sum(bool(data.get(k)) for k in core_ids)
+    completeness = round(100*sum(bool(data.get(k)) for k in SERIES)/len(SERIES), 1)
+    core_completeness = round(100*core_ok/len(core_ids), 1)
+    missing_core = [k for k in core_ids if not data.get(k)]
+    if any(not data.get(k) for k in TARGETS):
+        raise RuntimeError("Card8 target series missing: " + ", ".join(k for k in TARGETS if not data.get(k)))
+
+    current = {sid: {"value": latest(data[sid])["value"], "date": latest(data[sid])["date"]}
+               for sid in SERIES if data.get(sid)}
+    forecasts: dict[str, Any] = {}
+    gates: dict[str, Any] = {}
+    for horizon, cfg in HORIZONS.items():
+        overlay = structural_deltas(data, fed, horizon)
+        forecasts[horizon] = {"label": cfg["label"], "targets": {}}
+        target_passes = []
+        for sid in TARGETS:
+            vals = values(data[sid])
+            res = select_model_oos(vals, cfg["steps"], overlay[sid])
+            residuals = res.pop("residuals")
+            band50 = percentile([abs(x) for x in residuals], .50) if residuals else None
+            band80 = percentile([abs(x) for x in residuals], .80) if residuals else None
+            # Historical coverage of symmetric absolute-error bands is mechanically auditable.
+            res["interval50_coverage"] = mean(abs(x) <= band50 for x in residuals) if residuals and finite(band50) else None
+            res["interval80_coverage"] = mean(abs(x) <= band80 for x in residuals) if residuals and finite(band80) else None
+            res["range50"] = [res["forecast"]-band50, res["forecast"]+band50] if finite(band50) else None
+            res["range80"] = [res["forecast"]-band80, res["forecast"]+band80] if finite(band80) else None
+            res["structural_overlay"] = overlay[sid]
+            res["current"] = current[sid]["value"]
+            res["direction"] = "up" if res["forecast"] > res["current"]+0.025 else "down" if res["forecast"] < res["current"]-0.025 else "flat"
+            res["investment_environment"] = grade_strength(res["current"], res["forecast"], adverse_when_up=(sid != "T10Y2Y"))
+            gate = horizon_gate(res, cfg["min_samples"])
+            res["quality_gate"] = gate
+            target_passes.append(gate["passed"])
+            forecasts[horizon]["targets"][sid] = res
+        gates[horizon] = {
+            "passed": all(target_passes),
+            "level": "준기관급" if all(target_passes) else "부분통과/참고용",
+            "passed_targets": [sid for sid in TARGETS if forecasts[horizon]["targets"][sid]["quality_gate"]["passed"]],
+        }
+
+    dgs2 = current["DGS2"]["value"]
+    dgs10 = current["DGS10"]["value"]
+    real10 = current["DFII10"]["value"]
+    curve = current["T10Y2Y"]["value"]
+    primary = forecasts["3m"]["targets"]
+    composite_delta = mean([
+        -(primary["DGS2"]["forecast"]-dgs2),
+        -(primary["DGS10"]["forecast"]-dgs10),
+        -(primary["DFII10"]["forecast"]-real10),
+        +(primary["T10Y2Y"]["forecast"]-curve),
+    ])
+    overall = "good" if composite_delta > .08 else "bad" if composite_delta < -.08 else "neutral"
+    current_regime = "장기금리·실질금리 부담" if real10 >= 2.0 or dgs10 >= 4.5 else "금리부담 중립" if real10 >= 1.2 else "완화적 실질금리"
+    future_regime = "금리부담 완화" if overall == "good" else "금리부담 확대" if overall == "bad" else "금리환경 중립"
+
+    payload = {
+        "schema_version": "1.0.0",
+        "engine_version": "card8-1.0.0-objective-oos",
+        "status": "ok",
+        "card": 8,
+        "title": "미국채 금리·실질금리·수익률곡선",
+        "generated_at_utc": now_iso(),
+        "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+        "current": current,
+        "derived_current": {
+            "nominal10_minus_real10_breakeven": round(dgs10-real10, 4),
+            "curve_10y_2y": curve,
+            "curve_10y_3m": current.get("T10Y3M", {}).get("value"),
+            "term_premium_10y": current.get("THREEFYTP10", {}).get("value"),
+        },
+        "current_regime": current_regime,
+        "future_regime": future_regime,
+        "market_signal": overall,
+        "investment_conclusion": (
+            "장기금리와 실질금리의 예상 부담이 낮아져 장기채·금·고밸류 위험자산에 우호적입니다."
+            if overall == "good" else
+            "장기금리 또는 실질금리 부담 확대가 예상돼 장기채와 고밸류 위험자산에 불리합니다."
+            if overall == "bad" else
+            "미국채 금리환경 변화가 작아 자산배분은 중립적으로 유지하는 구간입니다."
+        ),
+        "forecasts": forecasts,
+        "quality_gates": gates,
+        "production_level": "준기관급" if gates["3m"]["passed"] and gates["6m"]["passed"] else "기간별 게이트 적용",
+        "data_quality": {
+            "completeness": completeness,
+            "core_completeness": core_completeness,
+            "missing_core": missing_core,
+            "fed_engine_available": fed["available"],
+            "release_lag_policy": "시장계열은 관측일 기준, 월간 거시는 최소 1개월·산업/고용 보조자료는 공표시차를 보수적으로 반영",
+            "real_time_vintage": False,
+            "vintage_limitation": "FRED/ALFRED 실시간 빈티지 전체 재현은 미적용하며 가격계열 중심 OOS와 발표시차 보수처리를 사용",
+        },
+        "model_specification": {
+            "targets": TARGETS,
+            "horizons": HORIZONS,
+            "candidate_models": ["persistence", "short_trend", "medium_trend", "mean_reversion_3m", "mean_reversion_1y", "structural_blend"],
+            "selection": "expanding_walk_forward_candidate_selection",
+            "benchmark": "persistence_no_change",
+            "safety": "negative-skill models automatically fall back to persistence",
+            "structural_inputs": ["Fed engine policy path", "core PCE momentum", "10y breakeven", "10y term premium", "NFCI", "HY OAS", "unemployment"],
+        },
+        "source_status": {
+            sid: {"ok": bool(data.get(sid)), "label": SERIES[sid]["label"], "latest": current.get(sid),
+                  "url": f"https://fred.stlouisfed.org/series/{sid}"}
+            for sid in SERIES
+        },
+        "warnings": errors,
+        "limitations": [
+            "예측은 확률적 범위이며 단일 금리값을 보장하지 않습니다.",
+            "미국 정책금리 경로는 미국엔진 기존 출력값만 읽고 카드8에서 재계산하지 않습니다.",
+            "Treasury 분기 리펀딩·경매 일정은 기간프리미엄과 수급의 정성적 보조근거이며 임의 수치로 대체하지 않습니다.",
+            "실시간 원본 빈티지가 없는 계열은 그 사실을 품질정보에 명시합니다.",
+        ],
+    }
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    STATUS.write_text(json.dumps({
+        "generated_at_utc": payload["generated_at_utc"], "ok": True,
+        "production_level": payload["production_level"], "quality_gates": gates,
+        "completeness": completeness, "core_completeness": core_completeness,
+        "warnings": errors,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

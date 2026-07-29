@@ -18,3 +18,12 @@
 다른 저장소명을 쓰면 Apps Script 속성에 아래를 추가합니다.
 - 이름: `ISM_MANUFACTURING_JSON_URL`
 - 값: 해당 raw JSON 주소
+
+
+## 카드 8 — 미국채 금리·실질금리·수익률곡선
+- 출력: `public/data/us_treasury_card8.json`
+- 상태: `public/data/us_treasury_card8_status.json`
+- 미국 정책금리 경로는 `fed-futures-collector`의 `latest.json`을 읽기 전용으로 사용합니다.
+- 2년물·10년물·10년 실질금리·10년-2년 곡선을 5일·1개월·3개월·6개월·12개월로 분리합니다.
+- expanding walk-forward OOS에서 지속성 기준모형보다 못한 후보는 자동 차단합니다.
+- 기간·대상별 품질 게이트를 통과한 경우에만 준기관급으로 표시합니다.

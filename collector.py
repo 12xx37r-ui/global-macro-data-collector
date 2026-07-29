@@ -173,3 +173,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    from treasury_card8 import main as card8_main
+    card8_main()
