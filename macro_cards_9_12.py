@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import json, math, os, statistics
+import json, math, os, statistics, io
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import requests
+from openpyxl import load_workbook
 
 from treasury_card8 import (
     build_http_session, fetch_fred_all, finite, latest, values, change,
@@ -42,8 +43,8 @@ CARD10_SERIES = {
     'PALUMUSDM': {'label':'글로벌 알루미늄가격','core':False,'adverse_up':False},
     'PIORECRUSDM': {'label':'글로벌 철광석가격','core':False,'adverse_up':False},
     'PWHEAMTUSDM': {'label':'글로벌 밀가격','core':False,'adverse_up':True},
-    'GSCPI': {'label':'뉴욕연은 글로벌 공급망압력','core':True,'adverse_up':True},
-    'WPUFD4': {'label':'미국 최종수요 생산자물가','core':False,'adverse_up':True},
+    'GSCPI': {'label':'뉴욕연은 글로벌 공급망압력','core':True,'adverse_up':True,'direct':True},
+    'PPIFIS': {'label':'미국 최종수요 생산자물가','core':True,'adverse_up':True},
 }
 
 # Card 12: futures market. Yahoo continuous contracts are delayed/free market inputs.
@@ -57,6 +58,89 @@ HORIZONS = {'5d':5,'1m':21,'3m':63,'6m':126,'12m':252}
 
 
 def now_iso(): return datetime.now(timezone.utc).isoformat()
+
+GSCPI_XLSX_URL = "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx"
+
+def fetch_gscpi_official(session: requests.Session) -> list[dict[str, Any]]:
+    r = session.get(GSCPI_XLSX_URL, timeout=(15, 60))
+    r.raise_for_status()
+    wb = load_workbook(io.BytesIO(r.content), read_only=True, data_only=True)
+    ws = wb.active
+    out = []
+    for row in ws.iter_rows(values_only=True):
+        if not row or len(row) < 2:
+            continue
+        d, v = row[0], row[1]
+        if not finite(v):
+            continue
+        if hasattr(d, "date"):
+            ds = d.date().isoformat()
+        else:
+            ds = str(d)[:10]
+            if len(ds) < 7 or not ds[:4].isdigit():
+                continue
+        out.append({"date": ds, "value": float(v)})
+    if not out:
+        raise ValueError("GSCPI official workbook contained no observations")
+    return out
+
+def fetch_card10_data(session: requests.Session) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
+    fred_ids = [sid for sid, meta in CARD10_SERIES.items() if not meta.get("direct")]
+    data, errors = fetch_fred_all(session, fred_ids)
+    try:
+        data["GSCPI"] = fetch_gscpi_official(session)
+    except Exception as exc:
+        data["GSCPI"] = []
+        errors.append(f"GSCPI official workbook: {exc}")
+    return data, errors
+
+def aligned_group_index(histories: dict[str, list[dict[str, Any]]], symbols: list[str]) -> list[dict[str, Any]]:
+    maps = {}
+    for sym in symbols:
+        rows = histories.get(sym, [])
+        if len(rows) < 260:
+            continue
+        vals = [float(x["value"]) for x in rows]
+        rets = {}
+        for i in range(63, len(rows)):
+            r21 = (vals[i] / vals[i-21] - 1) * 100 if vals[i-21] else 0.0
+            r63 = (vals[i] / vals[i-63] - 1) * 100 if vals[i-63] else 0.0
+            daily = [(vals[j] / vals[j-1] - 1) * 100 for j in range(max(1, i-62), i+1) if vals[j-1]]
+            vol = statistics.stdev(daily) if len(daily) > 2 else 1.0
+            rets[rows[i]["date"]] = clamp((0.6*r21 + 0.4*r63) / (vol*3 + 1), -3, 3)
+        maps[sym] = rets
+    dates = sorted(set().union(*[set(m) for m in maps.values()])) if maps else []
+    out = []
+    for d in dates:
+        xs = [m[d] for m in maps.values() if d in m]
+        if len(xs) >= max(1, len(maps)//2):
+            out.append({"date": d, "value": 50 + 10*clamp(mean(xs), -3, 3)})
+    return out
+
+def build_futures_forecasts(histories: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+    groups = {
+        "equity": ["ES=F", "NQ=F", "RTY=F"],
+        "rates": ["ZT=F", "ZF=F", "ZN=F", "ZB=F"],
+        "commodities": ["CL=F", "GC=F", "HG=F"],
+        "crypto": ["BTC=F"],
+    }
+    group_forecasts = {}
+    for group, syms in groups.items():
+        idx = aligned_group_index(histories, syms)
+        vals = values(idx)
+        if len(vals) < 320:
+            group_forecasts[group] = {"quality_gate": {"passed": False, "level": "참고용"}, "reason": "장기 검증표본 부족"}
+            continue
+        horizon_out = {}
+        for key, steps, minimum in (("5d", 5, 180), ("1m", 21, 150), ("3m", 63, 100)):
+            horizon_out[key] = walk_forward(vals, steps, minimum)
+        group_forecasts[group] = {"current_index": vals[-1], "forecasts": horizon_out}
+    passed = []
+    for g, obj in group_forecasts.items():
+        for h, fc in obj.get("forecasts", {}).items():
+            if fc.get("quality_gate", {}).get("passed"):
+                passed.append(f"{g}:{h}")
+    return {"groups": group_forecasts, "passed_horizons": passed, "quality_gate": {"passed": bool(passed), "level": "기간별 검증 통과" if passed else "현재신호 중심"}}
 
 def pctchg(vals:list[float], n:int)->float|None:
     if len(vals)<=n or vals[-1-n]==0: return None
@@ -175,7 +259,7 @@ def build_card9(session:requests.Session)->dict[str,Any]:
     }
 
 def build_card10(session:requests.Session)->dict[str,Any]:
-    data,errors=fetch_fred_all(session,list(CARD10_SERIES))
+    data,errors=fetch_card10_data(session)
     hist=composite_history(data,CARD10_SERIES,'commodity')
     vals=values(hist)
     if len(vals)<60: raise RuntimeError('Card10 composite history insufficient')
@@ -216,23 +300,27 @@ def build_card12(session:requests.Session)->dict[str,Any]:
     group_scores={}
     for g,syms in groups.items():
         comps=[]
-        for s in syms:
-            v=values(histories.get(s,[]))
+        for symbol in syms:
+            v=values(histories.get(symbol,[]))
             if len(v)>63:
                 mom=(pctchg(v,21) or 0)*.6+(pctchg(v,63) or 0)*.4
-                vol=statistics.stdev([(v[i]/v[i-1]-1)*100 for i in range(max(1,len(v)-63),len(v))]) if len(v)>3 else 0
+                daily=[(v[i]/v[i-1]-1)*100 for i in range(max(1,len(v)-63),len(v)) if v[i-1]]
+                vol=statistics.stdev(daily) if len(daily)>2 else 0
                 comps.append(clamp(mom/(vol*3+1),-2,2))
         group_scores[g]=mean(comps) if comps else None
-    # Higher Treasury futures price means lower yield and generally easier financial conditions.
     composite=mean([x for x in [group_scores.get('equity'),group_scores.get('rates'),group_scores.get('commodities')] if finite(x)])
     signal='good' if composite>.25 else 'bad' if composite<-.25 else 'neutral'
-    return {'schema_version':'1.0','card':12,'title':'선물시장 종합신호','generated_at_utc':now_iso(),
+    predictive=build_futures_forecasts(histories)
+    return {'schema_version':'1.1','card':12,'title':'선물시장 현재신호·검증형 방향예측','generated_at_utc':now_iso(),
             'current':current,'group_scores':group_scores,'market_signal':signal,
             'current_regime':'위험선호 우세' if signal=='good' else '위험회피 우세' if signal=='bad' else '선물시장 혼조',
-            'future_regime':'추세지속 가능성 점검','investment_conclusion':'주가지수·국채·원자재·달러 선물의 방향과 변동성을 교차검증합니다.',
+            'future_regime':'검증 통과 기간만 방향예측 사용',
+            'market_implied_interpretation':'현재 선물가격·최근 추세·변동성이 암시하는 방향이며 미래 가격 자체가 아닙니다.',
+            'predictive_validation':predictive,
+            'investment_conclusion':'현재 선물시장 신호와 장기 순차 OOS를 통과한 기간별 방향예측을 분리해 사용합니다.',
             'data_quality':{'completeness':round(100*sum(bool(v) for v in histories.values())/len(histories),1),'warnings':errors},
-            'source_status':{s:{'ok':bool(histories[s]),'label':YAHOO_SYMBOLS[s],'latest':current.get(s),'source':'Yahoo Finance delayed futures'} for s in histories},
-            'limitations':['무료 지연 선물자료이며 거래소 실시간 유료 시세를 대체하지 않습니다.','미국 정책금리 경로는 미국엔진 결과를 읽기 전용으로 사용합니다.']}
+            'source_status':{sym:{'ok':bool(histories[sym]),'label':YAHOO_SYMBOLS[sym],'latest':current.get(sym),'source':'Yahoo Finance delayed futures'} for sym in histories},
+            'limitations':['무료 지연 선물자료이며 거래소 실시간 유료 시세를 대체하지 않습니다.','선물가격은 미래 현물가격의 단순 예측값이 아닙니다.','검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다.']}
 
 def quality(data,spec,errors):
     core=[k for k,v in spec.items() if v.get('core')]
