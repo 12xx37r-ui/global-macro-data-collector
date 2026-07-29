@@ -242,7 +242,7 @@ def fetch_treasury_futures_context(session: requests.Session) -> dict[str, Any]:
     composite=mean(signals) if signals else 0.0
     return {"available":bool(current),"source":"Yahoo Finance 무료 지연 국채선물","current":current,"composite_score":composite,
             "yield_direction":"down" if composite>0.25 else "up" if composite<-0.25 else "flat",
-            "errors":errors,"limitation":"무료 지연 선물자료이며 CME 실시간 유료 시세를 대체하지 않습니다."}
+            "errors":errors,"limitation":"Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."}
 
 def values(series: list[dict[str, Any]]) -> list[float]:
     return [float(x["value"]) for x in series if finite(x.get("value"))]
