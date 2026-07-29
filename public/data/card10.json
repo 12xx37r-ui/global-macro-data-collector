@@ -2,14 +2,14 @@
   "schema_version": "1.0",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-07-29T03:39:15.393865+00:00",
+  "generated_at_utc": "2026-07-29T15:04:47.425849+00:00",
   "current": 59.49522040411782,
   "current_date": "2026-07-01",
   "forecast_3m": 55.89522040411782,
   "forecast_6m": 52.29522040411783,
   "forecast_range80_3m": [
-    49.432789842587155,
-    62.35765096564849
+    48.98599368290269,
+    62.804447125332956
   ],
   "future_direction": "down",
   "market_signal": "bad",
@@ -21,21 +21,21 @@
       "forecast": 58.49522040411782,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 3.585572544417799,
-      "baseline_rmse": 3.703061443463163,
-      "skill_pct": 3.1727504617230062,
-      "direction_accuracy": 0.6666666666666666,
+      "rmse": 3.4400376563008352,
+      "baseline_rmse": 3.529897155534865,
+      "skill_pct": 2.5456690457151265,
+      "direction_accuracy": 0.6046511627906976,
       "fallback_used": false,
       "range80": [
-        54.97870100335581,
-        62.01173980487984
+        55.050614950150766,
+        61.93982585808488
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 2.7281231527279113,
-          "p_value": 0.006369582293225484,
+          "statistic": 1.868655414062824,
+          "p_value": 0.06167077084771311,
           "significant_10pct": true
         }
       }
@@ -44,21 +44,21 @@
       "forecast": 55.89522040411782,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 5.945147877200001,
-      "baseline_rmse": 6.75921983244638,
-      "skill_pct": 12.04387452141411,
-      "direction_accuracy": 0.7657657657657657,
+      "rmse": 6.0168246430167045,
+      "baseline_rmse": 6.6963832971491,
+      "skill_pct": 10.148144512900103,
+      "direction_accuracy": 0.7410714285714286,
       "fallback_used": false,
       "range80": [
-        49.432789842587155,
-        62.35765096564849
+        48.98599368290269,
+        62.804447125332956
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 4.364820024640963,
-          "p_value": 1.2722746381310657e-05,
+          "statistic": 3.6609306991886292,
+          "p_value": 0.0002513007302267223,
           "significant_10pct": true
         }
       }
@@ -67,21 +67,21 @@
       "forecast": 52.29522040411783,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 5.378706094669119,
-      "baseline_rmse": 6.579803090023544,
-      "skill_pct": 18.254299998362523,
-      "direction_accuracy": 0.8529411764705882,
+      "rmse": 5.821825791753811,
+      "baseline_rmse": 6.709322366822228,
+      "skill_pct": 13.227812386197302,
+      "direction_accuracy": 0.803030303030303,
       "fallback_used": false,
       "range80": [
-        46.43718256031421,
-        58.15325824792144
+        45.588085140792195,
+        59.00235566744346
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 4.569636169004449,
-          "p_value": 4.885716420321984e-06,
+          "statistic": 3.2141564427376927,
+          "p_value": 0.001308283716464409,
           "significant_10pct": true
         }
       }
@@ -90,35 +90,34 @@
       "forecast": 51.49522040411782,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.224895322642157,
-      "baseline_rmse": 6.447640434892444,
-      "skill_pct": 18.96422613198474,
-      "direction_accuracy": 0.8432835820895522,
+      "rmse": 5.79789254882338,
+      "baseline_rmse": 6.899438483270555,
+      "skill_pct": 15.965733111732995,
+      "direction_accuracy": 0.7887323943661971,
       "fallback_used": false,
       "range80": [
-        44.97317584904254,
-        58.017264959193106
+        43.94164773000983,
+        59.04879307822582
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 5.1179947201173634,
-          "p_value": 3.08801245463286e-07,
+          "statistic": 4.216239163907428,
+          "p_value": 2.4841030830557997e-05,
           "significant_10pct": true
         }
       }
     }
   },
   "data_quality": {
-    "completeness": 81.8,
-    "core_completeness": 80.0,
+    "completeness": 90.9,
+    "core_completeness": 83.3,
     "missing_core": [
       "GSCPI"
     ],
     "warnings": [
-      "GSCPI CSV retry: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI&cosd=1990-01-01",
-      "WPUFD4 CSV retry: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=WPUFD4&cosd=1990-01-01"
+      "GSCPI official workbook: File is not a zip file"
     ],
     "release_lag_policy": "월간·주간 자료는 공표시차를 보수적으로 반영",
     "real_time_vintage": false
@@ -211,11 +210,14 @@
       "latest": null,
       "url": "https://fred.stlouisfed.org/series/GSCPI"
     },
-    "WPUFD4": {
-      "ok": false,
+    "PPIFIS": {
+      "ok": true,
       "label": "미국 최종수요 생산자물가",
-      "latest": null,
-      "url": "https://fred.stlouisfed.org/series/WPUFD4"
+      "latest": {
+        "date": "2026-06-01",
+        "value": 156.566
+      },
+      "url": "https://fred.stlouisfed.org/series/PPIFIS"
     }
   },
   "model_specification": {
@@ -232,7 +234,7 @@
       "PIORECRUSDM",
       "PWHEAMTUSDM",
       "GSCPI",
-      "WPUFD4"
+      "PPIFIS"
     ]
   }
 }
