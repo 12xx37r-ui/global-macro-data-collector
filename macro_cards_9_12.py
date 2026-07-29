@@ -106,7 +106,7 @@ def _coerce_date_text(value: Any) -> str | None:
     text = str(value).strip()
     if not text:
         return None
-    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%b-%Y", "%b %Y", "%Y-%m", "%Y/%m"):
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%d-%b-%Y", "%d %b %Y", "%b-%Y", "%b %Y", "%Y-%m", "%Y/%m"):
         try:
             return datetime.strptime(text, fmt).date().replace(day=1).isoformat() if "%d" not in fmt else datetime.strptime(text, fmt).date().isoformat()
         except ValueError:
@@ -243,6 +243,7 @@ def fetch_card10_data(session: requests.Session) -> tuple[dict[str, list[dict[st
         data["GSCPI"], source_overrides["GSCPI"] = fetch_gscpi_official(session)
     except Exception as exc:
         data["GSCPI"] = []
+        source_overrides["GSCPI"] = "New York Fed official workbook (collection failed)"
         errors.append(f"GSCPI collection failed after official, fallback and cache attempts: {exc}")
     return data, errors, source_overrides
 
