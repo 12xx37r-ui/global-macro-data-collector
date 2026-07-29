@@ -23,3 +23,18 @@ class Card8Test(unittest.TestCase):
         self.assertTrue(horizon_gate(r,180)['passed'])
 
 if __name__=='__main__': unittest.main()
+
+class FredFetchParserTest(unittest.TestCase):
+    def test_parse_multi_series_csv(self):
+        from treasury_card8 import parse_fred_csv
+        text = "observation_date,DGS2,DGS10,DFII10,T10Y2Y\n2026-01-02,4.10,4.30,2.00,0.20\n2026-01-03,.,4.31,2.01,.\n"
+        out = parse_fred_csv(text, ["DGS2", "DGS10", "DFII10", "T10Y2Y"])
+        self.assertEqual(len(out["DGS2"]), 1)
+        self.assertEqual(len(out["DGS10"]), 2)
+        self.assertAlmostEqual(out["DFII10"][0]["value"], 2.0)
+
+    def test_parse_date_header_variant(self):
+        from treasury_card8 import parse_fred_csv
+        text = "DATE,DGS2\n2026-01-02,4.10\n"
+        out = parse_fred_csv(text, ["DGS2"])
+        self.assertEqual(out["DGS2"][0]["date"], "2026-01-02")

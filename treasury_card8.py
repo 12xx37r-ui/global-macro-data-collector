@@ -6,17 +6,21 @@ import json
 import math
 import os
 import statistics
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "public" / "data" / "us_treasury_card8.json"
 STATUS = ROOT / "public" / "data" / "us_treasury_card8_status.json"
-FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
+FRED_CSV_BASE = "https://fred.stlouisfed.org/graph/fredgraph.csv"
+FRED_API = "https://api.stlouisfed.org/fred/series/observations"
 FED_LATEST_URL = os.getenv(
     "FED_ENGINE_LATEST_URL",
     "https://raw.githubusercontent.com/12xx37r-ui/fed-futures-collector/main/public/data/latest.json",
@@ -80,19 +84,113 @@ def clamp(v: float, lo: float, hi: float) -> float:
     return max(lo, min(hi, v))
 
 
-def fetch_fred(session: requests.Session, series_id: str) -> list[dict[str, Any]]:
-    r = session.get(FRED_CSV.format(series_id), timeout=35)
-    r.raise_for_status()
-    rows: list[dict[str, Any]] = []
-    reader = csv.reader(io.StringIO(r.text))
-    next(reader, None)
+def build_http_session() -> requests.Session:
+    session = requests.Session()
+    retry = Retry(
+        total=5, connect=5, read=5, status=5,
+        backoff_factor=1.0,
+        status_forcelist=(408, 425, 429, 500, 502, 503, 504),
+        allowed_methods=frozenset({"GET"}),
+        respect_retry_after_header=True,
+    )
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=8, pool_maxsize=8)
+    session.mount("https://", adapter)
+    session.headers.update({
+        "User-Agent": "Mozilla/5.0 (compatible; GlobalMacroDataCollector/Card8-1.1; +https://github.com/12xx37r-ui/global-macro-data-collector)",
+        "Accept": "text/csv,application/json;q=0.9,*/*;q=0.8",
+    })
+    return session
+
+
+def parse_fred_csv(text: str, requested: list[str]) -> dict[str, list[dict[str, Any]]]:
+    out = {sid: [] for sid in requested}
+    reader = csv.DictReader(io.StringIO(text.lstrip("\ufeff")))
+    if not reader.fieldnames:
+        raise ValueError("FRED CSV header missing")
+    date_col = next((x for x in reader.fieldnames if str(x).lower() in {"date", "observation_date"}), reader.fieldnames[0])
+    normalized = {str(x).strip().upper(): x for x in reader.fieldnames}
     for row in reader:
-        if len(row) < 2 or not finite(row[1]):
+        dt = str(row.get(date_col, "")).strip()
+        if not dt:
             continue
-        rows.append({"date": row[0], "value": float(row[1])})
+        for sid in requested:
+            col = normalized.get(sid.upper())
+            raw = row.get(col, "") if col else ""
+            if finite(raw):
+                out[sid].append({"date": dt, "value": float(raw)})
+    return out
+
+
+def fetch_fred_api(session: requests.Session, series_id: str, api_key: str) -> list[dict[str, Any]]:
+    r = session.get(FRED_API, params={
+        "series_id": series_id, "api_key": api_key, "file_type": "json",
+        "observation_start": "1990-01-01", "sort_order": "asc",
+    }, timeout=(15, 60))
+    r.raise_for_status()
+    payload = r.json()
+    rows = [
+        {"date": o["date"], "value": float(o["value"])}
+        for o in payload.get("observations", [])
+        if o.get("value") not in (None, ".") and finite(o.get("value"))
+    ]
     if not rows:
-        raise ValueError(f"{series_id}: no observations")
+        raise ValueError(f"{series_id}: FRED API no observations")
     return rows
+
+
+def fetch_fred_individual(session: requests.Session, series_id: str) -> list[dict[str, Any]]:
+    r = session.get(FRED_CSV_BASE, params={"id": series_id, "cosd": "1990-01-01"}, timeout=(15, 60))
+    r.raise_for_status()
+    parsed = parse_fred_csv(r.text, [series_id])[series_id]
+    if not parsed:
+        raise ValueError(f"{series_id}: FRED CSV no observations; HTTP {r.status_code}; type={r.headers.get('content-type','')}")
+    return parsed
+
+
+def fetch_fred_all(session: requests.Session, series_ids: list[str]) -> tuple[dict[str, list[dict[str, Any]]], list[str]]:
+    """Fetch FRED efficiently and defensively.
+
+    Primary path uses small multi-series CSV batches to avoid dozens of sequential
+    GitHub-runner requests. Missing series are retried individually, then through
+    the authenticated FRED API when FRED_API_KEY is configured.
+    """
+    result = {sid: [] for sid in series_ids}
+    errors: list[str] = []
+    chunk_size = 8
+    for i in range(0, len(series_ids), chunk_size):
+        chunk = series_ids[i:i+chunk_size]
+        try:
+            r = session.get(FRED_CSV_BASE, params={"id": ",".join(chunk), "cosd": "1990-01-01"}, timeout=(15, 75))
+            r.raise_for_status()
+            parsed = parse_fred_csv(r.text, chunk)
+            for sid in chunk:
+                if parsed.get(sid):
+                    result[sid] = parsed[sid]
+        except Exception as exc:
+            errors.append("FRED batch " + ",".join(chunk) + ": " + str(exc))
+
+    api_key = os.getenv("FRED_API_KEY", "").strip()
+    for sid in [x for x in series_ids if not result.get(x)]:
+        try:
+            result[sid] = fetch_fred_individual(session, sid)
+            continue
+        except Exception as exc:
+            errors.append(f"{sid} CSV retry: {exc}")
+        if api_key:
+            try:
+                result[sid] = fetch_fred_api(session, sid, api_key)
+            except Exception as exc:
+                errors.append(f"{sid} API retry: {exc}")
+
+    # Direct FRED spread can occasionally lag/fail independently. Reconstruct it
+    # exactly from official DGS10 and DGS2 observations rather than aborting.
+    if not result.get("T10Y2Y") and result.get("DGS10") and result.get("DGS2"):
+        a = {x["date"]: float(x["value"]) for x in result["DGS10"]}
+        b = {x["date"]: float(x["value"]) for x in result["DGS2"]}
+        dates = sorted(set(a).intersection(b))
+        result["T10Y2Y"] = [{"date": d, "value": round(a[d]-b[d], 6)} for d in dates]
+        errors.append("T10Y2Y: direct series unavailable; reconstructed from DGS10-DGS2")
+    return result, errors
 
 
 def fetch_fed_engine(session: requests.Session) -> dict[str, Any]:
@@ -282,16 +380,8 @@ def horizon_gate(result: dict[str, Any], minimum: int) -> dict[str, Any]:
 
 
 def main() -> None:
-    session = requests.Session()
-    session.headers.update({"User-Agent": "GlobalMacroDataCollector/Card8-1.0", "Accept": "text/csv,application/json"})
-    data: dict[str, list[dict[str, Any]]] = {}
-    errors: list[str] = []
-    for sid in SERIES:
-        try:
-            data[sid] = fetch_fred(session, sid)
-        except Exception as exc:
-            data[sid] = []
-            errors.append(f"{sid}: {exc}")
+    session = build_http_session()
+    data, errors = fetch_fred_all(session, list(SERIES))
     fed = fetch_fed_engine(session)
     if not fed["available"]:
         errors.append("fed_engine: " + fed.get("error", "unknown"))
@@ -302,7 +392,9 @@ def main() -> None:
     core_completeness = round(100*core_ok/len(core_ids), 1)
     missing_core = [k for k in core_ids if not data.get(k)]
     if any(not data.get(k) for k in TARGETS):
-        raise RuntimeError("Card8 target series missing: " + ", ".join(k for k in TARGETS if not data.get(k)))
+        missing_targets = [k for k in TARGETS if not data.get(k)]
+        tail = " | ".join(errors[-12:])
+        raise RuntimeError("Card8 target series missing after batch+retry: " + ", ".join(missing_targets) + (" | diagnostics: " + tail if tail else ""))
 
     current = {sid: {"value": latest(data[sid])["value"], "date": latest(data[sid])["date"]}
                for sid in SERIES if data.get(sid)}
@@ -354,7 +446,7 @@ def main() -> None:
 
     payload = {
         "schema_version": "1.0.0",
-        "engine_version": "card8-1.0.0-objective-oos",
+        "engine_version": "card8-1.1.0-objective-oos-resilient-fetch",
         "status": "ok",
         "card": 8,
         "title": "미국채 금리·실질금리·수익률곡선",
