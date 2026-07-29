@@ -175,3 +175,5 @@ if __name__ == "__main__":
     main()
     from treasury_card8 import main as card8_main
     card8_main()
+    from macro_cards_9_12 import main as cards_main
+    cards_main()

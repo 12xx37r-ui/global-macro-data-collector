@@ -27,6 +27,8 @@ FED_LATEST_URL = os.getenv(
     "https://raw.githubusercontent.com/12xx37r-ui/fed-futures-collector/main/public/data/latest.json",
 )
 
+TREASURY_FUTURES = {"ZT=F":"2년 국채선물","ZF=F":"5년 국채선물","ZN=F":"10년 국채선물","ZB=F":"30년 국채선물"}
+
 # Official/public series. Core series drive the forecast; context series alter regime and confidence.
 SERIES: dict[str, dict[str, Any]] = {
     "DGS3MO": {"label": "미국 3개월 국채금리", "freq": "D", "core": True},
@@ -206,6 +208,41 @@ def fetch_fed_engine(session: requests.Session) -> dict[str, Any]:
     except Exception as exc:
         return {"available": False, "url": FED_LATEST_URL, "error": str(exc), "payload": {}}
 
+
+def fetch_yahoo_history(session: requests.Session, symbol: str) -> list[dict[str, Any]]:
+    url = "https://query1.finance.yahoo.com/v8/finance/chart/" + requests.utils.quote(symbol, safe="")
+    r = session.get(url, params={"interval":"1d","range":"10y","events":"history"}, timeout=(15,60))
+    r.raise_for_status()
+    j = r.json(); z = (j.get("chart",{}).get("result") or [None])[0]
+    if not z: return []
+    ts = z.get("timestamp") or []
+    close = (((z.get("indicators") or {}).get("quote") or [{}])[0].get("close") or [])
+    out=[]
+    for t,v in zip(ts,close):
+        if finite(v):
+            out.append({"date": datetime.fromtimestamp(t, timezone.utc).date().isoformat(), "value": float(v)})
+    return out
+
+def fetch_treasury_futures_context(session: requests.Session) -> dict[str, Any]:
+    rows={}; errors=[]
+    for sym,label in TREASURY_FUTURES.items():
+        try: rows[sym]=fetch_yahoo_history(session,sym)
+        except Exception as exc: rows[sym]=[]; errors.append(f"{sym}: {exc}")
+    current={}; signals=[]
+    for sym,hist in rows.items():
+        if not hist: continue
+        v=[float(x["value"]) for x in hist]
+        ret21=(v[-1]/v[-22]-1)*100 if len(v)>22 and v[-22] else 0.0
+        ret63=(v[-1]/v[-64]-1)*100 if len(v)>64 and v[-64] else 0.0
+        daily=[(v[i]/v[i-1]-1)*100 for i in range(max(1,len(v)-63),len(v)) if v[i-1]]
+        vol=statistics.stdev(daily) if len(daily)>2 else 0.0
+        score=clamp((0.65*ret21+0.35*ret63)/(vol*3+1),-2,2)
+        signals.append(score)
+        current[sym]={"label":TREASURY_FUTURES[sym],"value":v[-1],"date":hist[-1]["date"],"return21d_pct":ret21,"return63d_pct":ret63,"realized_vol":vol,"score":score}
+    composite=mean(signals) if signals else 0.0
+    return {"available":bool(current),"source":"Yahoo Finance 무료 지연 국채선물","current":current,"composite_score":composite,
+            "yield_direction":"down" if composite>0.25 else "up" if composite<-0.25 else "flat",
+            "errors":errors,"limitation":"무료 지연 선물자료이며 CME 실시간 유료 시세를 대체하지 않습니다."}
 
 def values(series: list[dict[str, Any]]) -> list[float]:
     return [float(x["value"]) for x in series if finite(x.get("value"))]
@@ -455,6 +492,7 @@ def main() -> None:
     session = build_http_session()
     data, errors = fetch_fred_all(session, list(SERIES))
     fed = fetch_fed_engine(session)
+    treasury_futures = fetch_treasury_futures_context(session)
     if not fed["available"]:
         errors.append("fed_engine: " + fed.get("error", "unknown"))
 
@@ -534,6 +572,7 @@ def main() -> None:
         "current_regime": current_regime,
         "future_regime": future_regime,
         "market_signal": overall,
+        "treasury_futures_context": treasury_futures,
         "investment_conclusion": (
             "장기금리와 실질금리의 예상 부담이 낮아져 장기채·금·고밸류 위험자산에 우호적입니다."
             if overall == "good" else
@@ -560,7 +599,7 @@ def main() -> None:
             "selection": "expanding_walk_forward_candidate_selection_with_material_skill_and_dm_gate",
             "benchmark": "persistence_no_change",
             "safety": "non-positive-skill models automatically fall back to persistence; tiny positive skill cannot pass strict gate",
-            "structural_inputs": ["Fed engine policy path", "core PCE momentum", "10y breakeven", "10y term premium", "NFCI", "HY OAS", "unemployment"],
+            "structural_inputs": ["Fed engine policy path", "Treasury futures direction/volatility cross-check", "core PCE momentum", "10y breakeven", "10y term premium", "NFCI", "HY OAS", "unemployment"],
         },
         "source_status": {
             sid: {"ok": bool(data.get(sid)), "label": SERIES[sid]["label"], "latest": current.get(sid),
@@ -573,6 +612,7 @@ def main() -> None:
             "미국 정책금리 경로는 미국엔진 기존 출력값만 읽고 카드8에서 재계산하지 않습니다.",
             "Treasury 분기 리펀딩·경매 일정은 기간프리미엄과 수급의 정성적 보조근거이며 임의 수치로 대체하지 않습니다.",
             "실시간 원본 빈티지가 없는 계열은 그 사실을 품질정보에 명시합니다.",
+            "국채선물은 방향·변동성 교차검증에 사용하며, 검증 미통과 기간을 준기관급으로 승격시키지 않습니다.",
         ],
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
