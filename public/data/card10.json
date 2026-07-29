@@ -2,14 +2,14 @@
   "schema_version": "1.0",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-07-29T15:29:34.692004+00:00",
+  "generated_at_utc": "2026-07-29T15:35:36.631189+00:00",
   "current": 40.50477959588218,
   "current_date": "2026-07-01",
   "forecast_3m": 44.10477959588218,
-  "forecast_6m": 47.70477959588217,
+  "forecast_6m": 46.50477959588218,
   "forecast_range80_3m": [
-    37.195552874667044,
-    51.01400631709731
+    37.51642311459349,
+    50.69313607717086
   ],
   "future_direction": "up",
   "market_signal": "bad",
@@ -18,24 +18,24 @@
   "investment_conclusion": "원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 41.50477959588218,
-      "model": "mean_reversion_24m",
+      "forecast": 41.70477959588218,
+      "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 3.4400376563008352,
-      "baseline_rmse": 3.529897155534865,
-      "skill_pct": 2.5456690457151265,
-      "direction_accuracy": 0.6046511627906976,
+      "rmse": 3.4779511363639193,
+      "baseline_rmse": 3.602246081719329,
+      "skill_pct": 3.450484573671453,
+      "direction_accuracy": 0.6491228070175439,
       "fallback_used": false,
       "range80": [
-        38.06017414191512,
-        44.949385049849234
+        38.25888752341161,
+        45.15067166835275
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 1.868655414062824,
-          "p_value": 0.06167077084771311,
+          "statistic": 2.1158876061530703,
+          "p_value": 0.03435436777253642,
           "significant_10pct": true
         }
       }
@@ -44,44 +44,44 @@
       "forecast": 44.10477959588218,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.0168246430167045,
-      "baseline_rmse": 6.6963832971491,
-      "skill_pct": 10.148144512900103,
+      "rmse": 5.3209050276260825,
+      "baseline_rmse": 6.032795757179039,
+      "skill_pct": 11.800345282795377,
       "direction_accuracy": 0.7410714285714286,
       "fallback_used": false,
       "range80": [
-        37.195552874667044,
-        51.01400631709731
+        37.51642311459349,
+        50.69313607717086
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 3.6609306991886292,
-          "p_value": 0.0002513007302267223,
+          "statistic": 4.070472516564502,
+          "p_value": 4.6917876281638016e-05,
           "significant_10pct": true
         }
       }
     },
     "6m": {
-      "forecast": 47.70477959588217,
-      "model": "mean_reversion_12m",
+      "forecast": 46.50477959588218,
+      "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.821825791753811,
-      "baseline_rmse": 6.709322366822228,
-      "skill_pct": 13.227812386197302,
-      "direction_accuracy": 0.803030303030303,
+      "rmse": 5.182856262259097,
+      "baseline_rmse": 5.995153406238468,
+      "skill_pct": 13.549230335525797,
+      "direction_accuracy": 0.7580645161290323,
       "fallback_used": false,
       "range80": [
-        40.99764433255654,
-        54.411914859207805
+        40.13366194934643,
+        52.87589724241792
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 3.2141564427376927,
-          "p_value": 0.001308283716464409,
+          "statistic": 3.9699372856890554,
+          "p_value": 7.189155196685171e-05,
           "significant_10pct": true
         }
       }
@@ -90,37 +90,33 @@
       "forecast": 48.50477959588218,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.79789254882338,
-      "baseline_rmse": 6.899438483270555,
-      "skill_pct": 15.965733111732995,
-      "direction_accuracy": 0.7887323943661971,
+      "rmse": 5.342625813577305,
+      "baseline_rmse": 6.293534053566318,
+      "skill_pct": 15.10928886529449,
+      "direction_accuracy": 0.7647058823529411,
       "fallback_used": false,
       "range80": [
-        40.95120692177418,
-        56.05835226999017
+        41.35431948887138,
+        55.65523970289297
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 4.216239163907428,
-          "p_value": 2.4841030830557997e-05,
+          "statistic": 3.622712393311069,
+          "p_value": 0.00029152991012981744,
           "significant_10pct": true
         }
       }
     }
   },
   "data_quality": {
-    "completeness": 90.9,
-    "raw_collection_completeness": 90.9,
-    "core_completeness": 83.3,
-    "missing_core": [
-      "GSCPI"
-    ],
+    "completeness": 100.0,
+    "raw_collection_completeness": 100.0,
+    "core_completeness": 100.0,
+    "missing_core": [],
     "stale_series": [],
-    "warnings": [
-      "GSCPI collection failed after official, fallback and cache attempts: official workbook: official XLS workbook contained only 0 usable observations; FRED CSV fallback: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI"
-    ],
+    "warnings": [],
     "release_lag_policy": "월간·주간 자료는 공표시차와 계열별 최신성 기준을 함께 반영",
     "real_time_vintage": false
   },
@@ -243,14 +239,17 @@
       "collection_source": "FRED"
     },
     "GSCPI": {
-      "ok": false,
-      "fresh": false,
-      "age_days": null,
+      "ok": true,
+      "fresh": true,
+      "age_days": 29,
       "max_age_days": 120,
       "label": "뉴욕연은 글로벌 공급망압력",
-      "latest": null,
+      "latest": {
+        "date": "2026-06-30",
+        "value": 1.2494016683022036
+      },
       "url": "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx",
-      "collection_source": "FRED"
+      "collection_source": "New York Fed official XLS workbook"
     },
     "PPIFIS": {
       "ok": true,
