@@ -361,7 +361,7 @@ def main() -> None:
                     "available": False, "weight_multiplier": 0.25, "error": str(exc),
                 }
     payload = {
-        "schema_version": "1.4.0", "engine_version": "asset-oos-v1.4-nasdaq",
+        "schema_version": "1.5.0", "engine_version": "asset-oos-v1.5-nasdaq-required",
         "generated_at_utc": now_iso(), "assets": assets_out,
         "source_status": {"treasury_ready": treasury_ready, "treasury_window_years": 13, "fred_dependency": False, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
         "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
