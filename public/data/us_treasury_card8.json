@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-07-30T18:04:46.714014+00:00",
+  "generated_at_utc": "2026-07-30T20:08:18.062238+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -104,8 +104,8 @@
       "date": "2026-07-29"
     },
     "VIXCLS": {
-      "value": 18.21,
-      "date": "2026-07-28"
+      "value": 20.66,
+      "date": "2026-07-29"
     },
     "WALCL": {
       "value": 6747378.0,
@@ -139,12 +139,12 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 102.91015625,
+        "value": 102.9140625,
         "date": "2026-07-30",
-        "return21d_pct": -0.28010144214390964,
-        "return63d_pct": -0.5473763684409216,
-        "realized_vol": 0.08302252106593377,
-        "score": -0.2991412773471352
+        "return21d_pct": -0.27631628752035065,
+        "return63d_pct": -0.5436013590033983,
+        "realized_vol": 0.08302749840140278,
+        "score": -0.2961101960515019
       },
       "ZF=F": {
         "label": "5년 국채선물",
@@ -157,12 +157,12 @@
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.515625,
+        "value": 108.53125,
         "date": "2026-07-30",
-        "return21d_pct": -1.251244134793117,
-        "return63d_pct": -1.6706781820756023,
-        "realized_vol": 0.2866690997168666,
-        "score": -0.7516347123908736
+        "return21d_pct": -1.2370254514431966,
+        "return63d_pct": -1.6565198923970015,
+        "realized_vol": 0.28649870645430164,
+        "score": -0.7442061811084383
       },
       "ZB=F": {
         "label": "30년 국채선물",
@@ -174,7 +174,7 @@
         "score": -1.3345322021115449
       }
     },
-    "composite_score": -0.7555334518267516,
+    "composite_score": -0.7529185486822344,
     "yield_direction": "up",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -1613,8 +1613,8 @@
       "ok": true,
       "label": "VIX",
       "latest": {
-        "value": 18.21,
-        "date": "2026-07-28"
+        "value": 20.66,
+        "date": "2026-07-29"
       },
       "url": "https://fred.stlouisfed.org/series/VIXCLS"
     },

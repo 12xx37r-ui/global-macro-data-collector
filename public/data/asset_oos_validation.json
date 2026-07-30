@@ -1,7 +1,7 @@
 {
   "schema_version": "1.5.0",
   "engine_version": "asset-oos-v1.5-nasdaq-required",
-  "generated_at_utc": "2026-07-30T18:06:09.356536+00:00",
+  "generated_at_utc": "2026-07-30T20:09:45.144951+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -72,23 +72,23 @@
             "samples": 103,
             "grade": "F",
             "weight_multiplier": 0.0,
-            "direction_accuracy": 0.5049,
-            "correlation": -0.089,
-            "rmse": 0.042992,
-            "zero_baseline_rmse": 0.039874,
-            "skill_pct": -7.82,
+            "direction_accuracy": 0.4951,
+            "correlation": -0.1493,
+            "rmse": 0.042544,
+            "zero_baseline_rmse": 0.038722,
+            "skill_pct": -9.87,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "pass",
+            "status": "limited_pass",
             "samples": 103,
-            "grade": "B",
-            "weight_multiplier": 0.75,
-            "direction_accuracy": 0.5437,
-            "correlation": 0.1561,
-            "rmse": 0.039897,
-            "zero_baseline_rmse": 0.039874,
-            "skill_pct": -0.057,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.534,
+            "correlation": 0.0837,
+            "rmse": 0.039586,
+            "zero_baseline_rmse": 0.038722,
+            "skill_pct": -2.231,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -98,11 +98,11 @@
             "samples": 99,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5152,
-            "correlation": -0.0216,
-            "rmse": 0.079352,
-            "zero_baseline_rmse": 0.074804,
-            "skill_pct": -6.08,
+            "direction_accuracy": 0.5657,
+            "correlation": -0.0343,
+            "rmse": 0.077045,
+            "zero_baseline_rmse": 0.071545,
+            "skill_pct": -7.687,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -110,11 +110,11 @@
             "samples": 99,
             "grade": "B",
             "weight_multiplier": 0.75,
-            "direction_accuracy": 0.5556,
-            "correlation": 0.2063,
-            "rmse": 0.074151,
-            "zero_baseline_rmse": 0.074804,
-            "skill_pct": 0.873,
+            "direction_accuracy": 0.6061,
+            "correlation": 0.1663,
+            "rmse": 0.071814,
+            "zero_baseline_rmse": 0.071545,
+            "skill_pct": -0.375,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
@@ -190,11 +190,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.6214,
-            "correlation": -0.0082,
-            "rmse": 0.054421,
-            "zero_baseline_rmse": 0.052945,
-            "skill_pct": -2.787,
+            "direction_accuracy": 0.5534,
+            "correlation": -0.0611,
+            "rmse": 0.056159,
+            "zero_baseline_rmse": 0.053689,
+            "skill_pct": -4.6,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -203,10 +203,10 @@
             "grade": "C",
             "weight_multiplier": 0.5,
             "direction_accuracy": 0.6019,
-            "correlation": -0.0183,
-            "rmse": 0.053941,
-            "zero_baseline_rmse": 0.052945,
-            "skill_pct": -1.881,
+            "correlation": 0.01,
+            "rmse": 0.054278,
+            "zero_baseline_rmse": 0.053689,
+            "skill_pct": -1.096,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -216,23 +216,23 @@
             "samples": 99,
             "grade": "A",
             "weight_multiplier": 1.0,
-            "direction_accuracy": 0.7273,
-            "correlation": 0.2904,
-            "rmse": 0.076172,
-            "zero_baseline_rmse": 0.084962,
-            "skill_pct": 10.346,
+            "direction_accuracy": 0.7374,
+            "correlation": 0.2599,
+            "rmse": 0.077663,
+            "zero_baseline_rmse": 0.084779,
+            "skill_pct": 8.394,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "pass",
+            "status": "strong_pass",
             "samples": 99,
-            "grade": "B",
-            "weight_multiplier": 0.75,
+            "grade": "A",
+            "weight_multiplier": 1.0,
             "direction_accuracy": 0.6162,
-            "correlation": 0.1225,
-            "rmse": 0.080712,
-            "zero_baseline_rmse": 0.084962,
-            "skill_pct": 5.002,
+            "correlation": 0.1504,
+            "rmse": 0.079739,
+            "zero_baseline_rmse": 0.084779,
+            "skill_pct": 5.944,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
@@ -245,15 +245,15 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "pass",
+            "status": "limited_pass",
             "samples": 103,
-            "grade": "B",
-            "weight_multiplier": 0.75,
-            "direction_accuracy": 0.6117,
-            "correlation": 0.0855,
-            "rmse": 0.065447,
-            "zero_baseline_rmse": 0.065472,
-            "skill_pct": 0.038,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5825,
+            "correlation": 0.0236,
+            "rmse": 0.069555,
+            "zero_baseline_rmse": 0.06816,
+            "skill_pct": -2.047,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -261,11 +261,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.6408,
-            "correlation": -0.0499,
-            "rmse": 0.066244,
-            "zero_baseline_rmse": 0.065472,
-            "skill_pct": -1.178,
+            "direction_accuracy": 0.6214,
+            "correlation": -0.0346,
+            "rmse": 0.068784,
+            "zero_baseline_rmse": 0.06816,
+            "skill_pct": -0.915,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -275,11 +275,11 @@
             "samples": 99,
             "grade": "A",
             "weight_multiplier": 1.0,
-            "direction_accuracy": 0.7576,
-            "correlation": 0.3354,
-            "rmse": 0.096132,
-            "zero_baseline_rmse": 0.110253,
-            "skill_pct": 12.808,
+            "direction_accuracy": 0.7374,
+            "correlation": 0.2836,
+            "rmse": 0.101198,
+            "zero_baseline_rmse": 0.111726,
+            "skill_pct": 9.423,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -287,11 +287,11 @@
             "samples": 99,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5758,
-            "correlation": 0.0182,
-            "rmse": 0.104954,
-            "zero_baseline_rmse": 0.110253,
-            "skill_pct": 4.806,
+            "direction_accuracy": 0.5657,
+            "correlation": 0.0421,
+            "rmse": 0.105949,
+            "zero_baseline_rmse": 0.111726,
+            "skill_pct": 5.17,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
