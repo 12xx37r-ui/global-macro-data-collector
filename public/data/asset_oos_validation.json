@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.1.0",
-  "engine_version": "asset-oos-v1.1-resilient",
-  "generated_at_utc": "2026-07-30T16:28:08.740891+00:00",
+  "schema_version": "1.2.0",
+  "engine_version": "asset-oos-v1.2-bounded-fred",
+  "generated_at_utc": "2026-07-30T16:36:21.873096+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -55,6 +55,7 @@
   },
   "source_status": {
     "fred_ready": false,
+    "fred_window_years": 13,
     "used_previous_results": false
   },
   "weight_policy": {
@@ -71,6 +72,6 @@
     "공개자료 일시 장애 시 마지막 정상 검증값을 재사용하고 stale 상태를 명시합니다."
   ],
   "errors": [
-    "FRED DGS10: RuntimeError: HTTP request failed after 4 attempts: https://fred.stlouisfed.org/graph/fredgraph.csv: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+    "FRED DGS10: RuntimeError: HTTP request failed after 5 attempts: https://fred.stlouisfed.org/graph/fredgraph.csv: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
   ]
 }
