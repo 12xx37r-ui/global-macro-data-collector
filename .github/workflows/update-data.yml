@@ -11,18 +11,35 @@ permissions:
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v5
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
-      - run: python collector.py
-      - run: python -m unittest discover -s tests -v
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect global macro data
+        run: python collector.py
+
+      - name: Run asset OOS validation
+        run: python asset_oos_validation.py
+
+      - name: Verify validation output
+        run: |
+          test -f public/data/asset_oos_validation.json
+          python -m json.tool public/data/asset_oos_validation.json > /dev/null
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
       - name: Commit data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/data/*.json
-          git diff --cached --quiet || git commit -m "Update ISM manufacturing data"
+          git diff --cached --quiet || git commit -m "Update global macro and asset OOS data"
           git push
