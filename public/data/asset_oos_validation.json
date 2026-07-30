@@ -1,61 +1,414 @@
 {
-  "schema_version": "1.2.0",
-  "engine_version": "asset-oos-v1.2-bounded-fred",
-  "generated_at_utc": "2026-07-30T16:36:21.873096+00:00",
+  "schema_version": "1.3.0",
+  "engine_version": "asset-oos-v1.3-us-treasury-xml",
+  "generated_at_utc": "2026-07-30T16:44:09.830644+00:00",
   "assets": {
     "gold": {
       "label": "금",
       "ticker": "GC=F",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "weak",
+            "samples": 103,
+            "grade": "D",
+            "weight_multiplier": 0.25,
+            "direction_accuracy": 0.4951,
+            "correlation": 0.0128,
+            "rmse": 0.046137,
+            "zero_baseline_rmse": 0.046304,
+            "skill_pct": 0.361,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5437,
+            "correlation": 0.0461,
+            "rmse": 0.046463,
+            "zero_baseline_rmse": 0.046304,
+            "skill_pct": -0.344,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5455,
+            "correlation": 0.0532,
+            "rmse": 0.086751,
+            "zero_baseline_rmse": 0.089622,
+            "skill_pct": 3.203,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.6061,
+            "correlation": 0.0952,
+            "rmse": 0.08776,
+            "zero_baseline_rmse": 0.089622,
+            "skill_pct": 2.077,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
     },
     "bond": {
       "label": "미국 장기국채",
       "ticker": "TLT",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "fail",
+            "samples": 103,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.5049,
+            "correlation": -0.0889,
+            "rmse": 0.042992,
+            "zero_baseline_rmse": 0.039874,
+            "skill_pct": -7.82,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "pass",
+            "samples": 103,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5437,
+            "correlation": 0.1561,
+            "rmse": 0.039897,
+            "zero_baseline_rmse": 0.039874,
+            "skill_pct": -0.058,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5152,
+            "correlation": -0.0216,
+            "rmse": 0.079352,
+            "zero_baseline_rmse": 0.074804,
+            "skill_pct": -6.08,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5556,
+            "correlation": 0.2063,
+            "rmse": 0.074151,
+            "zero_baseline_rmse": 0.074804,
+            "skill_pct": 0.873,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
     },
     "bitcoin": {
       "label": "비트코인",
       "ticker": "BTC-USD",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 112,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5089,
+            "correlation": 0.0912,
+            "rmse": 0.166237,
+            "zero_baseline_rmse": 0.158666,
+            "skill_pct": -4.772,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "fail",
+            "samples": 109,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4587,
+            "correlation": -0.0462,
+            "rmse": 0.146878,
+            "zero_baseline_rmse": 0.143721,
+            "skill_pct": -2.197,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 108,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5648,
+            "correlation": 0.2063,
+            "rmse": 0.310722,
+            "zero_baseline_rmse": 0.294801,
+            "skill_pct": -5.401,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 105,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5143,
+            "correlation": -0.105,
+            "rmse": 0.297777,
+            "zero_baseline_rmse": 0.290035,
+            "skill_pct": -2.669,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
     },
     "sp500": {
       "label": "S&P 500",
       "ticker": "SPY",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.6214,
+            "correlation": -0.0082,
+            "rmse": 0.054421,
+            "zero_baseline_rmse": 0.052945,
+            "skill_pct": -2.787,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.6019,
+            "correlation": -0.0183,
+            "rmse": 0.053941,
+            "zero_baseline_rmse": 0.052945,
+            "skill_pct": -1.881,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "strong_pass",
+            "samples": 99,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.7273,
+            "correlation": 0.2904,
+            "rmse": 0.076172,
+            "zero_baseline_rmse": 0.084962,
+            "skill_pct": 10.346,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.6162,
+            "correlation": 0.1225,
+            "rmse": 0.080712,
+            "zero_baseline_rmse": 0.084962,
+            "skill_pct": 5.002,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
     },
     "cashShort": {
       "label": "미국 단기국채",
       "ticker": "SGOV",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "insufficient",
+            "samples": 33,
+            "grade": "미확인",
+            "weight_multiplier": 0.25,
+            "reasons": [
+              "독립 OOS 표본 36개 미만"
+            ]
+          },
+          "card12": {
+            "status": "insufficient",
+            "samples": 33,
+            "grade": "미확인",
+            "weight_multiplier": 0.25,
+            "reasons": [
+              "독립 OOS 표본 36개 미만"
+            ]
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "insufficient",
+            "samples": 29,
+            "grade": "미확인",
+            "weight_multiplier": 0.25,
+            "reasons": [
+              "독립 OOS 표본 36개 미만"
+            ]
+          },
+          "card12": {
+            "status": "insufficient",
+            "samples": 29,
+            "grade": "미확인",
+            "weight_multiplier": 0.25,
+            "reasons": [
+              "독립 OOS 표본 36개 미만"
+            ]
+          }
+        }
+      },
+      "stale": false
     },
     "copper": {
       "label": "구리",
       "ticker": "HG=F",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "weak",
+            "samples": 103,
+            "grade": "D",
+            "weight_multiplier": 0.25,
+            "direction_accuracy": 0.4951,
+            "correlation": -0.0462,
+            "rmse": 0.066628,
+            "zero_baseline_rmse": 0.064803,
+            "skill_pct": -2.817,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.534,
+            "correlation": 0.0869,
+            "rmse": 0.064617,
+            "zero_baseline_rmse": 0.064803,
+            "skill_pct": 0.287,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5152,
+            "correlation": 0.1053,
+            "rmse": 0.11242,
+            "zero_baseline_rmse": 0.109499,
+            "skill_pct": -2.668,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5354,
+            "correlation": 0.1032,
+            "rmse": 0.108311,
+            "zero_baseline_rmse": 0.109499,
+            "skill_pct": 1.085,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
     },
     "silver": {
       "label": "은",
       "ticker": "SI=F",
-      "available": false,
-      "weight_multiplier": 0.25,
-      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "fail",
+            "samples": 103,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.5049,
+            "correlation": -0.1501,
+            "rmse": 0.092212,
+            "zero_baseline_rmse": 0.090277,
+            "skill_pct": -2.144,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.534,
+            "correlation": -0.0603,
+            "rmse": 0.094196,
+            "zero_baseline_rmse": 0.090277,
+            "skill_pct": -4.341,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5556,
+            "correlation": 0.2248,
+            "rmse": 0.158437,
+            "zero_baseline_rmse": 0.162534,
+            "skill_pct": 2.521,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.6263,
+            "correlation": 0.1332,
+            "rmse": 0.167127,
+            "zero_baseline_rmse": 0.162534,
+            "skill_pct": -2.826,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
     }
   },
   "source_status": {
-    "fred_ready": false,
-    "fred_window_years": 13,
+    "treasury_ready": true,
+    "treasury_window_years": 13,
+    "fred_dependency": false,
     "used_previous_results": false
   },
   "weight_policy": {
@@ -68,10 +421,8 @@
   },
   "limitations": [
     "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
-    "무료 지연시세와 공개 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
+    "무료 지연시세와 미국 재무부 공식 명목·실질 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
     "공개자료 일시 장애 시 마지막 정상 검증값을 재사용하고 stale 상태를 명시합니다."
   ],
-  "errors": [
-    "FRED DGS10: RuntimeError: HTTP request failed after 5 attempts: https://fred.stlouisfed.org/graph/fredgraph.csv: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
-  ]
+  "errors": []
 }
