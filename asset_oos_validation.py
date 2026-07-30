@@ -6,15 +6,15 @@ No current card-8/card-12 calculation is replaced.
 """
 from __future__ import annotations
 
-import csv
-import io
 import json
 import math
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import xml.etree.ElementTree as ET
 from urllib.parse import quote
 
 import numpy as np
@@ -23,7 +23,7 @@ import requests
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "public" / "data" / "asset_oos_validation.json"
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.2"})
+SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.3 (GitHub Actions; Treasury official data)"})
 
 ASSETS = {
     "gold": {"ticker": "GC=F", "label": "금"},
@@ -95,32 +95,97 @@ def yahoo_series(ticker: str, years: int = 12) -> dict[str, float]:
     return out
 
 
-def fred_series(series_id: str, years: int = 13) -> dict[str, float]:
-    """Download only the validation window instead of the series' full history.
+def _xml_local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
 
-    FRED full-history CSVs can exceed GitHub Actions read timeouts.  The OOS
-    model uses at most eight training years plus warm-up, so 13 years is enough.
-    """
-    url = "https://fred.stlouisfed.org/graph/fredgraph.csv"
-    end = datetime.now(timezone.utc).date()
-    start = end - timedelta(days=366 * years)
-    r = get_with_retry(
-        url,
-        params={"id": series_id, "cosd": start.isoformat(), "coed": end.isoformat()},
-        attempts=5,
-    )
+
+def _parse_treasury_xml(text: str, value_fields: tuple[str, ...]) -> dict[str, float]:
+    """Parse Treasury Atom/OData XML without relying on a fixed namespace prefix."""
+    root = ET.fromstring(text)
     out: dict[str, float] = {}
-    for row in csv.DictReader(io.StringIO(r.text)):
-        raw = row.get(series_id)
-        if not raw or raw == ".":
+    for props in root.iter():
+        if _xml_local_name(props.tag) != "properties":
+            continue
+        values = {_xml_local_name(child.tag): (child.text or "").strip() for child in props}
+        raw_date = values.get("NEW_DATE") or values.get("Date") or values.get("record_date")
+        if not raw_date:
+            continue
+        day = raw_date[:10]
+        raw_value = next((values.get(name) for name in value_fields if values.get(name) not in (None, "")), None)
+        if raw_value is None:
             continue
         try:
-            out[row["DATE"]] = float(raw)
-        except (KeyError, ValueError):
+            out[day] = float(raw_value)
+        except ValueError:
             continue
-    if len(out) < 300:
-        raise ValueError(f"{series_id}: insufficient FRED history ({len(out)})")
     return out
+
+
+def _treasury_year(feed: str, year: int, fields: tuple[str, ...]) -> dict[str, float]:
+    """Fetch one small official Treasury XML year, with xml/xmlview endpoint fallback."""
+    base = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages"
+    errors: list[str] = []
+    for endpoint in ("xmlview", "xml"):
+        url = f"{base}/{endpoint}"
+        try:
+            r = get_with_retry(
+                url,
+                params={"data": feed, "field_tdr_date_value": str(year)},
+                attempts=3,
+            )
+            parsed = _parse_treasury_xml(r.text, fields)
+            if parsed:
+                return parsed
+            errors.append(f"{endpoint}: empty/unknown schema")
+        except Exception as exc:
+            errors.append(f"{endpoint}: {type(exc).__name__}: {exc}")
+    raise RuntimeError(f"Treasury {feed} {year} failed: {' | '.join(errors)}")
+
+
+def treasury_rate_bundle(years: int = 13) -> tuple[list[dict[str, float]], list[str]]:
+    """Return DGS10-equivalent, real10, 10y-2y curve, and DGS2-equivalent series.
+
+    Uses only the U.S. Treasury official annual XML feeds. Annual requests are
+    fetched concurrently, so one slow year does not block the whole history.
+    """
+    current_year = datetime.now(timezone.utc).year
+    first_year = current_year - years + 1
+    jobs: list[tuple[str, int, tuple[str, ...]]] = []
+    for year in range(first_year, current_year + 1):
+        jobs.append(("nominal", year, ("BC_2YEAR", "BC_2_YEAR", "TWO_YEAR")))
+        jobs.append(("nominal10", year, ("BC_10YEAR", "BC_10_YEAR", "TEN_YEAR")))
+        jobs.append(("real10", year, ("TC_10YEAR", "TC_10_YEAR", "BC_10YEAR")))
+
+    results: dict[tuple[str, int], dict[str, float]] = {}
+    errors: list[str] = []
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        futures = {}
+        for kind, year, fields in jobs:
+            feed = "daily_treasury_real_yield_curve" if kind == "real10" else "daily_treasury_yield_curve"
+            futures[pool.submit(_treasury_year, feed, year, fields)] = (kind, year)
+        for fut in as_completed(futures):
+            kind, year = futures[fut]
+            try:
+                results[(kind, year)] = fut.result()
+            except Exception as exc:
+                errors.append(f"{kind} {year}: {type(exc).__name__}: {exc}")
+
+    dgs2: dict[str, float] = {}
+    dgs10: dict[str, float] = {}
+    real10: dict[str, float] = {}
+    for year in range(first_year, current_year + 1):
+        dgs2.update(results.get(("nominal", year), {}))
+        dgs10.update(results.get(("nominal10", year), {}))
+        real10.update(results.get(("real10", year), {}))
+
+    common_curve_dates = set(dgs10) & set(dgs2)
+    curve = {d: dgs10[d] - dgs2[d] for d in common_curve_dates}
+    minimum = 300
+    counts = {"DGS10_equivalent": len(dgs10), "DFII10_equivalent": len(real10), "T10Y2Y_derived": len(curve), "DGS2_equivalent": len(dgs2)}
+    deficient = [f"{k}={v}" for k, v in counts.items() if v < minimum]
+    if deficient:
+        raise ValueError("insufficient Treasury history: " + ", ".join(deficient) + ("; fetch errors: " + " || ".join(errors[:6]) if errors else ""))
+    return [dgs10, real10, curve, dgs2], errors
 
 
 def aligned_matrix(target: dict[str, float], features: list[dict[str, float]]) -> tuple[list[str], np.ndarray, np.ndarray]:
@@ -241,32 +306,29 @@ def main() -> None:
     previous = load_previous_payload()
     previous_assets = (previous or {}).get("assets", {})
 
-    fred_ids = ["DGS10", "DFII10", "T10Y2Y", "DGS2"]
-    fred: list[dict[str, float]] = []
-    fred_ready = True
-    for sid in fred_ids:
-        try:
-            fred.append(fred_series(sid))
-        except Exception as exc:
-            fred_ready = False
-            errors.append(f"FRED {sid}: {type(exc).__name__}: {exc}")
-            break
-        time.sleep(0.2)
+    rates: list[dict[str, float]] = []
+    treasury_ready = True
+    try:
+        rates, treasury_errors = treasury_rate_bundle(years=13)
+        errors.extend([f"Treasury partial: {msg}" for msg in treasury_errors])
+    except Exception as exc:
+        treasury_ready = False
+        errors.append(f"Treasury rates: {type(exc).__name__}: {exc}")
 
     assets_out: dict[str, dict] = {}
     for key, spec in ASSETS.items():
-        if not fred_ready:
+        if not treasury_ready:
             prior = previous_assets.get(key)
             if isinstance(prior, dict) and prior.get("horizons"):
                 reused = dict(prior)
                 reused["stale"] = True
-                reused["stale_reason"] = "FRED 일시 장애로 마지막 정상 OOS 결과 재사용"
+                reused["stale_reason"] = "미국 재무부 공식 금리자료 일시 장애로 마지막 정상 OOS 결과 재사용"
                 assets_out[key] = reused
             else:
                 assets_out[key] = {
                     "label": spec["label"], "ticker": spec["ticker"],
                     "available": False, "weight_multiplier": 0.25,
-                    "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치",
+                    "error": "미국 재무부 공식 금리자료 일시 장애로 신규 검증 불가; 임시 25% 가중치",
                 }
             continue
         try:
@@ -275,7 +337,7 @@ def main() -> None:
             for ticker in GROUP_TICKERS[key]:
                 group.append(yahoo_series(ticker))
                 time.sleep(0.2)
-            price, card8_x, card12_x = build_features(key, asset_price, fred, group)
+            price, card8_x, card12_x = build_features(key, asset_price, rates, group)
             row = {"label": spec["label"], "ticker": spec["ticker"], "horizons": {}, "stale": False}
             for hname, days in HORIZONS.items():
                 row["horizons"][hname] = {
@@ -297,13 +359,13 @@ def main() -> None:
                     "available": False, "weight_multiplier": 0.25, "error": str(exc),
                 }
     payload = {
-        "schema_version": "1.2.0", "engine_version": "asset-oos-v1.2-bounded-fred",
+        "schema_version": "1.3.0", "engine_version": "asset-oos-v1.3-us-treasury-xml",
         "generated_at_utc": now_iso(), "assets": assets_out,
-        "source_status": {"fred_ready": fred_ready, "fred_window_years": 13, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
+        "source_status": {"treasury_ready": treasury_ready, "treasury_window_years": 13, "fred_dependency": False, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
         "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
         "limitations": [
             "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
-            "무료 지연시세와 공개 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
+            "무료 지연시세와 미국 재무부 공식 명목·실질 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
             "공개자료 일시 장애 시 마지막 정상 검증값을 재사용하고 stale 상태를 명시합니다.",
         ],
         "errors": errors,
