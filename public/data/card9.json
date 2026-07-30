@@ -2,109 +2,109 @@
   "schema_version": "1.0",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-07-30T16:42:52.701369+00:00",
-  "current": 47.20020177590913,
+  "generated_at_utc": "2026-07-30T17:27:25.033241+00:00",
+  "current": 47.732235904982105,
   "current_date": "2026-06-01",
-  "forecast_3m": 46.94041172915232,
-  "forecast_6m": 46.68062168239552,
+  "forecast_3m": 47.230906373865565,
+  "forecast_6m": 46.72957684274902,
   "forecast_range80_3m": [
-    42.56090965129002,
-    51.31991380701463
+    42.85140429600326,
+    51.61040845172787
   ],
-  "future_direction": "flat",
+  "future_direction": "down",
   "market_signal": "neutral",
   "current_regime": "고용·소비 보통",
   "future_regime": "보합",
   "investment_conclusion": "고용과 소비의 향후 방향을 경기민감주·내수·신용위험 판단에 반영합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 47.241463084591764,
+      "forecast": 47.714737445435944,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 4.421640579797918,
-      "baseline_rmse": 4.513885008244785,
-      "skill_pct": 2.0435706332433856,
+      "rmse": 4.421410548749007,
+      "baseline_rmse": 4.513613932692356,
+      "skill_pct": 2.042784015609189,
       "direction_accuracy": 0.8095238095238095,
       "fallback_used": false,
       "range80": [
-        44.35528750949605,
-        50.12763865968748
+        44.82856187034023,
+        50.60091302053166
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 1.7793531685572679,
-          "p_value": 0.07518187920991792,
+          "statistic": 1.7784339162502791,
+          "p_value": 0.07533261645703382,
           "significant_10pct": true
         }
       }
     },
     "3m": {
-      "forecast": 46.94041172915232,
+      "forecast": 47.230906373865565,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 7.509685813325208,
-      "baseline_rmse": 8.088826939299581,
-      "skill_pct": 7.1597665560208075,
-      "direction_accuracy": 0.7596153846153846,
+      "rmse": 7.510709279281325,
+      "baseline_rmse": 8.089426026741345,
+      "skill_pct": 7.153990228069917,
+      "direction_accuracy": 0.7572815533980582,
       "fallback_used": false,
       "range80": [
-        42.56090965129002,
-        51.31991380701463
+        42.85140429600326,
+        51.61040845172787
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 2.704131597544698,
-          "p_value": 0.006848316143898359,
+          "statistic": 2.7023698470283635,
+          "p_value": 0.006884713292432121,
           "significant_10pct": true
         }
       }
     },
     "6m": {
-      "forecast": 46.68062168239552,
+      "forecast": 46.72957684274902,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.803540307976588,
-      "baseline_rmse": 7.855880580128132,
-      "skill_pct": 13.395573690535656,
+      "rmse": 6.8045189087588005,
+      "baseline_rmse": 7.858530126753852,
+      "skill_pct": 13.412320128502643,
       "direction_accuracy": 0.752,
       "fallback_used": false,
       "range80": [
-        41.83941656409102,
-        51.52182680070002
+        41.88837172444452,
+        51.57078196105352
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 2.811959961201014,
-          "p_value": 0.004924063229294617,
+          "statistic": 2.8171715730452513,
+          "p_value": 0.004844863671610966,
           "significant_10pct": true
         }
       }
     },
     "12m": {
-      "forecast": 47.53029224537019,
+      "forecast": 47.59224822861281,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 6.962869835624704,
-      "baseline_rmse": 8.234832159042138,
-      "skill_pct": 15.446123234227361,
+      "rmse": 6.962496667747263,
+      "baseline_rmse": 8.235400959026748,
+      "skill_pct": 15.456494439220558,
       "direction_accuracy": 0.7413793103448276,
       "fallback_used": false,
       "range80": [
-        42.651368560846066,
-        52.409215929894316
+        42.71332454408869,
+        52.47117191313693
       ],
       "quality_gate": {
         "passed": true,
         "level": "준기관급",
         "dm_test": {
-          "statistic": 2.8176052166030088,
-          "p_value": 0.0048383259225937,
+          "statistic": 2.819821811007112,
+          "p_value": 0.004805032349521898,
           "significant_10pct": true
         }
       }
@@ -224,12 +224,12 @@
     "PCE": {
       "ok": true,
       "fresh": true,
-      "age_days": 90,
+      "age_days": 59,
       "max_age_days": 120,
       "label": "미국 개인소비지출",
       "latest": {
-        "date": "2026-05-01",
-        "value": 22059.8
+        "date": "2026-06-01",
+        "value": 22184.1
       },
       "url": "https://fred.stlouisfed.org/series/PCE",
       "collection_source": "FRED"
