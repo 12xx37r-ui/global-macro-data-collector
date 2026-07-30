@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.1.0",
+  "engine_version": "asset-oos-v1.1-resilient",
+  "generated_at_utc": "2026-07-30T16:28:08.740891+00:00",
+  "assets": {
+    "gold": {
+      "label": "금",
+      "ticker": "GC=F",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    },
+    "bond": {
+      "label": "미국 장기국채",
+      "ticker": "TLT",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    },
+    "bitcoin": {
+      "label": "비트코인",
+      "ticker": "BTC-USD",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    },
+    "sp500": {
+      "label": "S&P 500",
+      "ticker": "SPY",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    },
+    "cashShort": {
+      "label": "미국 단기국채",
+      "ticker": "SGOV",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    },
+    "copper": {
+      "label": "구리",
+      "ticker": "HG=F",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    },
+    "silver": {
+      "label": "은",
+      "ticker": "SI=F",
+      "available": false,
+      "weight_multiplier": 0.25,
+      "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치"
+    }
+  },
+  "source_status": {
+    "fred_ready": false,
+    "used_previous_results": false
+  },
+  "weight_policy": {
+    "A": 1.0,
+    "B": 0.75,
+    "C": 0.5,
+    "D": 0.25,
+    "F": 0.0,
+    "unavailable": 0.25
+  },
+  "limitations": [
+    "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
+    "무료 지연시세와 공개 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
+    "공개자료 일시 장애 시 마지막 정상 검증값을 재사용하고 stale 상태를 명시합니다."
+  ],
+  "errors": [
+    "FRED DGS10: RuntimeError: HTTP request failed after 4 attempts: https://fred.stlouisfed.org/graph/fredgraph.csv: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=45)"
+  ]
+}
