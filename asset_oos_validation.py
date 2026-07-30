@@ -12,7 +12,7 @@ import json
 import math
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Iterable
 from urllib.parse import quote
@@ -23,7 +23,7 @@ import requests
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "public" / "data" / "asset_oos_validation.json"
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.1"})
+SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.2"})
 
 ASSETS = {
     "gold": {"ticker": "GC=F", "label": "금"},
@@ -95,9 +95,20 @@ def yahoo_series(ticker: str, years: int = 12) -> dict[str, float]:
     return out
 
 
-def fred_series(series_id: str) -> dict[str, float]:
+def fred_series(series_id: str, years: int = 13) -> dict[str, float]:
+    """Download only the validation window instead of the series' full history.
+
+    FRED full-history CSVs can exceed GitHub Actions read timeouts.  The OOS
+    model uses at most eight training years plus warm-up, so 13 years is enough.
+    """
     url = "https://fred.stlouisfed.org/graph/fredgraph.csv"
-    r = get_with_retry(url, params={"id": series_id})
+    end = datetime.now(timezone.utc).date()
+    start = end - timedelta(days=366 * years)
+    r = get_with_retry(
+        url,
+        params={"id": series_id, "cosd": start.isoformat(), "coed": end.isoformat()},
+        attempts=5,
+    )
     out: dict[str, float] = {}
     for row in csv.DictReader(io.StringIO(r.text)):
         raw = row.get(series_id)
@@ -286,9 +297,9 @@ def main() -> None:
                     "available": False, "weight_multiplier": 0.25, "error": str(exc),
                 }
     payload = {
-        "schema_version": "1.1.0", "engine_version": "asset-oos-v1.1-resilient",
+        "schema_version": "1.2.0", "engine_version": "asset-oos-v1.2-bounded-fred",
         "generated_at_utc": now_iso(), "assets": assets_out,
-        "source_status": {"fred_ready": fred_ready, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
+        "source_status": {"fred_ready": fred_ready, "fred_window_years": 13, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
         "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
         "limitations": [
             "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
