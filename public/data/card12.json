@@ -2,63 +2,63 @@
   "schema_version": "1.1",
   "card": 12,
   "title": "선물시장 현재신호·검증형 방향예측",
-  "generated_at_utc": "2026-07-29T18:43:08.264102+00:00",
+  "generated_at_utc": "2026-07-30T16:08:57.655710+00:00",
   "current": {
     "ES=F": {
-      "value": 7421.5,
-      "date": "2026-07-29"
+      "value": 7426.5,
+      "date": "2026-07-30"
     },
     "NQ=F": {
-      "value": 27749.5,
-      "date": "2026-07-29"
+      "value": 28095.25,
+      "date": "2026-07-30"
     },
     "RTY=F": {
-      "value": 2931.5,
-      "date": "2026-07-29"
+      "value": 2936.699951171875,
+      "date": "2026-07-30"
     },
     "ZT=F": {
-      "value": 102.81640625,
-      "date": "2026-07-29"
+      "value": 102.94140625,
+      "date": "2026-07-30"
     },
     "ZF=F": {
-      "value": 106.2109375,
-      "date": "2026-07-29"
+      "value": 106.3671875,
+      "date": "2026-07-30"
     },
     "ZN=F": {
-      "value": 108.53125,
-      "date": "2026-07-29"
+      "value": 108.59375,
+      "date": "2026-07-30"
     },
     "ZB=F": {
-      "value": 110.0625,
-      "date": "2026-07-29"
+      "value": 109.40625,
+      "date": "2026-07-30"
     },
     "CL=F": {
-      "value": 84.87999725341797,
-      "date": "2026-07-29"
+      "value": 83.97000122070312,
+      "date": "2026-07-30"
     },
     "GC=F": {
-      "value": 4117.10009765625,
-      "date": "2026-07-29"
+      "value": 4167.5,
+      "date": "2026-07-30"
     },
     "HG=F": {
-      "value": 6.361999988555908,
-      "date": "2026-07-29"
+      "value": 6.468500137329102,
+      "date": "2026-07-30"
     },
     "DX-Y.NYB": {
-      "value": 101.21600341796875,
-      "date": "2026-07-29"
+      "value": 100.00399780273438,
+      "date": "2026-07-30"
     },
     "BTC=F": {
-      "value": 63925.0,
-      "date": "2026-07-29"
+      "value": 64940.0,
+      "date": "2026-07-30"
     }
   },
   "group_scores": {
-    "equity": -0.12143659740504488,
-    "rates": -0.8769599863835494,
-    "commodities": 0.303020345238931,
-    "dollar": 0.5524689916658301,
-    "crypto": -0.42010638286826185
+    "equity": -0.12443962260874959,
+    "rates": -0.7337932424239076,
+    "commodities": 0.3941022229711091,
+    "dollar": -0.13710187549235156,
+    "crypto": 0.054682836436792275
   },
   "market_signal": "neutral",
   "current_regime": "선물시장 혼조",
@@ -67,20 +67,20 @@
   "predictive_validation": {
     "groups": {
       "equity": {
-        "current_index": 48.78563402594955,
+        "current_index": 48.755603773912505,
         "forecasts": {
           "5d": {
-            "forecast": 48.78563402594955,
+            "forecast": 48.755603773912505,
             "model": "persistence",
             "samples": 180,
-            "rmse": 6.062448843527848,
-            "baseline_rmse": 6.062448843527848,
+            "rmse": 6.04964373919183,
+            "baseline_rmse": 6.04964373919183,
             "skill_pct": 0,
             "direction_accuracy": null,
             "fallback_used": true,
             "range80": [
-              41.016586390575306,
-              56.55468166132379
+              41.031448419793016,
+              56.47975912803199
             ],
             "quality_gate": {
               "passed": false,
@@ -93,47 +93,47 @@
             }
           },
           "1m": {
-            "forecast": 56.78563402594955,
+            "forecast": 56.755603773912505,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 12.262204969236986,
-            "baseline_rmse": 12.316396782073276,
-            "skill_pct": 0.4399972962479404,
-            "direction_accuracy": 0.5782312925170068,
+            "rmse": 12.325099935627644,
+            "baseline_rmse": 12.428209994714697,
+            "skill_pct": 0.8296452918875818,
+            "direction_accuracy": 0.581081081081081,
             "fallback_used": false,
             "range80": [
-              41.70886025950865,
-              71.86240779239046
+              41.4510069552804,
+              72.06020059254462
             ],
             "quality_gate": {
               "passed": false,
               "level": "참고용",
               "dm_test": {
-                "statistic": 0.1349129655780278,
-                "p_value": 0.8926806882282612,
+                "statistic": 0.25650004798786946,
+                "p_value": 0.7975647433895219,
                 "significant_10pct": false
               }
             }
           },
           "3m": {
-            "forecast": 56.78563402594955,
+            "forecast": 56.755603773912505,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 14.28065202021705,
-            "baseline_rmse": 15.730117687987699,
-            "skill_pct": 9.214588832209014,
-            "direction_accuracy": 0.61875,
+            "rmse": 14.297658678944035,
+            "baseline_rmse": 15.839707913344467,
+            "skill_pct": 9.735338825921803,
+            "direction_accuracy": 0.625,
             "fallback_used": false,
             "range80": [
-              39.244757014983485,
-              74.3265110369156
+              39.21472676294644,
+              74.29648078487857
             ],
             "quality_gate": {
               "passed": true,
               "level": "준기관급",
               "dm_test": {
-                "statistic": 4.023900478277267,
-                "p_value": 5.724211443536298e-05,
+                "statistic": 4.274783728523582,
+                "p_value": 1.913229206307321e-05,
                 "significant_10pct": true
               }
             }
@@ -141,20 +141,20 @@
         }
       },
       "rates": {
-        "current_index": 41.230400136164505,
+        "current_index": 42.66206757576092,
         "forecasts": {
           "5d": {
-            "forecast": 41.230400136164505,
+            "forecast": 42.66206757576092,
             "model": "persistence",
             "samples": 180,
-            "rmse": 3.3428018268521362,
-            "baseline_rmse": 3.3428018268521362,
+            "rmse": 3.3403596227004777,
+            "baseline_rmse": 3.3403596227004777,
             "skill_pct": 0,
             "direction_accuracy": null,
             "fallback_used": true,
             "range80": [
-              36.91841799412523,
-              45.54238227820378
+              38.350085433721645,
+              46.9740497178002
             ],
             "quality_gate": {
               "passed": false,
@@ -167,47 +167,47 @@
             }
           },
           "1m": {
-            "forecast": 44.67650481084357,
+            "forecast": 44.46737518026817,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 4.839638257786752,
-            "baseline_rmse": 7.077837862120642,
-            "skill_pct": 31.622645897447654,
+            "rmse": 4.841518540070295,
+            "baseline_rmse": 7.08474529803137,
+            "skill_pct": 31.662772105362748,
             "direction_accuracy": 0.7841726618705036,
             "fallback_used": false,
             "range80": [
-              38.521604098948416,
-              50.83140552273872
+              38.31247446837301,
+              50.62227589216333
             ],
             "quality_gate": {
               "passed": true,
               "level": "준기관급",
               "dm_test": {
-                "statistic": 7.526613527193221,
-                "p_value": 5.1958437552457326e-14,
+                "statistic": 7.562526426849566,
+                "p_value": 3.952393967665557e-14,
                 "significant_10pct": true
               }
             }
           },
           "3m": {
-            "forecast": 44.67650481084357,
+            "forecast": 44.46737518026817,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 5.624771282739037,
-            "baseline_rmse": 7.305267033704757,
-            "skill_pct": 23.003892167285798,
-            "direction_accuracy": 0.7483443708609272,
+            "rmse": 5.623156010825539,
+            "baseline_rmse": 7.301822231220528,
+            "skill_pct": 22.989688974041112,
+            "direction_accuracy": 0.7466666666666667,
             "fallback_used": false,
             "range80": [
-              36.706658686654926,
-              52.64635093503221
+              36.49752905607953,
+              52.43722130445681
             ],
             "quality_gate": {
               "passed": true,
               "level": "준기관급",
               "dm_test": {
-                "statistic": 6.2283568056991125,
-                "p_value": 4.713527346211777e-10,
+                "statistic": 6.222953442460602,
+                "p_value": 4.878821791010068e-10,
                 "significant_10pct": true
               }
             }
@@ -215,20 +215,20 @@
         }
       },
       "commodities": {
-        "current_index": 53.03020345238931,
+        "current_index": 53.94102222971109,
         "forecasts": {
           "5d": {
-            "forecast": 53.03020345238931,
+            "forecast": 53.94102222971109,
             "model": "persistence",
             "samples": 180,
-            "rmse": 4.631734901284513,
-            "baseline_rmse": 4.631734901284513,
+            "rmse": 4.620730912104613,
+            "baseline_rmse": 4.620730912104613,
             "skill_pct": 0,
             "direction_accuracy": null,
             "fallback_used": true,
             "range80": [
-              47.25106038346732,
-              58.8093465213113
+              48.1618791607891,
+              59.72016529863308
             ],
             "quality_gate": {
               "passed": false,
@@ -241,40 +241,40 @@
             }
           },
           "1m": {
-            "forecast": 47.27028158267801,
+            "forecast": 47.871702642896146,
             "model": "mean_reversion_12m",
             "samples": 180,
-            "rmse": 7.0537766354828335,
-            "baseline_rmse": 7.410287542845619,
-            "skill_pct": 4.811026634276628,
-            "direction_accuracy": 0.7310344827586207,
+            "rmse": 7.082742268289279,
+            "baseline_rmse": 7.467100860846598,
+            "skill_pct": 5.147360397563194,
+            "direction_accuracy": 0.7379310344827587,
             "fallback_used": false,
             "range80": [
-              38.397956558831126,
-              56.14260660652489
+              38.99937761904926,
+              56.74402766674303
             ],
             "quality_gate": {
-              "passed": false,
-              "level": "참고용",
+              "passed": true,
+              "level": "준기관급",
               "dm_test": {
-                "statistic": 1.5986930219328859,
-                "p_value": 0.1098888288825659,
-                "significant_10pct": false
+                "statistic": 1.7239121287763008,
+                "p_value": 0.08472370742267366,
+                "significant_10pct": true
               }
             }
           },
           "3m": {
-            "forecast": 53.03020345238931,
+            "forecast": 53.94102222971109,
             "model": "persistence",
             "samples": 180,
-            "rmse": 10.517995553200574,
-            "baseline_rmse": 10.517995553200574,
+            "rmse": 10.50560677101615,
+            "baseline_rmse": 10.50560677101615,
             "skill_pct": 0,
             "direction_accuracy": null,
             "fallback_used": true,
             "range80": [
-              40.07751599874338,
-              65.98289090603524
+              40.98833477606516,
+              66.89370968335702
             ],
             "quality_gate": {
               "passed": false,
@@ -289,20 +289,20 @@
         }
       },
       "crypto": {
-        "current_index": 45.79893617131738,
+        "current_index": 50.546828364367926,
         "forecasts": {
           "5d": {
-            "forecast": 45.79893617131738,
+            "forecast": 50.546828364367926,
             "model": "persistence",
             "samples": 180,
-            "rmse": 7.362083924629798,
-            "baseline_rmse": 7.362083924629798,
+            "rmse": 7.360498980714505,
+            "baseline_rmse": 7.360498980714505,
             "skill_pct": 0,
             "direction_accuracy": null,
             "fallback_used": true,
             "range80": [
-              37.09134568994021,
-              54.506526652694546
+              41.83923788299076,
+              59.25441884574509
             ],
             "quality_gate": {
               "passed": false,
@@ -315,47 +315,47 @@
             }
           },
           "1m": {
-            "forecast": 41.93144570767928,
+            "forecast": 43.08444643126052,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 15.366457807533902,
-            "baseline_rmse": 16.59455655117096,
-            "skill_pct": 7.40061200099017,
+            "rmse": 15.334481104358323,
+            "baseline_rmse": 16.576183845779227,
+            "skill_pct": 7.490884228682571,
             "direction_accuracy": 0.5783132530120482,
             "fallback_used": false,
             "range80": [
-              22.253192536875574,
-              61.60969887848299
+              24.013945638498733,
+              62.1549472240223
             ],
             "quality_gate": {
               "passed": true,
               "level": "준기관급",
               "dm_test": {
-                "statistic": 2.8256750842780147,
-                "p_value": 0.004718109537027448,
+                "statistic": 2.8511755209024234,
+                "p_value": 0.004355791788348551,
                 "significant_10pct": true
               }
             }
           },
           "3m": {
-            "forecast": 41.93144570767928,
+            "forecast": 43.08444643126052,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 16.22365803934873,
-            "baseline_rmse": 16.6033639114674,
-            "skill_pct": 2.286921338009218,
-            "direction_accuracy": 0.5060975609756098,
+            "rmse": 16.02429402055667,
+            "baseline_rmse": 16.48918004331206,
+            "skill_pct": 2.819339843062396,
+            "direction_accuracy": 0.5121951219512195,
             "fallback_used": false,
             "range80": [
-              20.866100748385563,
-              62.996790666973
+              22.415118377850927,
+              63.7537744846701
             ],
             "quality_gate": {
               "passed": false,
               "level": "참고용",
               "dm_test": {
-                "statistic": 0.7544812909402779,
-                "p_value": 0.4505602753686937,
+                "statistic": 0.9280408179287829,
+                "p_value": 0.35338639678134154,
                 "significant_10pct": false
               }
             }
@@ -367,6 +367,7 @@
       "equity:3m",
       "rates:1m",
       "rates:3m",
+      "commodities:1m",
       "crypto:1m"
     ],
     "quality_gate": {
@@ -384,8 +385,8 @@
       "ok": true,
       "label": "S&P500 선물",
       "latest": {
-        "value": 7421.5,
-        "date": "2026-07-29"
+        "value": 7426.5,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -393,8 +394,8 @@
       "ok": true,
       "label": "나스닥100 선물",
       "latest": {
-        "value": 27749.5,
-        "date": "2026-07-29"
+        "value": 28095.25,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -402,8 +403,8 @@
       "ok": true,
       "label": "러셀2000 선물",
       "latest": {
-        "value": 2931.5,
-        "date": "2026-07-29"
+        "value": 2936.699951171875,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -411,8 +412,8 @@
       "ok": true,
       "label": "미국 2년 국채선물",
       "latest": {
-        "value": 102.81640625,
-        "date": "2026-07-29"
+        "value": 102.94140625,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -420,8 +421,8 @@
       "ok": true,
       "label": "미국 5년 국채선물",
       "latest": {
-        "value": 106.2109375,
-        "date": "2026-07-29"
+        "value": 106.3671875,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -429,8 +430,8 @@
       "ok": true,
       "label": "미국 10년 국채선물",
       "latest": {
-        "value": 108.53125,
-        "date": "2026-07-29"
+        "value": 108.59375,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -438,8 +439,8 @@
       "ok": true,
       "label": "미국 30년 국채선물",
       "latest": {
-        "value": 110.0625,
-        "date": "2026-07-29"
+        "value": 109.40625,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -447,8 +448,8 @@
       "ok": true,
       "label": "WTI 원유선물",
       "latest": {
-        "value": 84.87999725341797,
-        "date": "2026-07-29"
+        "value": 83.97000122070312,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -456,8 +457,8 @@
       "ok": true,
       "label": "금선물",
       "latest": {
-        "value": 4117.10009765625,
-        "date": "2026-07-29"
+        "value": 4167.5,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -465,8 +466,8 @@
       "ok": true,
       "label": "구리선물",
       "latest": {
-        "value": 6.361999988555908,
-        "date": "2026-07-29"
+        "value": 6.468500137329102,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     },
@@ -474,8 +475,8 @@
       "ok": true,
       "label": "미국 달러인덱스(현물 대체신호)",
       "latest": {
-        "value": 101.21600341796875,
-        "date": "2026-07-29"
+        "value": 100.00399780273438,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed index proxy"
     },
@@ -483,8 +484,8 @@
       "ok": true,
       "label": "비트코인선물",
       "latest": {
-        "value": 63925.0,
-        "date": "2026-07-29"
+        "value": 64940.0,
+        "date": "2026-07-30"
       },
       "source": "Yahoo Finance delayed futures"
     }
