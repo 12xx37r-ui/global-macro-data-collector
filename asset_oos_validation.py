@@ -23,7 +23,7 @@ import requests
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "public" / "data" / "asset_oos_validation.json"
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.0"})
+SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.1"})
 
 ASSETS = {
     "gold": {"ticker": "GC=F", "label": "금"},
@@ -46,6 +46,33 @@ GROUP_TICKERS = {
 HORIZONS = {"1m": 21, "3m": 63}
 
 
+
+def get_with_retry(url: str, *, params: dict | None = None, attempts: int = 4) -> requests.Response:
+    """HTTP GET with bounded exponential backoff for transient public-data outages."""
+    last_exc: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            response = SESSION.get(url, params=params, timeout=(10, 45))
+            response.raise_for_status()
+            return response
+        except (requests.Timeout, requests.ConnectionError, requests.HTTPError) as exc:
+            last_exc = exc
+            if attempt >= attempts:
+                break
+            time.sleep(min(2 ** (attempt - 1), 8))
+    raise RuntimeError(f"HTTP request failed after {attempts} attempts: {url}: {last_exc}")
+
+
+def load_previous_payload() -> dict | None:
+    try:
+        if OUT.exists():
+            data = json.loads(OUT.read_text(encoding="utf-8"))
+            if isinstance(data, dict) and isinstance(data.get("assets"), dict):
+                return data
+    except Exception:
+        pass
+    return None
+
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -53,8 +80,7 @@ def now_iso() -> str:
 def yahoo_series(ticker: str, years: int = 12) -> dict[str, float]:
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{quote(ticker, safe='')}"
     params = {"range": f"{years}y", "interval": "1d", "events": "history", "includeAdjustedClose": "true"}
-    r = SESSION.get(url, params=params, timeout=25)
-    r.raise_for_status()
+    r = get_with_retry(url, params=params)
     result = r.json()["chart"]["result"][0]
     stamps = result.get("timestamp") or []
     q = (result.get("indicators", {}).get("adjclose") or result.get("indicators", {}).get("quote") or [{}])[0]
@@ -71,8 +97,7 @@ def yahoo_series(ticker: str, years: int = 12) -> dict[str, float]:
 
 def fred_series(series_id: str) -> dict[str, float]:
     url = "https://fred.stlouisfed.org/graph/fredgraph.csv"
-    r = SESSION.get(url, params={"id": series_id}, timeout=25)
-    r.raise_for_status()
+    r = get_with_retry(url, params={"id": series_id})
     out: dict[str, float] = {}
     for row in csv.DictReader(io.StringIO(r.text)):
         raw = row.get(series_id)
@@ -202,13 +227,37 @@ def build_features(asset_key: str, asset_price: dict[str, float], fred: list[dic
 
 def main() -> None:
     errors: list[str] = []
+    previous = load_previous_payload()
+    previous_assets = (previous or {}).get("assets", {})
+
     fred_ids = ["DGS10", "DFII10", "T10Y2Y", "DGS2"]
-    fred = []
+    fred: list[dict[str, float]] = []
+    fred_ready = True
     for sid in fred_ids:
-        fred.append(fred_series(sid))
+        try:
+            fred.append(fred_series(sid))
+        except Exception as exc:
+            fred_ready = False
+            errors.append(f"FRED {sid}: {type(exc).__name__}: {exc}")
+            break
         time.sleep(0.2)
-    assets_out = {}
+
+    assets_out: dict[str, dict] = {}
     for key, spec in ASSETS.items():
+        if not fred_ready:
+            prior = previous_assets.get(key)
+            if isinstance(prior, dict) and prior.get("horizons"):
+                reused = dict(prior)
+                reused["stale"] = True
+                reused["stale_reason"] = "FRED 일시 장애로 마지막 정상 OOS 결과 재사용"
+                assets_out[key] = reused
+            else:
+                assets_out[key] = {
+                    "label": spec["label"], "ticker": spec["ticker"],
+                    "available": False, "weight_multiplier": 0.25,
+                    "error": "FRED 일시 장애로 신규 검증 불가; 임시 25% 가중치",
+                }
+            continue
         try:
             asset_price = yahoo_series(spec["ticker"])
             group = []
@@ -216,7 +265,7 @@ def main() -> None:
                 group.append(yahoo_series(ticker))
                 time.sleep(0.2)
             price, card8_x, card12_x = build_features(key, asset_price, fred, group)
-            row = {"label": spec["label"], "ticker": spec["ticker"], "horizons": {}}
+            row = {"label": spec["label"], "ticker": spec["ticker"], "horizons": {}, "stale": False}
             for hname, days in HORIZONS.items():
                 row["horizons"][hname] = {
                     "card8": rolling_oos(card8_x, price, days),
@@ -225,14 +274,26 @@ def main() -> None:
             assets_out[key] = row
         except Exception as exc:  # keep other assets alive
             errors.append(f"{key}: {type(exc).__name__}: {exc}")
-            assets_out[key] = {"label": spec["label"], "ticker": spec["ticker"], "available": False, "error": str(exc)}
+            prior = previous_assets.get(key)
+            if isinstance(prior, dict) and prior.get("horizons"):
+                reused = dict(prior)
+                reused["stale"] = True
+                reused["stale_reason"] = f"신규 수집 실패로 마지막 정상값 재사용: {type(exc).__name__}"
+                assets_out[key] = reused
+            else:
+                assets_out[key] = {
+                    "label": spec["label"], "ticker": spec["ticker"],
+                    "available": False, "weight_multiplier": 0.25, "error": str(exc),
+                }
     payload = {
-        "schema_version": "1.0.0", "engine_version": "asset-oos-v1.0",
+        "schema_version": "1.1.0", "engine_version": "asset-oos-v1.1-resilient",
         "generated_at_utc": now_iso(), "assets": assets_out,
+        "source_status": {"fred_ready": fred_ready, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
         "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
         "limitations": [
             "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
             "무료 지연시세와 공개 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
+            "공개자료 일시 장애 시 마지막 정상 검증값을 재사용하고 stale 상태를 명시합니다.",
         ],
         "errors": errors,
     }
