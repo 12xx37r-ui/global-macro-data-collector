@@ -45,6 +45,9 @@ GROUP_TICKERS = {
     "copper": ["HG=F", "CL=F"],
     "silver": ["SI=F", "GC=F", "HG=F"],
 }
+# Backward-compatible public name used by tests and downstream tooling.
+# CARD12_TICKERS is the canonical alias for the card-12 futures/proxy mapping.
+CARD12_TICKERS = GROUP_TICKERS
 HORIZONS = {"1m": 21, "3m": 63}
 
 
