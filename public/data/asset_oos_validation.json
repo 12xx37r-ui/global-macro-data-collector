@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.6.0",
-  "engine_version": "asset-oos-v1.6-reit-added",
-  "generated_at_utc": "2026-07-31T05:02:54.326430+00:00",
+  "schema_version": "1.7.0",
+  "engine_version": "asset-oos-v1.7-high-yield-added",
+  "generated_at_utc": "2026-07-31T05:21:16.768285+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -206,7 +206,7 @@
             "correlation": 0.01,
             "rmse": 0.054278,
             "zero_baseline_rmse": 0.053689,
-            "skill_pct": -1.096,
+            "skill_pct": -1.097,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -351,6 +351,65 @@
             "rmse": 0.085662,
             "zero_baseline_rmse": 0.08752,
             "skill_pct": 2.123,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
+    },
+    "highYield": {
+      "label": "미국 하이일드 회사채",
+      "ticker": "HYG",
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.6019,
+            "correlation": -0.0894,
+            "rmse": 0.026993,
+            "zero_baseline_rmse": 0.02519,
+            "skill_pct": -7.158,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5728,
+            "correlation": 0.0331,
+            "rmse": 0.025728,
+            "zero_baseline_rmse": 0.02519,
+            "skill_pct": -2.134,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.6768,
+            "correlation": 0.1371,
+            "rmse": 0.037992,
+            "zero_baseline_rmse": 0.036892,
+            "skill_pct": -2.982,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.6364,
+            "correlation": 0.1292,
+            "rmse": 0.036369,
+            "zero_baseline_rmse": 0.036892,
+            "skill_pct": 1.417,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
