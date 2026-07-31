@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.1.0",
+  "engine_version": "equity-fundamentals-v1.2-bounded-parallel",
+  "generated_at_utc": "2026-07-31T04:09:37.257401+00:00",
+  "indices": {
+    "sp500": {
+      "available": true,
+      "values": {
+        "forward_pe": 21.485,
+        "trailing_pe": 27.62,
+        "price_sales": 4.92,
+        "eps_growth_pct": 15.545
+      },
+      "metric_counts": {
+        "forward_pe": 20,
+        "trailing_pe": 20,
+        "price_sales": 20,
+        "eps_growth_pct": 20
+      },
+      "sample_count": 20,
+      "symbols_used": [
+        "AAPL",
+        "AMZN",
+        "AVGO",
+        "BRK-B",
+        "COST",
+        "CVX",
+        "GOOGL",
+        "HD",
+        "JPM",
+        "KO",
+        "LLY",
+        "MA",
+        "META",
+        "MSFT",
+        "NVDA",
+        "PG",
+        "UNH",
+        "V",
+        "WMT",
+        "XOM"
+      ],
+      "stale_metrics": [],
+      "method": "representative constituent median; bounded parallel Yahoo batch/summary + Finviz fallback; last-good per-metric retention",
+      "label": "S&P 500 대표 업종 대형주"
+    },
+    "nasdaq": {
+      "available": true,
+      "values": {
+        "forward_pe": 19.62,
+        "trailing_pe": 26.96,
+        "price_sales": 6.81,
+        "eps_growth_pct": 12.535
+      },
+      "metric_counts": {
+        "forward_pe": 20,
+        "trailing_pe": 19,
+        "price_sales": 20,
+        "eps_growth_pct": 20
+      },
+      "sample_count": 20,
+      "symbols_used": [
+        "AAPL",
+        "ADBE",
+        "AMD",
+        "AMGN",
+        "AMZN",
+        "AVGO",
+        "BKNG",
+        "COST",
+        "CSCO",
+        "GOOGL",
+        "INTC",
+        "META",
+        "MSFT",
+        "NFLX",
+        "NVDA",
+        "PEP",
+        "QCOM",
+        "TMUS",
+        "TSLA",
+        "TXN"
+      ],
+      "stale_metrics": [],
+      "method": "representative constituent median; bounded parallel Yahoo batch/summary + Finviz fallback; last-good per-metric retention",
+      "label": "나스닥100 대표 성장주"
+    }
+  },
+  "source_status": {
+    "yahoo_batch_symbols": 0,
+    "fallback_symbols": 32,
+    "total_symbols": 32,
+    "fresh": true,
+    "bounded_request_timeout_seconds": 8,
+    "max_workers": 16
+  }
+}
