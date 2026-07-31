@@ -5,6 +5,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 from bs4 import BeautifulSoup
@@ -134,15 +135,24 @@ def main() -> None:
         "Accept": "text/html,application/xhtml+xml",
     })
 
-    for url in candidate_urls():
+    def fetch_report(url: str):
         try:
-            response = session.get(url, timeout=25)
+            response = session.get(url, timeout=(4, 8))
             response.raise_for_status()
-            parsed = parse_report(response.text, url)
+            return url, parse_report(response.text, url), None
+        except Exception as exc:
+            return url, None, exc
+
+    # Fetch candidate reports concurrently so a slow ISM page cannot block the
+    # entire workflow for several minutes.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(fetch_report, url) for url in candidate_urls()]
+        for fut in as_completed(futures):
+            url, parsed, exc = fut.result()
             if parsed:
                 found.append(parsed)
-        except Exception as exc:
-            errors.append(f"{url}: {exc}")
+            elif exc is not None:
+                errors.append(f"{url}: {exc}")
 
     history = merge_history(history, found)
     if not history:

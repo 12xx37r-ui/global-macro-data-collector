@@ -1,17 +1,18 @@
-"""Collect resilient US equity index fundamentals for the Apps Script dashboard.
+"""Fast, bounded US equity-index fundamentals collector.
 
-Runs in GitHub Actions, not at page load. It collects representative constituent
-fundamentals from multiple public Yahoo endpoints and writes a compact JSON.
-If a fresh run is partial, the last-good values are retained per metric.
+The collector is designed for GitHub Actions. Network calls are parallel and
+strictly time-bounded so one blocked public endpoint cannot hold the workflow
+for many minutes. Fresh values are merged metric-by-metric with the previous
+last-good JSON.
 """
 from __future__ import annotations
 
 import json
 import math
-import time
 import re
-from html import unescape
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+from html import unescape
 from pathlib import Path
 from statistics import median
 from typing import Any
@@ -21,10 +22,13 @@ import requests
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "public" / "data" / "equity_fundamentals.json"
 SESSION = requests.Session()
-SESSION.headers.update({
+HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36",
     "Accept": "application/json,text/plain,*/*",
-})
+}
+CONNECT_TIMEOUT = 4
+READ_TIMEOUT = 8
+MAX_WORKERS = 16
 
 UNIVERSES = {
     "sp500": {
@@ -49,26 +53,18 @@ def finite(v: Any) -> float | None:
     return n if math.isfinite(n) else None
 
 
-def request_json(url: str, params: dict[str, str] | None = None, attempts: int = 3) -> dict:
-    err = None
-    for i in range(attempts):
-        try:
-            r = SESSION.get(url, params=params, timeout=(10, 30))
-            if r.status_code == 200:
-                return r.json()
-            err = RuntimeError(f"HTTP {r.status_code}")
-        except Exception as exc:  # network resilience
-            err = exc
-        time.sleep(1.5 * (i + 1))
-    raise RuntimeError(str(err or "request failed"))
+def get_json(url: str, params: dict[str, str] | None = None) -> dict:
+    r = requests.get(url, params=params, headers=HEADERS, timeout=(CONNECT_TIMEOUT, READ_TIMEOUT))
+    r.raise_for_status()
+    return r.json()
 
 
 def yahoo_quote_batch(symbols: list[str]) -> dict[str, dict]:
-    out: dict[str, dict] = {}
     joined = ",".join(symbols)
     for host in ("query1.finance.yahoo.com", "query2.finance.yahoo.com"):
         try:
-            j = request_json(f"https://{host}/v7/finance/quote", {"symbols": joined})
+            j = get_json(f"https://{host}/v7/finance/quote", {"symbols": joined})
+            out: dict[str, dict] = {}
             for q in (((j or {}).get("quoteResponse") or {}).get("result") or []):
                 sym = str(q.get("symbol") or "")
                 if not sym:
@@ -81,75 +77,62 @@ def yahoo_quote_batch(symbols: list[str]) -> dict[str, dict]:
                     "trailing_pe": finite(q.get("trailingPE")),
                     "price_sales": finite(q.get("priceToSalesTrailing12Months")),
                     "eps_growth_pct": growth,
-                    "source": f"Yahoo quote {host}",
+                    "sources": [f"Yahoo quote {host}"],
                 }
             if out:
-                break
-        except Exception:
-            continue
-    return out
-
-
-def yahoo_summary(symbol: str) -> dict:
-    modules = "summaryDetail,defaultKeyStatistics,financialData,earningsTrend"
-    for host in ("query1.finance.yahoo.com", "query2.finance.yahoo.com"):
-        try:
-            j = request_json(f"https://{host}/v10/finance/quoteSummary/{symbol}", {"modules": modules})
-            q = ((((j or {}).get("quoteSummary") or {}).get("result") or [None])[0] or {})
-            if not q:
-                continue
-            sd, dk, fd = q.get("summaryDetail") or {}, q.get("defaultKeyStatistics") or {}, q.get("financialData") or {}
-            growth = finite(fd.get("earningsGrowth"))
-            if growth is not None and abs(growth) <= 2:
-                growth *= 100
-            if growth is None:
-                trends = (q.get("earningsTrend") or {}).get("trend") or []
-                tr = next((x for x in trends if x.get("period") == "+1y"), None) or next((x for x in trends if x.get("period") == "0y"), None)
-                if tr:
-                    growth = finite(tr.get("growth")) or finite((tr.get("earningsEstimate") or {}).get("growth"))
-                    if growth is not None and abs(growth) <= 2:
-                        growth *= 100
-            return {
-                "forward_pe": finite(sd.get("forwardPE")) or finite(dk.get("forwardPE")),
-                "trailing_pe": finite(sd.get("trailingPE")) or finite(dk.get("trailingPE")),
-                "price_sales": finite(sd.get("priceToSalesTrailing12Months")) or finite(dk.get("priceToSalesTrailing12Months")),
-                "eps_growth_pct": growth,
-                "source": f"Yahoo summary {host}",
-            }
+                return out
         except Exception:
             continue
     return {}
 
 
+def yahoo_summary_host(symbol: str, host: str) -> dict:
+    modules = "summaryDetail,defaultKeyStatistics,financialData,earningsTrend"
+    try:
+        j = get_json(f"https://{host}/v10/finance/quoteSummary/{symbol}", {"modules": modules})
+        q = ((((j or {}).get("quoteSummary") or {}).get("result") or [None])[0] or {})
+        if not q:
+            return {}
+        sd, dk, fd = q.get("summaryDetail") or {}, q.get("defaultKeyStatistics") or {}, q.get("financialData") or {}
+        growth = finite(fd.get("earningsGrowth"))
+        if growth is not None and abs(growth) <= 2:
+            growth *= 100
+        if growth is None:
+            trends = (q.get("earningsTrend") or {}).get("trend") or []
+            tr = next((x for x in trends if x.get("period") == "+1y"), None) or next((x for x in trends if x.get("period") == "0y"), None)
+            if tr:
+                growth = finite(tr.get("growth")) or finite((tr.get("earningsEstimate") or {}).get("growth"))
+                if growth is not None and abs(growth) <= 2:
+                    growth *= 100
+        return {
+            "forward_pe": finite(sd.get("forwardPE")) or finite(dk.get("forwardPE")),
+            "trailing_pe": finite(sd.get("trailingPE")) or finite(dk.get("trailingPE")),
+            "price_sales": finite(sd.get("priceToSalesTrailing12Months")) or finite(dk.get("priceToSalesTrailing12Months")),
+            "eps_growth_pct": growth,
+            "source": f"Yahoo summary {host}",
+        }
+    except Exception:
+        return {}
 
 
 def finviz_snapshot(symbol: str) -> dict:
-    """Independent HTML fallback for constituent fundamentals.
-
-    Finviz exposes the four fields used here in the quote snapshot table. The
-    parser is deliberately label-driven so layout changes do not silently map
-    a value to the wrong metric.
-    """
-    url = "https://finviz.com/quote.ashx"
     try:
-        r = SESSION.get(url, params={"t": symbol, "p": "d"}, timeout=(10, 30), headers={
-            "User-Agent": SESSION.headers.get("User-Agent", "Mozilla/5.0"),
-            "Accept": "text/html,application/xhtml+xml",
-            "Referer": "https://finviz.com/",
-        })
+        r = SESSION.get(
+            "https://finviz.com/quote.ashx",
+            params={"t": symbol, "p": "d"},
+            timeout=(CONNECT_TIMEOUT, READ_TIMEOUT),
+            headers={**HEADERS, "Accept": "text/html,application/xhtml+xml", "Referer": "https://finviz.com/"},
+        )
         if r.status_code != 200:
             return {}
-        text = unescape(r.text)
-        clean = re.sub(r"<[^>]+>", " ", text)
-        clean = re.sub(r"\s+", " ", clean)
+        clean = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", unescape(r.text)))
+
         def field(label: str) -> float | None:
-            m = re.search(r"(?:^|\s)" + re.escape(label) + r"\s+(-?\d+(?:\.\d+)?%?|-)\s", clean, re.I)
+            m = re.search(r"(?:^|\s)" + re.escape(label) + r"\s+(-?\d+(?:\.\d+)?%?|-)(?:\s|$)", clean, re.I)
             if not m or m.group(1) == "-":
                 return None
-            v = m.group(1)
-            pct = v.endswith("%")
-            n = finite(v.rstrip("%"))
-            return n if n is None or not pct else n
+            return finite(m.group(1).rstrip("%"))
+
         return {
             "forward_pe": field("Forward P/E"),
             "trailing_pe": field("P/E"),
@@ -160,13 +143,24 @@ def finviz_snapshot(symbol: str) -> dict:
     except Exception:
         return {}
 
+
 def merge_metrics(base: dict, extra: dict) -> dict:
     for k in METRICS:
         if finite(base.get(k)) is None and finite(extra.get(k)) is not None:
             base[k] = finite(extra[k])
-    if extra.get("source"):
-        base.setdefault("sources", []).append(extra["source"])
+    src = extra.get("source")
+    if src:
+        base.setdefault("sources", []).append(src)
     return base
+
+
+def fetch_fallback(task: tuple[str, str]) -> tuple[str, dict]:
+    source, symbol = task
+    if source == "y1":
+        return symbol, yahoo_summary_host(symbol, "query1.finance.yahoo.com")
+    if source == "y2":
+        return symbol, yahoo_summary_host(symbol, "query2.finance.yahoo.com")
+    return symbol, finviz_snapshot(symbol)
 
 
 def aggregate(rows: dict[str, dict], previous: dict | None) -> dict:
@@ -191,49 +185,60 @@ def aggregate(rows: dict[str, dict], previous: dict | None) -> dict:
         "sample_count": len([1 for r in rows.values() if any(finite(r.get(m)) is not None for m in METRICS)]),
         "symbols_used": sorted([s for s, r in rows.items() if any(finite(r.get(m)) is not None for m in METRICS)]),
         "stale_metrics": stale_metrics,
-        "method": "representative constituent median; Yahoo v7 batch + quoteSummary + independent Finviz snapshot fallback; last-good per-metric retention",
+        "method": "representative constituent median; bounded parallel Yahoo batch/summary + Finviz fallback; last-good per-metric retention",
     }
 
 
 def main() -> None:
-    previous = {}
+    previous: dict = {}
     if OUT.exists():
         try:
             previous = json.loads(OUT.read_text(encoding="utf-8"))
         except Exception:
             previous = {}
+
     all_symbols = sorted({s for u in UNIVERSES.values() for s in u["symbols"]})
     batch = yahoo_quote_batch(all_symbols)
     rows: dict[str, dict] = {s: dict(batch.get(s) or {}) for s in all_symbols}
-    # Only request slower summaries for symbols whose batch response lacks at least two metrics.
-    for s in all_symbols:
-        have = sum(finite(rows[s].get(m)) is not None for m in METRICS)
-        if have < 3:
-            rows[s] = merge_metrics(rows[s], yahoo_summary(s))
-            have = sum(finite(rows[s].get(m)) is not None for m in METRICS)
-            if have < 3:
-                rows[s] = merge_metrics(rows[s], finviz_snapshot(s))
-            time.sleep(0.12)
+    missing = [s for s in all_symbols if sum(finite(rows[s].get(m)) is not None for m in METRICS) < 3]
+
+    # All slow fallback calls run concurrently. Maximum network wait is bounded
+    # by three waves of 8-second reads instead of 40 symbols sequentially.
+    tasks = [(src, sym) for sym in missing for src in ("y1", "y2", "finviz")]
+    if tasks:
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+            futures = [pool.submit(fetch_fallback, task) for task in tasks]
+            for fut in as_completed(futures):
+                try:
+                    symbol, extra = fut.result()
+                    rows[symbol] = merge_metrics(rows[symbol], extra)
+                except Exception:
+                    continue
+
     indices = {}
     for key, cfg in UNIVERSES.items():
         subset = {s: rows.get(s, {}) for s in cfg["symbols"]}
         agg = aggregate(subset, ((previous.get("indices") or {}).get(key)))
         agg["label"] = cfg["label"]
         indices[key] = agg
+
     output = {
-        "schema_version": "1.0.0",
-        "engine_version": "equity-fundamentals-v1.1-yahoo-finviz",
+        "schema_version": "1.1.0",
+        "engine_version": "equity-fundamentals-v1.2-bounded-parallel",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "indices": indices,
         "source_status": {
             "yahoo_batch_symbols": len(batch),
+            "fallback_symbols": len(missing),
             "total_symbols": len(all_symbols),
             "fresh": all(x.get("available") for x in indices.values()),
+            "bounded_request_timeout_seconds": READ_TIMEOUT,
+            "max_workers": MAX_WORKERS,
         },
     }
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"wrote {OUT} (sp500={indices['sp500']['sample_count']}, nasdaq={indices['nasdaq']['sample_count']})")
+    print(f"wrote {OUT} (sp500={indices['sp500']['sample_count']}, nasdaq={indices['nasdaq']['sample_count']}, fallbacks={len(missing)})")
 
 
 if __name__ == "__main__":
