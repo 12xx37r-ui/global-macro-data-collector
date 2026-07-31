@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.5.0",
-  "engine_version": "asset-oos-v1.5-nasdaq-required",
-  "generated_at_utc": "2026-07-31T04:10:46.227902+00:00",
+  "schema_version": "1.6.0",
+  "engine_version": "asset-oos-v1.6-reit-added",
+  "generated_at_utc": "2026-07-31T05:02:54.326430+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -292,6 +292,65 @@
             "rmse": 0.105949,
             "zero_baseline_rmse": 0.111726,
             "skill_pct": 5.17,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
+    },
+    "reit": {
+      "label": "미국 리츠",
+      "ticker": "VNQ",
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "fail",
+            "samples": 103,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4854,
+            "correlation": -0.085,
+            "rmse": 0.065711,
+            "zero_baseline_rmse": 0.062756,
+            "skill_pct": -4.708,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "strong_pass",
+            "samples": 103,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6019,
+            "correlation": 0.1995,
+            "rmse": 0.061521,
+            "zero_baseline_rmse": 0.062756,
+            "skill_pct": 1.969,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5758,
+            "correlation": 0.155,
+            "rmse": 0.088562,
+            "zero_baseline_rmse": 0.08752,
+            "skill_pct": -1.19,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "strong_pass",
+            "samples": 99,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.5859,
+            "correlation": 0.2349,
+            "rmse": 0.085662,
+            "zero_baseline_rmse": 0.08752,
+            "skill_pct": 2.123,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
