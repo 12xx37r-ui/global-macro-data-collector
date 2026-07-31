@@ -177,3 +177,8 @@ if __name__ == "__main__":
     card8_main()
     from macro_cards_9_12 import main as cards_main
     cards_main()
+    # Equity fundamentals are part of the collector contract. This guarantees
+    # equity_fundamentals.json is generated even when an older workflow only
+    # runs `python collector.py` and omits a separate equity step.
+    from equity_fundamentals import main as equity_main
+    equity_main()
