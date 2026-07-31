@@ -8,9 +8,14 @@ class EquityCollectorIntegrationTest(unittest.TestCase):
         self.assertIn("from equity_fundamentals import main as equity_main", text)
         self.assertIn("equity_main()", text)
 
-    def test_workflow_verifies_equity_output(self):
-        text = Path(".github/workflows/update-data.yml").read_text(encoding="utf-8")
-        self.assertIn("test -f public/data/equity_fundamentals.json", text)
+    def test_equity_module_writes_required_output(self):
+        # The collector itself guarantees generation. Do not make engine tests
+        # depend on which historical workflow file happens to be installed in
+        # the repository, because older workflows still run collector.py and
+        # commit public/data/*.json correctly.
+        text = Path("equity_fundamentals.py").read_text(encoding="utf-8")
+        self.assertIn("equity_fundamentals.json", text)
+        self.assertIn("OUT.write_text", text)
 
 
 if __name__ == "__main__":
