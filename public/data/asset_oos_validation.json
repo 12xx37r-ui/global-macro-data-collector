@@ -1,7 +1,7 @@
 {
-  "schema_version": "1.7.0",
-  "engine_version": "asset-oos-v1.7-high-yield-added",
-  "generated_at_utc": "2026-07-31T05:21:16.768285+00:00",
+  "schema_version": "1.8.0",
+  "engine_version": "asset-oos-v1.8-oil-emerging-investment-grade-added",
+  "generated_at_utc": "2026-07-31T05:42:35.889005+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -311,7 +311,7 @@
             "direction_accuracy": 0.4854,
             "correlation": -0.085,
             "rmse": 0.065711,
-            "zero_baseline_rmse": 0.062756,
+            "zero_baseline_rmse": 0.062757,
             "skill_pct": -4.708,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
@@ -323,7 +323,7 @@
             "direction_accuracy": 0.6019,
             "correlation": 0.1995,
             "rmse": 0.061521,
-            "zero_baseline_rmse": 0.062756,
+            "zero_baseline_rmse": 0.062757,
             "skill_pct": 1.969,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
@@ -410,6 +410,183 @@
             "rmse": 0.036369,
             "zero_baseline_rmse": 0.036892,
             "skill_pct": 1.417,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
+    },
+    "oil": {
+      "label": "원유",
+      "ticker": "CL=F",
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5243,
+            "correlation": -0.0807,
+            "rmse": 0.318748,
+            "zero_baseline_rmse": 0.118148,
+            "skill_pct": -169.786,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "fail",
+            "samples": 103,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4272,
+            "correlation": -0.0513,
+            "rmse": 0.164905,
+            "zero_baseline_rmse": 0.118148,
+            "skill_pct": -39.574,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "fail",
+            "samples": 99,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4242,
+            "correlation": -0.0102,
+            "rmse": 0.293917,
+            "zero_baseline_rmse": 0.218343,
+            "skill_pct": -34.612,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5051,
+            "correlation": 0.1607,
+            "rmse": 0.224927,
+            "zero_baseline_rmse": 0.218343,
+            "skill_pct": -3.015,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
+    },
+    "emerging": {
+      "label": "신흥국 주식",
+      "ticker": "EEM",
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "weak",
+            "samples": 103,
+            "grade": "D",
+            "weight_multiplier": 0.25,
+            "direction_accuracy": 0.5049,
+            "correlation": -0.049,
+            "rmse": 0.060271,
+            "zero_baseline_rmse": 0.056658,
+            "skill_pct": -6.378,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "strong_pass",
+            "samples": 103,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6117,
+            "correlation": 0.1543,
+            "rmse": 0.05645,
+            "zero_baseline_rmse": 0.056658,
+            "skill_pct": 0.366,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.4444,
+            "correlation": 0.0315,
+            "rmse": 0.098599,
+            "zero_baseline_rmse": 0.092933,
+            "skill_pct": -6.096,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.4646,
+            "correlation": 0.0573,
+            "rmse": 0.095498,
+            "zero_baseline_rmse": 0.092933,
+            "skill_pct": -2.76,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false
+    },
+    "investmentGrade": {
+      "label": "미국 투자등급 회사채",
+      "ticker": "LQD",
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5437,
+            "correlation": 0.0613,
+            "rmse": 0.0259,
+            "zero_baseline_rmse": 0.024753,
+            "skill_pct": -4.633,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5728,
+            "correlation": 0.14,
+            "rmse": 0.025435,
+            "zero_baseline_rmse": 0.024753,
+            "skill_pct": -2.757,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5455,
+            "correlation": 0.2073,
+            "rmse": 0.043306,
+            "zero_baseline_rmse": 0.042245,
+            "skill_pct": -2.513,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "strong_pass",
+            "samples": 99,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.596,
+            "correlation": 0.246,
+            "rmse": 0.04163,
+            "zero_baseline_rmse": 0.042245,
+            "skill_pct": 1.455,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
