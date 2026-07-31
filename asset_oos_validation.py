@@ -33,6 +33,9 @@ ASSETS = {
     "nasdaq": {"ticker": "QQQ", "label": "나스닥100"},
     "reit": {"ticker": "VNQ", "label": "미국 리츠"},
     "highYield": {"ticker": "HYG", "label": "미국 하이일드 회사채"},
+    "oil": {"ticker": "CL=F", "label": "원유"},
+    "emerging": {"ticker": "EEM", "label": "신흥국 주식"},
+    "investmentGrade": {"ticker": "LQD", "label": "미국 투자등급 회사채"},
     "cashShort": {"ticker": "SGOV", "label": "미국 단기국채"},
     "copper": {"ticker": "HG=F", "label": "구리"},
     "silver": {"ticker": "SI=F", "label": "은"},
@@ -45,6 +48,9 @@ GROUP_TICKERS = {
     "nasdaq": ["NQ=F", "ES=F"],
     "reit": ["ES=F"],
     "highYield": ["ES=F", "ZN=F"],
+    "oil": ["CL=F"],
+    "emerging": ["ES=F", "DX-Y.NYB"],
+    "investmentGrade": ["ZN=F", "ZB=F", "ES=F"],
     "cashShort": ["ZT=F", "ZF=F"],
     "copper": ["HG=F", "CL=F"],
     "silver": ["SI=F", "GC=F", "HG=F"],
@@ -368,7 +374,7 @@ def main() -> None:
                     "available": False, "weight_multiplier": 0.25, "error": str(exc),
                 }
     payload = {
-        "schema_version": "1.7.0", "engine_version": "asset-oos-v1.7-high-yield-added",
+        "schema_version": "1.8.0", "engine_version": "asset-oos-v1.8-oil-emerging-investment-grade-added",
         "generated_at_utc": now_iso(), "assets": assets_out,
         "source_status": {"treasury_ready": treasury_ready, "treasury_window_years": 13, "fred_dependency": False, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
         "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
