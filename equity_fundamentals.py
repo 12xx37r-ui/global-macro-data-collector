@@ -9,6 +9,8 @@ from __future__ import annotations
 import json
 import math
 import time
+import re
+from html import unescape
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
@@ -119,6 +121,45 @@ def yahoo_summary(symbol: str) -> dict:
     return {}
 
 
+
+
+def finviz_snapshot(symbol: str) -> dict:
+    """Independent HTML fallback for constituent fundamentals.
+
+    Finviz exposes the four fields used here in the quote snapshot table. The
+    parser is deliberately label-driven so layout changes do not silently map
+    a value to the wrong metric.
+    """
+    url = "https://finviz.com/quote.ashx"
+    try:
+        r = SESSION.get(url, params={"t": symbol, "p": "d"}, timeout=(10, 30), headers={
+            "User-Agent": SESSION.headers.get("User-Agent", "Mozilla/5.0"),
+            "Accept": "text/html,application/xhtml+xml",
+            "Referer": "https://finviz.com/",
+        })
+        if r.status_code != 200:
+            return {}
+        text = unescape(r.text)
+        clean = re.sub(r"<[^>]+>", " ", text)
+        clean = re.sub(r"\s+", " ", clean)
+        def field(label: str) -> float | None:
+            m = re.search(r"(?:^|\s)" + re.escape(label) + r"\s+(-?\d+(?:\.\d+)?%?|-)\s", clean, re.I)
+            if not m or m.group(1) == "-":
+                return None
+            v = m.group(1)
+            pct = v.endswith("%")
+            n = finite(v.rstrip("%"))
+            return n if n is None or not pct else n
+        return {
+            "forward_pe": field("Forward P/E"),
+            "trailing_pe": field("P/E"),
+            "price_sales": field("P/S"),
+            "eps_growth_pct": field("EPS next Y"),
+            "source": "Finviz quote snapshot",
+        }
+    except Exception:
+        return {}
+
 def merge_metrics(base: dict, extra: dict) -> dict:
     for k in METRICS:
         if finite(base.get(k)) is None and finite(extra.get(k)) is not None:
@@ -150,7 +191,7 @@ def aggregate(rows: dict[str, dict], previous: dict | None) -> dict:
         "sample_count": len([1 for r in rows.values() if any(finite(r.get(m)) is not None for m in METRICS)]),
         "symbols_used": sorted([s for s, r in rows.items() if any(finite(r.get(m)) is not None for m in METRICS)]),
         "stale_metrics": stale_metrics,
-        "method": "representative constituent median; Yahoo v7 batch + quoteSummary fallback; last-good per-metric retention",
+        "method": "representative constituent median; Yahoo v7 batch + quoteSummary + independent Finviz snapshot fallback; last-good per-metric retention",
     }
 
 
@@ -169,6 +210,9 @@ def main() -> None:
         have = sum(finite(rows[s].get(m)) is not None for m in METRICS)
         if have < 3:
             rows[s] = merge_metrics(rows[s], yahoo_summary(s))
+            have = sum(finite(rows[s].get(m)) is not None for m in METRICS)
+            if have < 3:
+                rows[s] = merge_metrics(rows[s], finviz_snapshot(s))
             time.sleep(0.12)
     indices = {}
     for key, cfg in UNIVERSES.items():
@@ -178,7 +222,7 @@ def main() -> None:
         indices[key] = agg
     output = {
         "schema_version": "1.0.0",
-        "engine_version": "equity-fundamentals-v1.0-resilient",
+        "engine_version": "equity-fundamentals-v1.1-yahoo-finviz",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "indices": indices,
         "source_status": {
