@@ -1,7 +1,7 @@
 {
   "schema_version": "1.9.0",
   "engine_version": "asset-oos-v1.9-complete-13-assets-multisource",
-  "generated_at_utc": "2026-07-31T05:42:35.889005+00:00",
+  "generated_at_utc": "2026-08-01T21:23:38.138848+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -9,15 +9,15 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "weak",
+            "status": "limited_pass",
             "samples": 103,
-            "grade": "D",
-            "weight_multiplier": 0.25,
-            "direction_accuracy": 0.5049,
-            "correlation": 0.0153,
-            "rmse": 0.044191,
-            "zero_baseline_rmse": 0.043964,
-            "skill_pct": -0.517,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5437,
+            "correlation": 0.0018,
+            "rmse": 0.042207,
+            "zero_baseline_rmse": 0.041879,
+            "skill_pct": -0.785,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -25,11 +25,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.534,
-            "correlation": 0.0527,
-            "rmse": 0.044132,
-            "zero_baseline_rmse": 0.043964,
-            "skill_pct": -0.382,
+            "direction_accuracy": 0.5825,
+            "correlation": 0.0291,
+            "rmse": 0.04227,
+            "zero_baseline_rmse": 0.041879,
+            "skill_pct": -0.934,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -39,11 +39,11 @@
             "samples": 99,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5859,
-            "correlation": 0.0627,
-            "rmse": 0.084256,
-            "zero_baseline_rmse": 0.087118,
-            "skill_pct": 3.285,
+            "direction_accuracy": 0.5556,
+            "correlation": 0.0699,
+            "rmse": 0.083657,
+            "zero_baseline_rmse": 0.086774,
+            "skill_pct": 3.592,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -52,15 +52,23 @@
             "grade": "B",
             "weight_multiplier": 0.75,
             "direction_accuracy": 0.596,
-            "correlation": 0.1197,
-            "rmse": 0.084584,
-            "zero_baseline_rmse": 0.087118,
-            "skill_pct": 2.908,
+            "correlation": 0.0873,
+            "rmse": 0.085014,
+            "zero_baseline_rmse": 0.086774,
+            "skill_pct": 2.028,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "GC=F:Yahoo Finance delayed",
+          "SI=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "bond": {
       "label": "미국 장기국채",
@@ -72,37 +80,37 @@
             "samples": 103,
             "grade": "F",
             "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4951,
-            "correlation": -0.1493,
-            "rmse": 0.042544,
-            "zero_baseline_rmse": 0.038722,
-            "skill_pct": -9.87,
+            "direction_accuracy": 0.4563,
+            "correlation": -0.1514,
+            "rmse": 0.042998,
+            "zero_baseline_rmse": 0.03921,
+            "skill_pct": -9.662,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "limited_pass",
+            "status": "pass",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.534,
-            "correlation": 0.0837,
-            "rmse": 0.039586,
-            "zero_baseline_rmse": 0.038722,
-            "skill_pct": -2.231,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5728,
+            "correlation": 0.0889,
+            "rmse": 0.039952,
+            "zero_baseline_rmse": 0.03921,
+            "skill_pct": -1.894,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 99,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5657,
-            "correlation": -0.0343,
-            "rmse": 0.077045,
-            "zero_baseline_rmse": 0.071545,
-            "skill_pct": -7.687,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.5051,
+            "correlation": -0.0562,
+            "rmse": 0.077055,
+            "zero_baseline_rmse": 0.070938,
+            "skill_pct": -8.623,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -110,16 +118,24 @@
             "samples": 99,
             "grade": "B",
             "weight_multiplier": 0.75,
-            "direction_accuracy": 0.6061,
-            "correlation": 0.1663,
-            "rmse": 0.071814,
-            "zero_baseline_rmse": 0.071545,
-            "skill_pct": -0.375,
+            "direction_accuracy": 0.5859,
+            "correlation": 0.1531,
+            "rmse": 0.071429,
+            "zero_baseline_rmse": 0.070938,
+            "skill_pct": -0.692,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ZN=F:Yahoo Finance delayed",
+          "ZB=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "bitcoin": {
       "label": "비트코인",
@@ -178,7 +194,15 @@
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "BTC=F:Yahoo Finance delayed",
+          "BTC-USD:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "sp500": {
       "label": "S&P 500",
@@ -190,11 +214,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5534,
-            "correlation": -0.0611,
-            "rmse": 0.056159,
-            "zero_baseline_rmse": 0.053689,
-            "skill_pct": -4.6,
+            "direction_accuracy": 0.5922,
+            "correlation": -0.0704,
+            "rmse": 0.054299,
+            "zero_baseline_rmse": 0.051087,
+            "skill_pct": -6.288,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -202,11 +226,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.6019,
-            "correlation": 0.01,
-            "rmse": 0.054278,
-            "zero_baseline_rmse": 0.053689,
-            "skill_pct": -1.097,
+            "direction_accuracy": 0.534,
+            "correlation": -0.032,
+            "rmse": 0.05233,
+            "zero_baseline_rmse": 0.051087,
+            "skill_pct": -2.434,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -216,11 +240,11 @@
             "samples": 99,
             "grade": "A",
             "weight_multiplier": 1.0,
-            "direction_accuracy": 0.7374,
-            "correlation": 0.2599,
-            "rmse": 0.077663,
-            "zero_baseline_rmse": 0.084779,
-            "skill_pct": 8.394,
+            "direction_accuracy": 0.7172,
+            "correlation": 0.2821,
+            "rmse": 0.07597,
+            "zero_baseline_rmse": 0.08369,
+            "skill_pct": 9.225,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -228,16 +252,24 @@
             "samples": 99,
             "grade": "A",
             "weight_multiplier": 1.0,
-            "direction_accuracy": 0.6162,
-            "correlation": 0.1504,
-            "rmse": 0.079739,
-            "zero_baseline_rmse": 0.084779,
-            "skill_pct": 5.944,
+            "direction_accuracy": 0.6061,
+            "correlation": 0.1758,
+            "rmse": 0.078055,
+            "zero_baseline_rmse": 0.08369,
+            "skill_pct": 6.733,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ES=F:Yahoo Finance delayed",
+          "NQ=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "nasdaq": {
       "label": "나스닥100",
@@ -249,11 +281,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5825,
-            "correlation": 0.0236,
-            "rmse": 0.069555,
-            "zero_baseline_rmse": 0.06816,
-            "skill_pct": -2.047,
+            "direction_accuracy": 0.5437,
+            "correlation": 0.0148,
+            "rmse": 0.068894,
+            "zero_baseline_rmse": 0.066669,
+            "skill_pct": -3.337,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -261,11 +293,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.6214,
-            "correlation": -0.0346,
-            "rmse": 0.068784,
-            "zero_baseline_rmse": 0.06816,
-            "skill_pct": -0.915,
+            "direction_accuracy": 0.5728,
+            "correlation": -0.0774,
+            "rmse": 0.06793,
+            "zero_baseline_rmse": 0.066669,
+            "skill_pct": -1.891,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -275,11 +307,11 @@
             "samples": 99,
             "grade": "A",
             "weight_multiplier": 1.0,
-            "direction_accuracy": 0.7374,
-            "correlation": 0.2836,
-            "rmse": 0.101198,
-            "zero_baseline_rmse": 0.111726,
-            "skill_pct": 9.423,
+            "direction_accuracy": 0.697,
+            "correlation": 0.2942,
+            "rmse": 0.100923,
+            "zero_baseline_rmse": 0.111699,
+            "skill_pct": 9.648,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -288,15 +320,23 @@
             "grade": "C",
             "weight_multiplier": 0.5,
             "direction_accuracy": 0.5657,
-            "correlation": 0.0421,
-            "rmse": 0.105949,
-            "zero_baseline_rmse": 0.111726,
-            "skill_pct": 5.17,
+            "correlation": 0.0681,
+            "rmse": 0.105195,
+            "zero_baseline_rmse": 0.111699,
+            "skill_pct": 5.823,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "NQ=F:Yahoo Finance delayed",
+          "ES=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "reit": {
       "label": "미국 리츠",
@@ -308,54 +348,61 @@
             "samples": 103,
             "grade": "F",
             "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4854,
-            "correlation": -0.085,
-            "rmse": 0.065711,
-            "zero_baseline_rmse": 0.062757,
-            "skill_pct": -4.708,
+            "direction_accuracy": 0.4951,
+            "correlation": -0.095,
+            "rmse": 0.061751,
+            "zero_baseline_rmse": 0.058265,
+            "skill_pct": -5.983,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "strong_pass",
+            "status": "pass",
             "samples": 103,
-            "grade": "A",
-            "weight_multiplier": 1.0,
-            "direction_accuracy": 0.6019,
-            "correlation": 0.1995,
-            "rmse": 0.061521,
-            "zero_baseline_rmse": 0.062757,
-            "skill_pct": 1.969,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5728,
+            "correlation": 0.1953,
+            "rmse": 0.057315,
+            "zero_baseline_rmse": 0.058265,
+            "skill_pct": 1.63,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.6061,
+            "correlation": 0.1444,
+            "rmse": 0.088046,
+            "zero_baseline_rmse": 0.08615,
+            "skill_pct": -2.2,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
             "status": "pass",
             "samples": 99,
             "grade": "B",
             "weight_multiplier": 0.75,
             "direction_accuracy": 0.5758,
-            "correlation": 0.155,
-            "rmse": 0.088562,
-            "zero_baseline_rmse": 0.08752,
-            "skill_pct": -1.19,
-            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
-          },
-          "card12": {
-            "status": "strong_pass",
-            "samples": 99,
-            "grade": "A",
-            "weight_multiplier": 1.0,
-            "direction_accuracy": 0.5859,
-            "correlation": 0.2349,
-            "rmse": 0.085662,
-            "zero_baseline_rmse": 0.08752,
-            "skill_pct": 2.123,
+            "correlation": 0.2253,
+            "rmse": 0.085073,
+            "zero_baseline_rmse": 0.08615,
+            "skill_pct": 1.251,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ES=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "highYield": {
       "label": "미국 하이일드 회사채",
@@ -367,11 +414,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.6019,
-            "correlation": -0.0894,
-            "rmse": 0.026993,
-            "zero_baseline_rmse": 0.02519,
-            "skill_pct": -7.158,
+            "direction_accuracy": 0.5534,
+            "correlation": -0.1197,
+            "rmse": 0.027073,
+            "zero_baseline_rmse": 0.024928,
+            "skill_pct": -8.604,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -379,42 +426,50 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5728,
-            "correlation": 0.0331,
-            "rmse": 0.025728,
-            "zero_baseline_rmse": 0.02519,
-            "skill_pct": -2.134,
+            "direction_accuracy": 0.6019,
+            "correlation": 0.0316,
+            "rmse": 0.025463,
+            "zero_baseline_rmse": 0.024928,
+            "skill_pct": -2.145,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
-            "status": "limited_pass",
-            "samples": 99,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.6768,
-            "correlation": 0.1371,
-            "rmse": 0.037992,
-            "zero_baseline_rmse": 0.036892,
-            "skill_pct": -2.982,
-            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
-          },
-          "card12": {
             "status": "pass",
             "samples": 99,
             "grade": "B",
             "weight_multiplier": 0.75,
-            "direction_accuracy": 0.6364,
-            "correlation": 0.1292,
-            "rmse": 0.036369,
-            "zero_baseline_rmse": 0.036892,
-            "skill_pct": 1.417,
+            "direction_accuracy": 0.7172,
+            "correlation": 0.17,
+            "rmse": 0.038069,
+            "zero_baseline_rmse": 0.037609,
+            "skill_pct": -1.224,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "strong_pass",
+            "samples": 99,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6566,
+            "correlation": 0.1761,
+            "rmse": 0.036373,
+            "zero_baseline_rmse": 0.037609,
+            "skill_pct": 3.287,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ES=F:Yahoo Finance delayed",
+          "ZN=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "oil": {
       "label": "원유",
@@ -422,15 +477,15 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5243,
-            "correlation": -0.0807,
-            "rmse": 0.318748,
-            "zero_baseline_rmse": 0.118148,
-            "skill_pct": -169.786,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4854,
+            "correlation": -0.1773,
+            "rmse": 0.348865,
+            "zero_baseline_rmse": 0.126363,
+            "skill_pct": -176.082,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -438,25 +493,91 @@
             "samples": 103,
             "grade": "F",
             "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4272,
-            "correlation": -0.0513,
-            "rmse": 0.164905,
-            "zero_baseline_rmse": 0.118148,
-            "skill_pct": -39.574,
+            "direction_accuracy": 0.466,
+            "correlation": 0.0225,
+            "rmse": 0.168979,
+            "zero_baseline_rmse": 0.126363,
+            "skill_pct": -33.725,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
-            "status": "fail",
+            "status": "weak",
             "samples": 99,
-            "grade": "F",
-            "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4242,
-            "correlation": -0.0102,
-            "rmse": 0.293917,
-            "zero_baseline_rmse": 0.218343,
-            "skill_pct": -34.612,
+            "grade": "D",
+            "weight_multiplier": 0.25,
+            "direction_accuracy": 0.5051,
+            "correlation": -0.0285,
+            "rmse": 0.323517,
+            "zero_baseline_rmse": 0.236408,
+            "skill_pct": -36.847,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "pass",
+            "samples": 99,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.6162,
+            "correlation": 0.1922,
+            "rmse": 0.239207,
+            "zero_baseline_rmse": 0.236408,
+            "skill_pct": -1.184,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        }
+      },
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "CL=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
+    },
+    "emerging": {
+      "label": "신흥국 주식",
+      "ticker": "EEM",
+      "horizons": {
+        "1m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 103,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5631,
+            "correlation": -0.0162,
+            "rmse": 0.057707,
+            "zero_baseline_rmse": 0.054231,
+            "skill_pct": -6.41,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          },
+          "card12": {
+            "status": "strong_pass",
+            "samples": 103,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6408,
+            "correlation": 0.1594,
+            "rmse": 0.054122,
+            "zero_baseline_rmse": 0.054231,
+            "skill_pct": 0.201,
+            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
+          }
+        },
+        "3m": {
+          "card8": {
+            "status": "limited_pass",
+            "samples": 99,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5152,
+            "correlation": 0.0509,
+            "rmse": 0.098258,
+            "zero_baseline_rmse": 0.093238,
+            "skill_pct": -5.384,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -465,74 +586,23 @@
             "grade": "C",
             "weight_multiplier": 0.5,
             "direction_accuracy": 0.5051,
-            "correlation": 0.1607,
-            "rmse": 0.224927,
-            "zero_baseline_rmse": 0.218343,
-            "skill_pct": -3.015,
+            "correlation": 0.0694,
+            "rmse": 0.095372,
+            "zero_baseline_rmse": 0.093238,
+            "skill_pct": -2.289,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
-    },
-    "emerging": {
-      "label": "신흥국 주식",
-      "ticker": "EEM",
-      "horizons": {
-        "1m": {
-          "card8": {
-            "status": "weak",
-            "samples": 103,
-            "grade": "D",
-            "weight_multiplier": 0.25,
-            "direction_accuracy": 0.5049,
-            "correlation": -0.049,
-            "rmse": 0.060271,
-            "zero_baseline_rmse": 0.056658,
-            "skill_pct": -6.378,
-            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
-          },
-          "card12": {
-            "status": "strong_pass",
-            "samples": 103,
-            "grade": "A",
-            "weight_multiplier": 1.0,
-            "direction_accuracy": 0.6117,
-            "correlation": 0.1543,
-            "rmse": 0.05645,
-            "zero_baseline_rmse": 0.056658,
-            "skill_pct": 0.366,
-            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
-          }
-        },
-        "3m": {
-          "card8": {
-            "status": "limited_pass",
-            "samples": 99,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.4444,
-            "correlation": 0.0315,
-            "rmse": 0.098599,
-            "zero_baseline_rmse": 0.092933,
-            "skill_pct": -6.096,
-            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
-          },
-          "card12": {
-            "status": "limited_pass",
-            "samples": 99,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.4646,
-            "correlation": 0.0573,
-            "rmse": 0.095498,
-            "zero_baseline_rmse": 0.092933,
-            "skill_pct": -2.76,
-            "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
-          }
-        }
-      },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ES=F:Yahoo Finance delayed",
+          "DX-Y.NYB:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "investmentGrade": {
       "label": "미국 투자등급 회사채",
@@ -545,22 +615,22 @@
             "grade": "C",
             "weight_multiplier": 0.5,
             "direction_accuracy": 0.5437,
-            "correlation": 0.0613,
-            "rmse": 0.0259,
-            "zero_baseline_rmse": 0.024753,
-            "skill_pct": -4.633,
+            "correlation": 0.04,
+            "rmse": 0.025912,
+            "zero_baseline_rmse": 0.024497,
+            "skill_pct": -5.776,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "limited_pass",
+            "status": "strong_pass",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5728,
-            "correlation": 0.14,
-            "rmse": 0.025435,
-            "zero_baseline_rmse": 0.024753,
-            "skill_pct": -2.757,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6019,
+            "correlation": 0.1973,
+            "rmse": 0.02449,
+            "zero_baseline_rmse": 0.024497,
+            "skill_pct": 0.026,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -571,27 +641,36 @@
             "grade": "C",
             "weight_multiplier": 0.5,
             "direction_accuracy": 0.5455,
-            "correlation": 0.2073,
-            "rmse": 0.043306,
-            "zero_baseline_rmse": 0.042245,
-            "skill_pct": -2.513,
+            "correlation": 0.2098,
+            "rmse": 0.042982,
+            "zero_baseline_rmse": 0.041884,
+            "skill_pct": -2.622,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "strong_pass",
+            "status": "pass",
             "samples": 99,
-            "grade": "A",
-            "weight_multiplier": 1.0,
-            "direction_accuracy": 0.596,
-            "correlation": 0.246,
-            "rmse": 0.04163,
-            "zero_baseline_rmse": 0.042245,
-            "skill_pct": 1.455,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.5758,
+            "correlation": 0.2841,
+            "rmse": 0.040392,
+            "zero_baseline_rmse": 0.041884,
+            "skill_pct": 3.563,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ZN=F:Yahoo Finance delayed",
+          "ZB=F:Yahoo Finance delayed",
+          "ES=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "cashShort": {
       "label": "미국 단기국채",
@@ -638,7 +717,15 @@
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "ZT=F:Yahoo Finance delayed",
+          "ZF=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "copper": {
       "label": "구리",
@@ -646,27 +733,27 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "fail",
+            "status": "limited_pass",
             "samples": 103,
-            "grade": "F",
-            "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4757,
-            "correlation": -0.0355,
-            "rmse": 0.065566,
-            "zero_baseline_rmse": 0.063962,
-            "skill_pct": -2.507,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5146,
+            "correlation": -0.0606,
+            "rmse": 0.066746,
+            "zero_baseline_rmse": 0.064975,
+            "skill_pct": -2.727,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "strong_pass",
+            "status": "pass",
             "samples": 103,
-            "grade": "A",
-            "weight_multiplier": 1.0,
+            "grade": "B",
+            "weight_multiplier": 0.75,
             "direction_accuracy": 0.5922,
-            "correlation": 0.1932,
-            "rmse": 0.062594,
-            "zero_baseline_rmse": 0.063962,
-            "skill_pct": 2.138,
+            "correlation": 0.1387,
+            "rmse": 0.064208,
+            "zero_baseline_rmse": 0.064975,
+            "skill_pct": 1.18,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -676,28 +763,36 @@
             "samples": 99,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.4949,
-            "correlation": 0.0903,
-            "rmse": 0.111065,
-            "zero_baseline_rmse": 0.107707,
-            "skill_pct": -3.118,
+            "direction_accuracy": 0.4545,
+            "correlation": 0.0718,
+            "rmse": 0.109864,
+            "zero_baseline_rmse": 0.105811,
+            "skill_pct": -3.83,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "pass",
+            "status": "limited_pass",
             "samples": 99,
-            "grade": "B",
-            "weight_multiplier": 0.75,
+            "grade": "C",
+            "weight_multiplier": 0.5,
             "direction_accuracy": 0.5455,
-            "correlation": 0.0922,
-            "rmse": 0.107027,
-            "zero_baseline_rmse": 0.107707,
-            "skill_pct": 0.632,
+            "correlation": 0.0517,
+            "rmse": 0.105571,
+            "zero_baseline_rmse": 0.105811,
+            "skill_pct": 0.227,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "HG=F:Yahoo Finance delayed",
+          "CL=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     },
     "silver": {
       "label": "은",
@@ -705,41 +800,41 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5534,
-            "correlation": -0.1496,
-            "rmse": 0.093502,
-            "zero_baseline_rmse": 0.09129,
-            "skill_pct": -2.423,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4175,
+            "correlation": -0.1798,
+            "rmse": 0.092225,
+            "zero_baseline_rmse": 0.089787,
+            "skill_pct": -2.715,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5534,
-            "correlation": -0.0557,
-            "rmse": 0.095209,
-            "zero_baseline_rmse": 0.09129,
-            "skill_pct": -4.293,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4951,
+            "correlation": -0.1125,
+            "rmse": 0.095102,
+            "zero_baseline_rmse": 0.089787,
+            "skill_pct": -5.92,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
-            "status": "pass",
+            "status": "strong_pass",
             "samples": 99,
-            "grade": "B",
-            "weight_multiplier": 0.75,
-            "direction_accuracy": 0.5657,
-            "correlation": 0.2683,
-            "rmse": 0.156898,
-            "zero_baseline_rmse": 0.16316,
-            "skill_pct": 3.838,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6162,
+            "correlation": 0.2718,
+            "rmse": 0.156364,
+            "zero_baseline_rmse": 0.162803,
+            "skill_pct": 3.955,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -747,16 +842,25 @@
             "samples": 99,
             "grade": "B",
             "weight_multiplier": 0.75,
-            "direction_accuracy": 0.596,
-            "correlation": 0.1977,
-            "rmse": 0.163203,
-            "zero_baseline_rmse": 0.16316,
-            "skill_pct": -0.026,
+            "direction_accuracy": 0.5657,
+            "correlation": 0.1532,
+            "rmse": 0.165569,
+            "zero_baseline_rmse": 0.162803,
+            "skill_pct": -1.699,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
       },
-      "stale": false
+      "stale": false,
+      "source_status": {
+        "asset_history": "Yahoo Finance delayed",
+        "group_histories": [
+          "SI=F:Yahoo Finance delayed",
+          "GC=F:Yahoo Finance delayed",
+          "HG=F:Yahoo Finance delayed"
+        ],
+        "fallback_diagnostics": []
+      }
     }
   },
   "source_status": {
@@ -764,6 +868,12 @@
     "treasury_window_years": 13,
     "fred_dependency": false,
     "used_previous_results": false
+  },
+  "coverage": {
+    "required_assets": 13,
+    "usable_assets": 13,
+    "missing_assets": [],
+    "complete": true
   },
   "weight_policy": {
     "A": 1.0,
@@ -778,11 +888,5 @@
     "무료 지연시세와 미국 재무부 공식 명목·실질 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",
     "공개자료 일시 장애 시 마지막 정상 검증값을 재사용하고 stale 상태를 명시합니다."
   ],
-  "errors": [],
-  "coverage": {
-    "required_assets": 13,
-    "usable_assets": 13,
-    "missing_assets": [],
-    "complete": true
-  }
+  "errors": []
 }
