@@ -6,6 +6,8 @@ No current card-8/card-12 calculation is replaced.
 """
 from __future__ import annotations
 
+import csv
+import io
 import json
 import math
 import time
@@ -23,7 +25,7 @@ import requests
 ROOT = Path(__file__).resolve().parent
 OUT = ROOT / "public" / "data" / "asset_oos_validation.json"
 SESSION = requests.Session()
-SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.3 (GitHub Actions; Treasury official data)"})
+SESSION.headers.update({"User-Agent": "baek-asset-oos-validator/1.9 (GitHub Actions; Treasury official data)"})
 
 ASSETS = {
     "gold": {"ticker": "GC=F", "label": "금"},
@@ -59,6 +61,11 @@ GROUP_TICKERS = {
 # CARD12_TICKERS is the canonical alias for the card-12 futures/proxy mapping.
 CARD12_TICKERS = GROUP_TICKERS
 HORIZONS = {"1m": 21, "3m": 63}
+REQUIRED_ASSETS = tuple(ASSETS)
+STOOQ_TICKERS = {
+    "TLT": "tlt.us", "SPY": "spy.us", "QQQ": "qqq.us", "VNQ": "vnq.us",
+    "HYG": "hyg.us", "EEM": "eem.us", "LQD": "lqd.us", "SGOV": "sgov.us",
+}
 
 
 
@@ -108,6 +115,43 @@ def yahoo_series(ticker: str, years: int = 12) -> dict[str, float]:
     if len(out) < 300:
         raise ValueError(f"{ticker}: insufficient Yahoo history ({len(out)})")
     return out
+
+
+def stooq_series(ticker: str, years: int = 12) -> dict[str, float]:
+    symbol = STOOQ_TICKERS.get(ticker)
+    if not symbol:
+        raise ValueError(f"{ticker}: no Stooq fallback mapping")
+    end = datetime.now(timezone.utc).date()
+    start = end.replace(year=max(1990, end.year - years))
+    url = "https://stooq.com/q/d/l/"
+    params = {"s": symbol, "d1": start.strftime("%Y%m%d"), "d2": end.strftime("%Y%m%d"), "i": "d"}
+    r = get_with_retry(url, params=params, attempts=3)
+    out: dict[str, float] = {}
+    for row in csv.DictReader(io.StringIO(r.text)):
+        day = (row.get("Date") or "").strip()
+        raw = (row.get("Close") or "").strip()
+        try:
+            value = float(raw)
+        except ValueError:
+            continue
+        if day and math.isfinite(value):
+            out[day] = value
+    if len(out) < 300:
+        raise ValueError(f"{ticker}: insufficient Stooq history ({len(out)})")
+    return out
+
+
+def market_series(ticker: str, years: int = 12) -> tuple[dict[str, float], str, list[str]]:
+    errors: list[str] = []
+    try:
+        return yahoo_series(ticker, years), "Yahoo Finance delayed", errors
+    except Exception as exc:
+        errors.append(f"Yahoo: {type(exc).__name__}: {exc}")
+    try:
+        return stooq_series(ticker, years), "Stooq daily fallback", errors
+    except Exception as exc:
+        errors.append(f"Stooq: {type(exc).__name__}: {exc}")
+    raise RuntimeError(f"{ticker}: all market history routes failed: {' | '.join(errors)}")
 
 
 def _xml_local_name(tag: str) -> str:
@@ -347,13 +391,24 @@ def main() -> None:
                 }
             continue
         try:
-            asset_price = yahoo_series(spec["ticker"])
+            asset_price, asset_source, asset_source_errors = market_series(spec["ticker"])
             group = []
+            group_sources: list[str] = []
+            group_errors: list[str] = []
             for ticker in GROUP_TICKERS[key]:
-                group.append(yahoo_series(ticker))
+                series, source, source_errors = market_series(ticker)
+                group.append(series)
+                group_sources.append(f"{ticker}:{source}")
+                group_errors.extend([f"{ticker}:{msg}" for msg in source_errors])
                 time.sleep(0.2)
             price, card8_x, card12_x = build_features(key, asset_price, rates, group)
-            row = {"label": spec["label"], "ticker": spec["ticker"], "horizons": {}, "stale": False}
+            row = {
+                "label": spec["label"], "ticker": spec["ticker"], "horizons": {}, "stale": False,
+                "source_status": {
+                    "asset_history": asset_source, "group_histories": group_sources,
+                    "fallback_diagnostics": asset_source_errors + group_errors,
+                },
+            }
             for hname, days in HORIZONS.items():
                 row["horizons"][hname] = {
                     "card8": rolling_oos(card8_x, price, days),
@@ -373,10 +428,21 @@ def main() -> None:
                     "label": spec["label"], "ticker": spec["ticker"],
                     "available": False, "weight_multiplier": 0.25, "error": str(exc),
                 }
+    usable_assets = [
+        key for key in REQUIRED_ASSETS
+        if isinstance(assets_out.get(key), dict)
+        and isinstance(assets_out[key].get("horizons"), dict)
+        and all(h in assets_out[key]["horizons"] for h in HORIZONS)
+    ]
+    missing_assets = [key for key in REQUIRED_ASSETS if key not in usable_assets]
     payload = {
-        "schema_version": "1.8.0", "engine_version": "asset-oos-v1.8-oil-emerging-investment-grade-added",
+        "schema_version": "1.9.0", "engine_version": "asset-oos-v1.9-complete-13-assets-multisource",
         "generated_at_utc": now_iso(), "assets": assets_out,
         "source_status": {"treasury_ready": treasury_ready, "treasury_window_years": 13, "fred_dependency": False, "used_previous_results": any(bool(v.get("stale")) for v in assets_out.values())},
+        "coverage": {
+            "required_assets": len(REQUIRED_ASSETS), "usable_assets": len(usable_assets),
+            "missing_assets": missing_assets, "complete": not missing_assets,
+        },
         "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
         "limitations": [
             "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
@@ -385,6 +451,8 @@ def main() -> None:
         ],
         "errors": errors,
     }
+    if missing_assets:
+        payload["errors"].append("required asset validation rows missing: " + ", ".join(missing_assets))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     tmp = OUT.with_suffix(".tmp")
     tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
