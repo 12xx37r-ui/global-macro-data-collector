@@ -1,7 +1,7 @@
 {
   "schema_version": "1.8.0",
   "engine_version": "asset-oos-v1.8-oil-emerging-investment-grade-added",
-  "generated_at_utc": "2026-07-31T20:15:15.510454+00:00",
+  "generated_at_utc": "2026-08-01T18:44:04.882911+00:00",
   "assets": {
     "gold": {
       "label": "금",
@@ -9,15 +9,15 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "weak",
+            "status": "limited_pass",
             "samples": 103,
-            "grade": "D",
-            "weight_multiplier": 0.25,
-            "direction_accuracy": 0.5049,
-            "correlation": 0.0153,
-            "rmse": 0.044191,
-            "zero_baseline_rmse": 0.043964,
-            "skill_pct": -0.517,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5437,
+            "correlation": 0.0018,
+            "rmse": 0.042207,
+            "zero_baseline_rmse": 0.041879,
+            "skill_pct": -0.785,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -25,11 +25,11 @@
             "samples": 103,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.534,
-            "correlation": 0.0527,
-            "rmse": 0.044132,
-            "zero_baseline_rmse": 0.043964,
-            "skill_pct": -0.382,
+            "direction_accuracy": 0.5825,
+            "correlation": 0.0291,
+            "rmse": 0.04227,
+            "zero_baseline_rmse": 0.041879,
+            "skill_pct": -0.934,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -39,11 +39,11 @@
             "samples": 99,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5859,
-            "correlation": 0.0627,
-            "rmse": 0.084256,
-            "zero_baseline_rmse": 0.087118,
-            "skill_pct": 3.285,
+            "direction_accuracy": 0.5556,
+            "correlation": 0.0699,
+            "rmse": 0.083657,
+            "zero_baseline_rmse": 0.086774,
+            "skill_pct": 3.592,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -52,10 +52,10 @@
             "grade": "B",
             "weight_multiplier": 0.75,
             "direction_accuracy": 0.596,
-            "correlation": 0.1197,
-            "rmse": 0.084584,
-            "zero_baseline_rmse": 0.087118,
-            "skill_pct": 2.908,
+            "correlation": 0.0873,
+            "rmse": 0.085014,
+            "zero_baseline_rmse": 0.086774,
+            "skill_pct": 2.028,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
@@ -422,15 +422,15 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5243,
-            "correlation": -0.0807,
-            "rmse": 0.318748,
-            "zero_baseline_rmse": 0.118148,
-            "skill_pct": -169.786,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4854,
+            "correlation": -0.1773,
+            "rmse": 0.348865,
+            "zero_baseline_rmse": 0.126363,
+            "skill_pct": -176.082,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -438,37 +438,37 @@
             "samples": 103,
             "grade": "F",
             "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4272,
-            "correlation": -0.0513,
-            "rmse": 0.164905,
-            "zero_baseline_rmse": 0.118148,
-            "skill_pct": -39.574,
+            "direction_accuracy": 0.466,
+            "correlation": 0.0225,
+            "rmse": 0.168979,
+            "zero_baseline_rmse": 0.126363,
+            "skill_pct": -33.725,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
-            "status": "fail",
+            "status": "weak",
             "samples": 99,
-            "grade": "F",
-            "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4242,
-            "correlation": -0.0102,
-            "rmse": 0.293917,
-            "zero_baseline_rmse": 0.218343,
-            "skill_pct": -34.612,
+            "grade": "D",
+            "weight_multiplier": 0.25,
+            "direction_accuracy": 0.5051,
+            "correlation": -0.0285,
+            "rmse": 0.323517,
+            "zero_baseline_rmse": 0.236408,
+            "skill_pct": -36.847,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "limited_pass",
+            "status": "pass",
             "samples": 99,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5051,
-            "correlation": 0.1607,
-            "rmse": 0.224927,
-            "zero_baseline_rmse": 0.218343,
-            "skill_pct": -3.015,
+            "grade": "B",
+            "weight_multiplier": 0.75,
+            "direction_accuracy": 0.6162,
+            "correlation": 0.1922,
+            "rmse": 0.239207,
+            "zero_baseline_rmse": 0.236408,
+            "skill_pct": -1.184,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
@@ -547,7 +547,7 @@
             "direction_accuracy": 0.5437,
             "correlation": 0.04,
             "rmse": 0.025912,
-            "zero_baseline_rmse": 0.024497,
+            "zero_baseline_rmse": 0.024496,
             "skill_pct": -5.777,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
@@ -559,7 +559,7 @@
             "direction_accuracy": 0.6019,
             "correlation": 0.1973,
             "rmse": 0.02449,
-            "zero_baseline_rmse": 0.024497,
+            "zero_baseline_rmse": 0.024496,
             "skill_pct": 0.026,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
@@ -646,27 +646,27 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "fail",
+            "status": "limited_pass",
             "samples": 103,
-            "grade": "F",
-            "weight_multiplier": 0.0,
-            "direction_accuracy": 0.4757,
-            "correlation": -0.0355,
-            "rmse": 0.065566,
-            "zero_baseline_rmse": 0.063962,
-            "skill_pct": -2.507,
+            "grade": "C",
+            "weight_multiplier": 0.5,
+            "direction_accuracy": 0.5146,
+            "correlation": -0.0606,
+            "rmse": 0.066746,
+            "zero_baseline_rmse": 0.064975,
+            "skill_pct": -2.727,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "strong_pass",
+            "status": "pass",
             "samples": 103,
-            "grade": "A",
-            "weight_multiplier": 1.0,
+            "grade": "B",
+            "weight_multiplier": 0.75,
             "direction_accuracy": 0.5922,
-            "correlation": 0.1932,
-            "rmse": 0.062594,
-            "zero_baseline_rmse": 0.063962,
-            "skill_pct": 2.138,
+            "correlation": 0.1387,
+            "rmse": 0.064208,
+            "zero_baseline_rmse": 0.064975,
+            "skill_pct": 1.18,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
@@ -676,23 +676,23 @@
             "samples": 99,
             "grade": "C",
             "weight_multiplier": 0.5,
-            "direction_accuracy": 0.4949,
-            "correlation": 0.0903,
-            "rmse": 0.111065,
-            "zero_baseline_rmse": 0.107707,
-            "skill_pct": -3.118,
+            "direction_accuracy": 0.4545,
+            "correlation": 0.0718,
+            "rmse": 0.109864,
+            "zero_baseline_rmse": 0.105811,
+            "skill_pct": -3.83,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "pass",
+            "status": "limited_pass",
             "samples": 99,
-            "grade": "B",
-            "weight_multiplier": 0.75,
+            "grade": "C",
+            "weight_multiplier": 0.5,
             "direction_accuracy": 0.5455,
-            "correlation": 0.0922,
-            "rmse": 0.107027,
-            "zero_baseline_rmse": 0.107707,
-            "skill_pct": 0.632,
+            "correlation": 0.0517,
+            "rmse": 0.105571,
+            "zero_baseline_rmse": 0.105811,
+            "skill_pct": 0.227,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
@@ -705,41 +705,41 @@
       "horizons": {
         "1m": {
           "card8": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5534,
-            "correlation": -0.1496,
-            "rmse": 0.093502,
-            "zero_baseline_rmse": 0.09129,
-            "skill_pct": -2.423,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4175,
+            "correlation": -0.1798,
+            "rmse": 0.092225,
+            "zero_baseline_rmse": 0.089787,
+            "skill_pct": -2.715,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
-            "status": "limited_pass",
+            "status": "fail",
             "samples": 103,
-            "grade": "C",
-            "weight_multiplier": 0.5,
-            "direction_accuracy": 0.5534,
-            "correlation": -0.0557,
-            "rmse": 0.095209,
-            "zero_baseline_rmse": 0.09129,
-            "skill_pct": -4.293,
+            "grade": "F",
+            "weight_multiplier": 0.0,
+            "direction_accuracy": 0.4951,
+            "correlation": -0.1125,
+            "rmse": 0.095102,
+            "zero_baseline_rmse": 0.089787,
+            "skill_pct": -5.92,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         },
         "3m": {
           "card8": {
-            "status": "pass",
+            "status": "strong_pass",
             "samples": 99,
-            "grade": "B",
-            "weight_multiplier": 0.75,
-            "direction_accuracy": 0.5657,
-            "correlation": 0.2683,
-            "rmse": 0.156898,
-            "zero_baseline_rmse": 0.16316,
-            "skill_pct": 3.838,
+            "grade": "A",
+            "weight_multiplier": 1.0,
+            "direction_accuracy": 0.6162,
+            "correlation": 0.2718,
+            "rmse": 0.156364,
+            "zero_baseline_rmse": 0.162803,
+            "skill_pct": 3.955,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           },
           "card12": {
@@ -747,11 +747,11 @@
             "samples": 99,
             "grade": "B",
             "weight_multiplier": 0.75,
-            "direction_accuracy": 0.596,
-            "correlation": 0.1977,
-            "rmse": 0.163203,
-            "zero_baseline_rmse": 0.16316,
-            "skill_pct": -0.026,
+            "direction_accuracy": 0.5657,
+            "correlation": 0.1532,
+            "rmse": 0.165569,
+            "zero_baseline_rmse": 0.162803,
+            "skill_pct": -1.699,
             "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training"
           }
         }
