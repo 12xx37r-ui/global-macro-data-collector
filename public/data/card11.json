@@ -2,8 +2,8 @@
   "schema_version": "1.1",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-03T20:40:13.685164+00:00",
-  "score": -23.8,
+  "generated_at_utc": "2026-08-03T20:40:03.179194+00:00",
+  "score": -33.3,
   "market_signal": "bad",
   "current_regime": "수축·위험회피",
   "future_regime": "불리한 투자환경",
@@ -25,25 +25,8 @@
       "label": "미국채 금리·실질금리",
       "signal": "neutral",
       "validation": {
-        "passed": true,
-        "passed_horizons": [
-          {
-            "horizon": "3m",
-            "targets": [
-              "DGS2",
-              "DGS10",
-              "DFII10"
-            ]
-          },
-          {
-            "horizon": "6m",
-            "targets": [
-              "DGS2",
-              "DGS10",
-              "DFII10"
-            ]
-          }
-        ],
+        "passed": false,
+        "passed_horizons": [],
         "reason": "3·6개월 핵심금리 검증 통과 여부"
       }
     },
@@ -51,13 +34,8 @@
       "label": "글로벌 고용·소비",
       "signal": "neutral",
       "validation": {
-        "passed": true,
-        "passed_horizons": [
-          "1m",
-          "3m",
-          "6m",
-          "12m"
-        ]
+        "passed": false,
+        "passed_horizons": []
       }
     },
     "card10": {
@@ -66,7 +44,6 @@
       "validation": {
         "passed": true,
         "passed_horizons": [
-          "1m",
           "3m",
           "6m",
           "12m"
@@ -81,9 +58,7 @@
         "passed_horizons": [
           "equity:3m",
           "rates:1m",
-          "rates:3m",
-          "commodities:1m",
-          "crypto:1m"
+          "rates:3m"
         ]
       }
     }
@@ -92,8 +67,8 @@
     "passed": false,
     "level": "조건부 통합판정",
     "checks": {
-      "card8_validation": true,
-      "card9_validation": true,
+      "card8_validation": false,
+      "card9_validation": false,
       "card10_validation": true,
       "card12_validation": true,
       "card8_data": true,

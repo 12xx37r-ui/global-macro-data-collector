@@ -20,7 +20,7 @@ class TestV23Integrity(unittest.TestCase):
     def test_card11_quality_label_matches_passed_flag(self):
         card8 = {
             'market_signal': 'neutral',
-            'quality_gates': {'3m': {'passed_targets': ['DGS2', 'DGS10', 'DFII10']}},
+            'quality_gates': {'3m': {'passed': True, 'passed_targets': ['DGS2', 'DGS10', 'DFII10']}},
             'data_quality': {'core_completeness': 100},
         }
         card9 = {
@@ -40,7 +40,7 @@ class TestV23Integrity(unittest.TestCase):
         }
         result = build_card11(card8, card9, card10, card12)
         self.assertTrue(result['quality_gate']['passed'])
-        self.assertEqual(result['quality_gate']['level'], '준기관급 통합판정')
+        self.assertEqual(result['quality_gate']['level'], '검증통과 신호 통합')
 
 
 if __name__ == '__main__':

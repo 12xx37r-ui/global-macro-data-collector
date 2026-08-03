@@ -289,25 +289,42 @@ def walk_forward(vals:list[float], h:int, min_samples:int=60)->dict[str,Any]:
     first=max(36,len(vals)-180-h)
     if len(vals)<first+h+15:
         return {'forecast':vals[-1],'model':'persistence','samples':0,'skill_pct':0,'direction_accuracy':None,'fallback_used':True,'range80':None}
-    errs={}; hits={}; cases={}; base_err=[]
+    # Online/nested selection: the model used at each origin is selected only
+    # from losses observed before that origin.  This prevents choosing the best
+    # candidate on the same OOS sample later reported as its performance.
+    candidate_losses:dict[str,list[float]]={}
+    strategy_errors:list[float]=[]
+    base_err:list[float]=[]
+    strategy_hits:list[int]=[]
+    selected_counts:dict[str,int]={}
     for o in range(first,len(vals)-h):
-        tr=vals[:o+1]; actual=vals[o+h]; base=tr[-1]; base_err.append(base-actual)
-        for name,p in candidates(tr,h).items():
-            errs.setdefault(name,[]).append(p-actual)
-            if abs(actual-base)>=1 and abs(p-base)>=.5:
-                cases[name]=cases.get(name,0)+1
-                hits.setdefault(name,[]).append(int((p-base)*(actual-base)>0))
-    br=rmse(base_err); best=min(errs,key=lambda k:rmse(errs[k])); mr=rmse(errs[best]); skill=(1-mr/br)*100 if br else 0
+        tr=vals[:o+1]; actual=vals[o+h]; base=tr[-1]
+        forecasts=candidates(tr,h)
+        eligible={name:losses for name,losses in candidate_losses.items() if len(losses)>=12}
+        selected=min(eligible,key=lambda k:mean(eligible[k])) if eligible else 'persistence'
+        pred=forecasts[selected]
+        selected_counts[selected]=selected_counts.get(selected,0)+1
+        strategy_errors.append(pred-actual)
+        base_err.append(base-actual)
+        if abs(actual-base)>=1 and abs(pred-base)>=.5:
+            strategy_hits.append(int((pred-base)*(actual-base)>0))
+        for name,prediction in forecasts.items():
+            candidate_losses.setdefault(name,[]).append((prediction-actual)**2)
+    br=rmse(base_err); mr=rmse(strategy_errors); skill=(1-mr/br)*100 if br else 0
     fallback=skill<=0
-    if fallback: best='persistence'; mr=br; skill=0
-    final=candidates(vals,h)[best]
-    res=errs.get(best,base_err); b80=percentile([abs(x) for x in res],.8)
-    da=mean(hits.get(best,[])) if hits.get(best) else None
-    dm=dm_test_squared_errors(res,base_err)
-    passed=len(res)>=min_samples and skill>=1.5 and da is not None and da>=.53 and dm.get('significant_10pct') and not fallback
-    return {'forecast':final,'model':best,'samples':len(res),'rmse':mr,'baseline_rmse':br,'skill_pct':skill,
+    final_best=min(candidate_losses,key=lambda k:mean(candidate_losses[k])) if candidate_losses else 'persistence'
+    if fallback: final_best='persistence'; mr=br; skill=0
+    final=candidates(vals,h)[final_best]
+    res=base_err if fallback else strategy_errors
+    b80=percentile([abs(x) for x in res],.8)
+    da=mean(strategy_hits) if strategy_hits else None
+    dm=dm_test_squared_errors(res,base_err,max_lag=max(0,h-1))
+    passed=len(res)>=min_samples and skill>=3.0 and da is not None and da>=.55 and dm.get('significant_5pct') and not fallback
+    return {'forecast':final,'model':final_best,'samples':len(res),'rmse':mr,'baseline_rmse':br,'skill_pct':skill,
             'direction_accuracy':da,'fallback_used':fallback,'range80':[final-b80,final+b80] if finite(b80) else None,
-            'quality_gate':{'passed':passed,'level':'준기관급' if passed else '참고용','dm_test':dm}}
+            'selection_method':'online_prequential_candidate_selection','selected_model_counts':selected_counts,
+            'quality_gate':{'passed':passed,'level':'독립검증 통과' if passed else '참고용/관망','dm_test':dm,
+                            'requirements':{'skill_pct_min':3.0,'direction_accuracy_min':.55,'dm_p_value_max':.05,'hac_lag':max(0,h-1)}}}
 
 def build_card9(session:requests.Session)->dict[str,Any]:
     data,errors=fetch_fred_all(session,list(CARD9_SERIES))
@@ -463,7 +480,7 @@ def _card8_validation(card8: dict[str, Any]) -> dict[str, Any]:
     passed = []
     for horizon, gate in gates.items():
         targets = gate.get('passed_targets') or []
-        if targets:
+        if gate.get('passed') and targets:
             passed.append({'horizon': horizon, 'targets': targets})
     return {'passed': bool(passed), 'passed_horizons': passed, 'reason': '3·6개월 핵심금리 검증 통과 여부'}
 
@@ -510,7 +527,7 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
         'card12_data': card12.get('data_quality', {}).get('completeness', 0) >= 80,
     }
     quality_passed = all(quality_checks.values())
-    quality_level = '준기관급 통합판정' if quality_passed else '조건부 통합판정'
+    quality_level = '검증통과 신호 통합' if quality_passed else '조건부 통합판정'
 
     input_details = {
         'card8': {'label': '미국채 금리·실질금리', 'signal': card8.get('market_signal'), 'validation': validations['card8']},

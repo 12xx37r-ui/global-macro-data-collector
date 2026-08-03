@@ -319,23 +319,40 @@ def _normal_cdf(z: float) -> float:
     return 0.5 * (1.0 + math.erf(z / math.sqrt(2.0)))
 
 
-def dm_test_squared_errors(model_errors: list[float], baseline_errors: list[float]) -> dict[str, Any]:
-    """Approximate two-sided Diebold-Mariano test with Newey-West lag 0.
+def dm_test_squared_errors(
+    model_errors: list[float],
+    baseline_errors: list[float],
+    max_lag: int = 0,
+) -> dict[str, Any]:
+    """Two-sided DM diagnostic with a Bartlett/Newey-West HAC variance.
 
-    The OOS origins overlap at long horizons, so the result is disclosed as an
-    approximate significance diagnostic rather than a definitive proof.
+    ``max_lag`` must reflect forecast-horizon overlap (normally h-1).  This is
+    deliberately conservative versus treating overlapping forecast errors as
+    independent observations.
     """
     n = min(len(model_errors), len(baseline_errors))
     if n < 30:
-        return {"statistic": None, "p_value": None, "significant_10pct": False}
+        return {"statistic": None, "p_value": None, "significant_5pct": False, "significant_10pct": False, "hac_lag": 0}
     d = [baseline_errors[i]**2 - model_errors[i]**2 for i in range(n)]
     md = mean(d)
-    var = sum((x-md)**2 for x in d) / max(1, n-1)
-    if var <= 0:
-        return {"statistic": None, "p_value": None, "significant_10pct": False}
-    stat = md / math.sqrt(var/n)
+    centered = [x-md for x in d]
+    lag = max(0, min(int(max_lag), n // 3))
+    gamma0 = sum(x*x for x in centered) / n
+    long_run_var = gamma0
+    for k in range(1, lag + 1):
+        gamma = sum(centered[t] * centered[t-k] for t in range(k, n)) / n
+        long_run_var += 2.0 * (1.0 - k / (lag + 1.0)) * gamma
+    if long_run_var <= 0:
+        return {"statistic": None, "p_value": None, "significant_5pct": False, "significant_10pct": False, "hac_lag": lag}
+    stat = md / math.sqrt(long_run_var/n)
     p = 2.0 * (1.0 - _normal_cdf(abs(stat)))
-    return {"statistic": stat, "p_value": p, "significant_10pct": p < 0.10 and md > 0}
+    return {
+        "statistic": stat,
+        "p_value": p,
+        "significant_5pct": p < 0.05 and md > 0,
+        "significant_10pct": p < 0.10 and md > 0,
+        "hac_lag": lag,
+    }
 
 
 def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict[str, Any]:
@@ -348,30 +365,35 @@ def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict
                 "dm_test": {"statistic": None, "p_value": None, "significant_10pct": False},
                 "residuals": [], "fallback_used": True}
     scores: dict[str, list[float]] = {}
-    dir_hits: dict[str, list[int]] = {}
-    dir_cases: dict[str, int] = {}
-    residuals: dict[str, list[float]] = {}
+    strategy_residuals: list[float] = []
+    strategy_hits: list[int] = []
+    strategy_active_cases = 0
+    selected_counts: dict[str, int] = {}
     baseline_residuals: list[float] = []
     all_direction_cases = 0
     for o in range(first, len(vals)-h):
         train = vals[:o+1]
         actual = vals[o+h]
         base = train[-1]
+        forecasts = dict(candidate_forecasts(train, h, structural_delta=0.0))
+        eligible = {name: losses for name, losses in scores.items() if len(losses) >= 30}
+        selected = min(eligible, key=lambda k: mean(eligible[k])) if eligible else "persistence"
+        selected_pred = forecasts[selected]
+        selected_counts[selected] = selected_counts.get(selected, 0) + 1
+        strategy_residuals.append(selected_pred-actual)
         baseline_residuals.append(base-actual)
         actual_move = actual-base
         if abs(actual_move) >= 0.10:
             all_direction_cases += 1
-        for name, pred in candidate_forecasts(train, h, structural_delta=0.0):
+        selected_move = selected_pred-base
+        if abs(actual_move) >= 0.10 and abs(selected_move) >= 0.025:
+            strategy_active_cases += 1
+            strategy_hits.append(int(selected_move*actual_move > 0))
+        for name, pred in forecasts.items():
             scores.setdefault(name, []).append((pred-actual)**2)
-            residuals.setdefault(name, []).append(pred-actual)
-            predicted_move = pred-base
-            # Direction is evaluated only when both actual and model signal are active.
-            if abs(actual_move) >= 0.10 and abs(predicted_move) >= 0.025:
-                dir_cases[name] = dir_cases.get(name, 0) + 1
-                dir_hits.setdefault(name, []).append(int(predicted_move*actual_move > 0))
     best = min(scores, key=lambda k: mean(scores[k]))
     baseline_rmse = math.sqrt(mean(scores["persistence"]))
-    best_rmse = math.sqrt(mean(scores[best]))
+    best_rmse = math.sqrt(mean([x*x for x in strategy_residuals]))
     skill = (1-best_rmse/baseline_rmse)*100 if baseline_rmse > 0 else 0.0
     if skill <= 0:
         best = "persistence"
@@ -382,10 +404,11 @@ def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict
         fallback = False
     final_map = dict(candidate_forecasts(vals, h, structural_delta))
     pred = final_map.get(best, vals[-1])
-    active_cases = dir_cases.get(best, 0)
-    hit = mean(dir_hits.get(best, [])) if dir_hits.get(best) else math.nan
+    active_cases = strategy_active_cases
+    hit = mean(strategy_hits) if strategy_hits else math.nan
     active_coverage = active_cases / all_direction_cases if all_direction_cases else 0.0
-    dm = dm_test_squared_errors(residuals[best], baseline_residuals)
+    evaluated_residuals = baseline_residuals if fallback else strategy_residuals
+    dm = dm_test_squared_errors(evaluated_residuals, baseline_residuals, max_lag=max(0, h-1))
     return {
         "forecast": pred, "model": best, "samples": len(scores[best]),
         "rmse": best_rmse, "baseline_rmse": baseline_rmse, "skill_pct": skill,
@@ -394,7 +417,9 @@ def select_model_oos(vals: list[float], h: int, structural_delta: float) -> dict
         "active_direction_coverage": active_coverage,
         "abstention_rate": 1.0-active_coverage,
         "dm_test": dm,
-        "residuals": residuals[best], "fallback_used": fallback,
+        "selection_method": "online_prequential_candidate_selection",
+        "selected_model_counts": selected_counts,
+        "residuals": evaluated_residuals, "fallback_used": fallback,
     }
 
 
@@ -460,7 +485,7 @@ def horizon_gate(result: dict[str, Any], minimum: int, horizon: str | None = Non
     # mislabeled as institutional-grade. Longer horizons require more skill.
     min_skill = {"5d": 0.25, "1m": 0.50, "3m": 1.50, "6m": 2.00, "12m": 3.00}.get(horizon or "", 1.0)
     min_active_coverage = {"5d": 0.25, "1m": 0.30, "3m": 0.35, "6m": 0.35, "12m": 0.30}.get(horizon or "", 0.30)
-    dm_ok = bool(dm.get("significant_10pct"))
+    dm_ok = bool(dm.get("significant_5pct"))
     passed = (
         samples >= minimum and
         skill >= min_skill and
@@ -480,11 +505,11 @@ def horizon_gate(result: dict[str, Any], minimum: int, horizon: str | None = Non
     if result.get("fallback_used"): reasons.append("지속성 안전모형으로 후퇴")
     return {
         "passed": passed,
-        "level": "준기관급" if passed else "참고용",
+        "level": "독립검증 통과" if passed else "참고용/관망",
         "reasons": reasons,
         "thresholds": {"min_skill_pct": min_skill, "min_direction_accuracy": 0.52,
                        "min_active_direction_coverage": min_active_coverage,
-                       "dm_p_value_max": 0.10, "interval80_coverage": [0.75, 0.85]},
+                       "dm_p_value_max": 0.05, "interval80_coverage": [0.75, 0.85]},
     }
 
 
@@ -535,7 +560,7 @@ def main() -> None:
             forecasts[horizon]["targets"][sid] = res
         gates[horizon] = {
             "passed": all(target_passes),
-            "level": "준기관급" if all(target_passes) else "부분통과/참고용",
+            "level": "독립검증 통과" if all(target_passes) else "부분통과/참고용",
             "passed_targets": [sid for sid in TARGETS if forecasts[horizon]["targets"][sid]["quality_gate"]["passed"]],
         }
 
@@ -582,7 +607,7 @@ def main() -> None:
         ),
         "forecasts": forecasts,
         "quality_gates": gates,
-        "production_level": "준기관급" if gates["3m"]["passed"] and gates["6m"]["passed"] else "기간별 게이트 적용",
+        "production_level": "독립검증 통과" if gates["3m"]["passed"] and gates["6m"]["passed"] else "기간별 게이트 적용",
         "data_quality": {
             "completeness": completeness,
             "core_completeness": core_completeness,

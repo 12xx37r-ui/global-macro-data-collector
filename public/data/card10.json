@@ -2,14 +2,14 @@
   "schema_version": "1.0",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-08-03T20:40:09.166050+00:00",
+  "generated_at_utc": "2026-08-03T20:39:57.969074+00:00",
   "current": 40.43476288140092,
   "current_date": "2026-07-01",
   "forecast_3m": 44.03476288140092,
   "forecast_6m": 47.63476288140092,
   "forecast_range80_3m": [
-    37.12553616018579,
-    50.94398960261606
+    37.54524694595198,
+    50.524278816849865
   ],
   "future_direction": "up",
   "market_signal": "bad",
@@ -21,22 +21,38 @@
       "forecast": 41.43476288140092,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 3.4404439042950186,
+      "rmse": 3.5063297687456125,
       "baseline_rmse": 3.5302051938565473,
-      "skill_pct": 2.54266493397427,
-      "direction_accuracy": 0.6046511627906976,
+      "skill_pct": 0.6763183384491112,
+      "direction_accuracy": 0.5405405405405406,
       "fallback_used": false,
       "range80": [
-        37.990157427433864,
-        44.87936833536798
+        38.01359273663753,
+        44.855933026164315
       ],
+      "selection_method": "online_prequential_candidate_selection",
+      "selected_model_counts": {
+        "persistence": 17,
+        "mean_reversion_12m": 22,
+        "mean_reversion_24m": 137,
+        "short_trend": 3,
+        "medium_trend": 1
+      },
       "quality_gate": {
-        "passed": true,
-        "level": "준기관급",
+        "passed": false,
+        "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.8664750139428135,
-          "p_value": 0.06197493663513498,
-          "significant_10pct": true
+          "statistic": 0.4692266103877028,
+          "p_value": 0.6389076666575679,
+          "significant_5pct": false,
+          "significant_10pct": false,
+          "hac_lag": 0
+        },
+        "requirements": {
+          "skill_pct_min": 3.0,
+          "direction_accuracy_min": 0.55,
+          "dm_p_value_max": 0.05,
+          "hac_lag": 0
         }
       }
     },
@@ -44,22 +60,36 @@
       "forecast": 44.03476288140092,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.017995782255459,
+      "rmse": 6.0511626665146085,
       "baseline_rmse": 6.697644689093929,
-      "skill_pct": 10.147580804714417,
-      "direction_accuracy": 0.7410714285714286,
+      "skill_pct": 9.6523785985843,
+      "direction_accuracy": 0.7450980392156863,
       "fallback_used": false,
       "range80": [
-        37.12553616018579,
-        50.94398960261606
+        37.54524694595198,
+        50.524278816849865
       ],
+      "selection_method": "online_prequential_candidate_selection",
+      "selected_model_counts": {
+        "persistence": 14,
+        "mean_reversion_24m": 44,
+        "mean_reversion_12m": 122
+      },
       "quality_gate": {
         "passed": true,
-        "level": "준기관급",
+        "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 3.6607317407831177,
-          "p_value": 0.000251495967796167,
-          "significant_10pct": true
+          "statistic": 2.9396945805905017,
+          "p_value": 0.0032853591336321486,
+          "significant_5pct": true,
+          "significant_10pct": true,
+          "hac_lag": 2
+        },
+        "requirements": {
+          "skill_pct_min": 3.0,
+          "direction_accuracy_min": 0.55,
+          "dm_p_value_max": 0.05,
+          "hac_lag": 2
         }
       }
     },
@@ -67,22 +97,36 @@
       "forecast": 47.63476288140092,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 5.822275881360177,
+      "rmse": 5.9400671254129485,
       "baseline_rmse": 6.709931288271153,
-      "skill_pct": 13.228979087499482,
-      "direction_accuracy": 0.803030303030303,
+      "skill_pct": 11.473502928471325,
+      "direction_accuracy": 0.7419354838709677,
       "fallback_used": false,
       "range80": [
-        40.8972258019988,
-        54.37229996080303
+        40.16142191666961,
+        55.108103846132224
       ],
+      "selection_method": "online_prequential_candidate_selection",
+      "selected_model_counts": {
+        "persistence": 12,
+        "mean_reversion_24m": 131,
+        "mean_reversion_12m": 37
+      },
       "quality_gate": {
         "passed": true,
-        "level": "준기관급",
+        "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 3.2147667891195097,
-          "p_value": 0.0013055053762973667,
-          "significant_10pct": true
+          "statistic": 2.242046241027651,
+          "p_value": 0.024958383893378233,
+          "significant_5pct": true,
+          "significant_10pct": true,
+          "hac_lag": 5
+        },
+        "requirements": {
+          "skill_pct_min": 3.0,
+          "direction_accuracy_min": 0.55,
+          "dm_p_value_max": 0.05,
+          "hac_lag": 5
         }
       }
     },
@@ -90,22 +134,35 @@
       "forecast": 48.43476288140092,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.79844059580446,
+      "rmse": 5.9080562819899605,
       "baseline_rmse": 6.8999403553026255,
-      "skill_pct": 15.963902624921378,
-      "direction_accuracy": 0.7887323943661971,
+      "skill_pct": 14.375255759282023,
+      "direction_accuracy": 0.7769230769230769,
       "fallback_used": false,
       "range80": [
         40.881190207292924,
         55.98833555550892
       ],
+      "selection_method": "online_prequential_candidate_selection",
+      "selected_model_counts": {
+        "persistence": 12,
+        "mean_reversion_24m": 168
+      },
       "quality_gate": {
         "passed": true,
-        "level": "준기관급",
+        "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 4.216412844969526,
-          "p_value": 2.482191566377523e-05,
-          "significant_10pct": true
+          "statistic": 3.0282171033152867,
+          "p_value": 0.0024600128513965203,
+          "significant_5pct": true,
+          "significant_10pct": true,
+          "hac_lag": 11
+        },
+        "requirements": {
+          "skill_pct_min": 3.0,
+          "direction_accuracy_min": 0.55,
+          "dm_p_value_max": 0.05,
+          "hac_lag": 11
         }
       }
     }

@@ -313,29 +313,42 @@ def rolling_oos(x: np.ndarray, price: np.ndarray, horizon: int) -> dict:
     p, a = np.asarray(preds), np.asarray(actual)
     n = len(a)
     if n < 36:
-        return {"status": "insufficient", "samples": n, "grade": "미확인", "weight_multiplier": 0.25,
+        return {"status": "insufficient", "samples": n, "grade": "미확인", "weight_multiplier": 0.0,
                 "reasons": ["독립 OOS 표본 36개 미만"]}
     da = float(np.mean(np.sign(p) == np.sign(a)))
+    hits = int(np.sum(np.sign(p) == np.sign(a)))
+    z = 1.959963984540054
+    denom = 1.0 + z * z / n
+    center = da + z * z / (2.0 * n)
+    margin = z * math.sqrt((da * (1.0 - da) + z * z / (4.0 * n)) / n)
+    direction_wilson_lower_95 = max(0.0, (center - margin) / denom)
     corr = float(np.corrcoef(p, a)[0, 1]) if np.std(p) > 1e-12 and np.std(a) > 1e-12 else 0.0
     rmse = float(np.sqrt(np.mean((p - a) ** 2)))
     baseline = float(np.sqrt(np.mean(a ** 2)))
     skill = (1.0 - rmse / baseline) * 100.0 if baseline > 1e-12 else 0.0
-    if n >= 60 and da >= 0.58 and corr >= 0.15 and skill > 0:
+    # A signal may never receive production weight when it loses to the
+    # no-change benchmark.  Wilson bounds prevent small-sample hit-rate luck
+    # from being promoted as objective predictive evidence.
+    if n >= 96 and da >= 0.60 and direction_wilson_lower_95 > 0.50 and corr >= 0.15 and skill >= 5.0:
         grade, mult, status = "A", 1.0, "strong_pass"
-    elif n >= 48 and da >= 0.54 and corr >= 0.08 and skill > -2:
+    elif n >= 72 and da >= 0.57 and direction_wilson_lower_95 >= 0.48 and corr >= 0.10 and skill >= 2.0:
         grade, mult, status = "B", 0.75, "pass"
-    elif da >= 0.51 or corr > 0.03:
-        grade, mult, status = "C", 0.50, "limited_pass"
-    elif da >= 0.48 and corr > -0.05:
-        grade, mult, status = "D", 0.25, "weak"
+    elif n >= 60 and da >= 0.54 and corr >= 0.05 and skill > 0.0:
+        grade, mult, status = "C", 0.0, "research_only"
+    elif skill > 0.0 and corr > 0.0:
+        grade, mult, status = "D", 0.0, "shadow_only"
     else:
         grade, mult, status = "F", 0.0, "fail"
     return {
         "status": status, "samples": n, "grade": grade, "weight_multiplier": mult,
-        "direction_accuracy": round(da, 4), "correlation": round(corr, 4),
+        "direction_accuracy": round(da, 4),
+        "direction_hits": hits,
+        "direction_wilson_lower_95": round(direction_wilson_lower_95, 4),
+        "correlation": round(corr, 4),
         "rmse": round(rmse, 6), "zero_baseline_rmse": round(baseline, 6),
         "skill_pct": round(skill, 3),
-        "method": "fixed-feature expanding/rolling ridge OOS; monthly anchors; no future data in training",
+        "method": "fixed-feature expanding ridge OOS; monthly anchors; embargoed labels; benchmark-and-confidence gated",
+        "production_eligible": grade in {"A", "B"},
     }
 
 
@@ -386,7 +399,7 @@ def main() -> None:
             else:
                 assets_out[key] = {
                     "label": spec["label"], "ticker": spec["ticker"],
-                    "available": False, "weight_multiplier": 0.25,
+                    "available": False, "weight_multiplier": 0.0,
                     "error": "미국 재무부 공식 금리자료 일시 장애로 신규 검증 불가; 임시 25% 가중치",
                 }
             continue
@@ -426,7 +439,7 @@ def main() -> None:
             else:
                 assets_out[key] = {
                     "label": spec["label"], "ticker": spec["ticker"],
-                    "available": False, "weight_multiplier": 0.25, "error": str(exc),
+                    "available": False, "weight_multiplier": 0.0, "error": str(exc),
                 }
     usable_assets = [
         key for key in REQUIRED_ASSETS
@@ -443,7 +456,7 @@ def main() -> None:
             "required_assets": len(REQUIRED_ASSETS), "usable_assets": len(usable_assets),
             "missing_assets": missing_assets, "complete": not missing_assets,
         },
-        "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.5, "D": 0.25, "F": 0.0, "unavailable": 0.25},
+        "weight_policy": {"A": 1.0, "B": 0.75, "C": 0.0, "D": 0.0, "F": 0.0, "unavailable": 0.0},
         "limitations": [
             "이 파일은 카드 8·12 신호가 각 자산 수익률에 전달되는 정도를 검증하며 카드 8·12 원본 계산을 대체하지 않습니다.",
             "무료 지연시세와 미국 재무부 공식 명목·실질 금리자료를 사용합니다. 과거 성과가 미래 성과를 보장하지 않습니다.",

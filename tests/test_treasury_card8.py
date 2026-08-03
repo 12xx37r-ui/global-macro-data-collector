@@ -15,7 +15,7 @@ class Card8Test(unittest.TestCase):
         self.assertGreater(r['samples'],100)
 
     def test_tiny_skill_does_not_pass(self):
-        r={'samples':900,'skill_pct':0.10,'active_direction_accuracy':0.60,'active_direction_coverage':0.60,'interval80_coverage':0.8,'dm_test':{'significant_10pct':True},'fallback_used':False}
+        r={'samples':900,'skill_pct':0.10,'active_direction_accuracy':0.60,'active_direction_coverage':0.60,'interval80_coverage':0.8,'dm_test':{'significant_5pct':True},'fallback_used':False}
         self.assertFalse(horizon_gate(r,180,'5d')['passed'])
 
     def test_investment_color(self):
@@ -23,7 +23,7 @@ class Card8Test(unittest.TestCase):
         self.assertEqual(grade_strength(4.0,4.5,True)['signal'],'bad')
 
     def test_gate(self):
-        r={'samples':200,'skill_pct':2.5,'active_direction_accuracy':0.56,'active_direction_coverage':0.45,'interval80_coverage':0.8,'dm_test':{'significant_10pct':True},'fallback_used':False}
+        r={'samples':200,'skill_pct':2.5,'active_direction_accuracy':0.56,'active_direction_coverage':0.45,'interval80_coverage':0.8,'dm_test':{'significant_5pct':True},'fallback_used':False}
         self.assertTrue(horizon_gate(r,180,'5d')['passed'])
 
 if __name__=='__main__': unittest.main()
