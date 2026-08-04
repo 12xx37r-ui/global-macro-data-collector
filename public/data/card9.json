@@ -2,33 +2,33 @@
   "schema_version": "1.0",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-08-03T20:39:52.970302+00:00",
-  "current": 47.56642950699298,
+  "generated_at_utc": "2026-08-04T20:46:02.816994+00:00",
+  "current": 48.69048522351869,
   "current_date": "2026-06-01",
-  "forecast_3m": 47.147174142881056,
-  "forecast_6m": 46.72791877876912,
+  "forecast_3m": 47.711310108792766,
+  "forecast_6m": 46.73213499406684,
   "forecast_range80_3m": [
-    42.45094660546487,
-    51.84340168029724
+    43.01508257137658,
+    52.40753764620895
   ],
   "future_direction": "down",
-  "market_signal": "neutral",
+  "market_signal": "bad",
   "current_regime": "고용·소비 보통",
-  "future_regime": "보합",
+  "future_regime": "둔화",
   "investment_conclusion": "고용과 소비의 향후 방향을 경기민감주·내수·신용위험 판단에 반영합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 47.56799878321557,
+      "forecast": 48.56239785112596,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 4.442986318619144,
-      "baseline_rmse": 4.513976104618762,
-      "skill_pct": 1.5726664110379485,
+      "rmse": 4.441381221160737,
+      "baseline_rmse": 4.512080373470134,
+      "skill_pct": 1.566885925283823,
       "direction_accuracy": 0.7941176470588235,
       "fallback_used": false,
       "range80": [
-        44.74194193681784,
-        50.394055629613305
+        45.736341004728224,
+        51.38845469752369
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -40,8 +40,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.1022016859266879,
-          "p_value": 0.2703739992079526,
+          "statistic": 1.0972553157181164,
+          "p_value": 0.27252979835661795,
           "significant_5pct": false,
           "significant_10pct": false,
           "hac_lag": 0
@@ -55,17 +55,17 @@
       }
     },
     "3m": {
-      "forecast": 47.147174142881056,
+      "forecast": 47.711310108792766,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 7.538161587194312,
-      "baseline_rmse": 8.089528319774516,
-      "skill_pct": 6.815808175520077,
+      "rmse": 7.538558539147019,
+      "baseline_rmse": 8.089042526931674,
+      "skill_pct": 6.805304656909305,
       "direction_accuracy": 0.7473684210526316,
       "fallback_used": false,
       "range80": [
-        42.45094660546487,
-        51.84340168029724
+        43.01508257137658,
+        52.40753764620895
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -76,8 +76,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.9433265823433497,
-          "p_value": 0.0519767116716805,
+          "statistic": 1.9400783071845193,
+          "p_value": 0.052370173905152306,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 2
@@ -91,17 +91,17 @@
       }
     },
     "6m": {
-      "forecast": 46.72791877876912,
+      "forecast": 46.73213499406684,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.857140144985203,
-      "baseline_rmse": 7.858141240002375,
-      "skill_pct": 12.738395308059768,
+      "rmse": 6.858160555462168,
+      "baseline_rmse": 7.8609068053497255,
+      "skill_pct": 12.756114208161595,
       "direction_accuracy": 0.7372881355932204,
       "fallback_used": false,
       "range80": [
-        41.73616172247899,
-        51.719675835059256
+        41.74037793777671,
+        51.72389205035697
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -112,8 +112,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.7444201957159637,
-          "p_value": 0.08108584594840762,
+          "statistic": 1.7479609283755875,
+          "p_value": 0.080470793264519,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 5
@@ -127,17 +127,17 @@
       }
     },
     "12m": {
-      "forecast": 47.57898371677368,
+      "forecast": 47.66578624437684,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 6.998438864589557,
-      "baseline_rmse": 8.235358263546276,
-      "skill_pct": 15.019618568774707,
-      "direction_accuracy": 0.7551020408163265,
+      "rmse": 6.997914063445947,
+      "baseline_rmse": 8.235919301044019,
+      "skill_pct": 15.031779602808125,
+      "direction_accuracy": 0.7575757575757576,
       "fallback_used": false,
       "range80": [
-        42.77713046072577,
-        52.380836972821584
+        42.86393298832893,
+        52.467639500424745
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -149,8 +149,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.8282653807915794,
-          "p_value": 0.06750973281964234,
+          "statistic": 1.830076134996806,
+          "p_value": 0.06723855497402842,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 11
@@ -173,12 +173,12 @@
       {
         "series": "OECDSLRTTO01IXOBSAM",
         "latest_date": "2023-12-01",
-        "age_days": 976,
+        "age_days": 977,
         "max_age_days": 180
       }
     ],
     "warnings": [
-      "OECDSLRTTO01IXOBSAM 최신성이 기준 초과: 2023-12-01 (976일 경과)"
+      "OECDSLRTTO01IXOBSAM 최신성이 기준 초과: 2023-12-01 (977일 경과)"
     ],
     "release_lag_policy": "월간·주간 자료는 공표시차와 계열별 최신성 기준을 함께 반영",
     "real_time_vintage": false
@@ -187,7 +187,7 @@
     "UNRATE": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 실업률",
       "latest": {
@@ -200,7 +200,7 @@
     "PAYEMS": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 비농업고용",
       "latest": {
@@ -213,7 +213,7 @@
     "ICSA": {
       "ok": true,
       "fresh": true,
-      "age_days": 9,
+      "age_days": 10,
       "max_age_days": 120,
       "label": "미국 신규실업수당",
       "latest": {
@@ -226,7 +226,7 @@
     "CCSA": {
       "ok": true,
       "fresh": true,
-      "age_days": 16,
+      "age_days": 17,
       "max_age_days": 120,
       "label": "미국 계속실업수당",
       "latest": {
@@ -239,12 +239,12 @@
     "JTSJOL": {
       "ok": true,
       "fresh": true,
-      "age_days": 94,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 구인건수",
       "latest": {
-        "date": "2026-05-01",
-        "value": 7594.0
+        "date": "2026-06-01",
+        "value": 7359.0
       },
       "url": "https://fred.stlouisfed.org/series/JTSJOL",
       "collection_source": "FRED"
@@ -252,7 +252,7 @@
     "CES0500000003": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 시간당임금",
       "latest": {
@@ -265,7 +265,7 @@
     "RSAFS": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 소매판매",
       "latest": {
@@ -278,7 +278,7 @@
     "PCE": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 개인소비지출",
       "latest": {
@@ -291,7 +291,7 @@
     "UMCSENT": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미시간 소비심리",
       "latest": {
@@ -304,7 +304,7 @@
     "TOTALSL": {
       "ok": true,
       "fresh": true,
-      "age_days": 94,
+      "age_days": 95,
       "max_age_days": 120,
       "label": "미국 소비자신용",
       "latest": {
@@ -317,7 +317,7 @@
     "PSAVERT": {
       "ok": true,
       "fresh": true,
-      "age_days": 63,
+      "age_days": 64,
       "max_age_days": 120,
       "label": "미국 개인저축률",
       "latest": {
@@ -330,7 +330,7 @@
     "OECDSLRTTO01IXOBSAM": {
       "ok": true,
       "fresh": false,
-      "age_days": 976,
+      "age_days": 977,
       "max_age_days": 180,
       "label": "OECD 소매판매량",
       "latest": {
