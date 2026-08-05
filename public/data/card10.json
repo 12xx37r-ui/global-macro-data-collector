@@ -2,14 +2,14 @@
   "schema_version": "1.0",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-08-04T20:46:07.775274+00:00",
-  "current": 40.43476288140092,
-  "current_date": "2026-07-01",
-  "forecast_3m": 44.03476288140092,
-  "forecast_6m": 47.63476288140092,
+  "generated_at_utc": "2026-08-05T20:39:33.763077+00:00",
+  "current": 44.767010422946505,
+  "current_date": "2026-08-01",
+  "forecast_3m": 47.74288105543978,
+  "forecast_6m": 50.71875168793305,
   "forecast_range80_3m": [
-    37.54524694595198,
-    50.524278816849865
+    41.114015066655966,
+    54.371747044223596
   ],
   "future_direction": "up",
   "market_signal": "bad",
@@ -18,32 +18,32 @@
   "investment_conclusion": "원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 41.43476288140092,
+      "forecast": 45.32077220779486,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 3.5063297687456125,
-      "baseline_rmse": 3.5302051938565473,
-      "skill_pct": 0.6763183384491112,
-      "direction_accuracy": 0.5405405405405406,
+      "rmse": 3.519437982268875,
+      "baseline_rmse": 3.5373188724396973,
+      "skill_pct": 0.5054927422613154,
+      "direction_accuracy": 0.5526315789473685,
       "fallback_used": false,
       "range80": [
-        38.01359273663753,
-        44.855933026164315
+        41.91882379767107,
+        48.722720617918654
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
-        "persistence": 17,
-        "mean_reversion_12m": 22,
+        "persistence": 16,
         "mean_reversion_24m": 137,
-        "short_trend": 3,
+        "mean_reversion_12m": 21,
+        "short_trend": 5,
         "medium_trend": 1
       },
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 0.4692266103877028,
-          "p_value": 0.6389076666575679,
+          "statistic": 0.33792203957978734,
+          "p_value": 0.7354219383608893,
           "significant_5pct": false,
           "significant_10pct": false,
           "hac_lag": 0
@@ -57,30 +57,30 @@
       }
     },
     "3m": {
-      "forecast": 44.03476288140092,
+      "forecast": 47.74288105543978,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.0511626665146085,
-      "baseline_rmse": 6.697644689093929,
-      "skill_pct": 9.6523785985843,
-      "direction_accuracy": 0.7450980392156863,
+      "rmse": 6.124483672754077,
+      "baseline_rmse": 6.747322287274349,
+      "skill_pct": 9.230900615122007,
+      "direction_accuracy": 0.7475728155339806,
       "fallback_used": false,
       "range80": [
-        37.54524694595198,
-        50.524278816849865
+        41.114015066655966,
+        54.371747044223596
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
-        "persistence": 14,
-        "mean_reversion_24m": 44,
-        "mean_reversion_12m": 122
+        "persistence": 15,
+        "mean_reversion_24m": 22,
+        "mean_reversion_12m": 143
       },
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 2.9396945805905017,
-          "p_value": 0.0032853591336321486,
+          "statistic": 2.790905643815752,
+          "p_value": 0.005256079232917266,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 2
@@ -94,30 +94,30 @@
       }
     },
     "6m": {
-      "forecast": 47.63476288140092,
+      "forecast": 50.71875168793305,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 5.9400671254129485,
-      "baseline_rmse": 6.709931288271153,
-      "skill_pct": 11.473502928471325,
+      "rmse": 5.91284668802412,
+      "baseline_rmse": 6.68560531712811,
+      "skill_pct": 11.558543952994494,
       "direction_accuracy": 0.7419354838709677,
       "fallback_used": false,
       "range80": [
-        40.16142191666961,
-        55.108103846132224
+        43.24541072320174,
+        58.19209265266436
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
         "persistence": 12,
-        "mean_reversion_24m": 131,
-        "mean_reversion_12m": 37
+        "mean_reversion_24m": 136,
+        "mean_reversion_12m": 32
       },
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 2.242046241027651,
-          "p_value": 0.024958383893378233,
+          "statistic": 2.2498298267355805,
+          "p_value": 0.024459749858710023,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 5
@@ -131,17 +131,17 @@
       }
     },
     "12m": {
-      "forecast": 48.43476288140092,
+      "forecast": 49.19710470173336,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.9080562819899605,
-      "baseline_rmse": 6.8999403553026255,
-      "skill_pct": 14.375255759282023,
-      "direction_accuracy": 0.7769230769230769,
+      "rmse": 5.915416109207152,
+      "baseline_rmse": 6.894389229107455,
+      "skill_pct": 14.1995626786949,
+      "direction_accuracy": 0.7692307692307693,
       "fallback_used": false,
       "range80": [
-        40.881190207292924,
-        55.98833555550892
+        41.72274054211124,
+        56.67146886135548
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -152,8 +152,8 @@
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 3.0282171033152867,
-          "p_value": 0.0024600128513965203,
+          "statistic": 2.9849309770211416,
+          "p_value": 0.002836423190638593,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 11
@@ -185,7 +185,7 @@
     "PALLFNFINDEXM": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "IMF 글로벌 원자재 종합지수",
       "latest": {
@@ -198,7 +198,7 @@
     "PNRGINDEXM": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "IMF 글로벌 에너지지수",
       "latest": {
@@ -211,12 +211,12 @@
     "DCOILWTICO": {
       "ok": true,
       "fresh": true,
-      "age_days": 8,
+      "age_days": 2,
       "max_age_days": 120,
       "label": "WTI 유가",
       "latest": {
-        "date": "2026-07-27",
-        "value": 84.25
+        "date": "2026-08-03",
+        "value": 81.96
       },
       "url": "https://fred.stlouisfed.org/series/DCOILWTICO",
       "collection_source": "FRED"
@@ -224,12 +224,12 @@
     "DCOILBRENTEU": {
       "ok": true,
       "fresh": true,
-      "age_days": 8,
+      "age_days": 2,
       "max_age_days": 120,
       "label": "브렌트유",
       "latest": {
-        "date": "2026-07-27",
-        "value": 91.82
+        "date": "2026-08-03",
+        "value": 88.9
       },
       "url": "https://fred.stlouisfed.org/series/DCOILBRENTEU",
       "collection_source": "FRED"
@@ -237,12 +237,12 @@
     "DHHNGSP": {
       "ok": true,
       "fresh": true,
-      "age_days": 8,
+      "age_days": 2,
       "max_age_days": 120,
       "label": "미국 천연가스",
       "latest": {
-        "date": "2026-07-27",
-        "value": 2.63
+        "date": "2026-08-03",
+        "value": 2.81
       },
       "url": "https://fred.stlouisfed.org/series/DHHNGSP",
       "collection_source": "FRED"
@@ -250,7 +250,7 @@
     "PCOPPUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "글로벌 구리가격",
       "latest": {
@@ -263,7 +263,7 @@
     "PALUMUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "글로벌 알루미늄가격",
       "latest": {
@@ -276,7 +276,7 @@
     "PIORECRUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "글로벌 철광석가격",
       "latest": {
@@ -289,7 +289,7 @@
     "PWHEAMTUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "글로벌 밀가격",
       "latest": {
@@ -312,7 +312,7 @@
     "PPIFIS": {
       "ok": true,
       "fresh": true,
-      "age_days": 64,
+      "age_days": 65,
       "max_age_days": 120,
       "label": "미국 최종수요 생산자물가",
       "latest": {
