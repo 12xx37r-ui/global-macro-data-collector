@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-07T01:43:01.056837+00:00",
+  "generated_at_utc": "2026-08-07T18:06:20.423418+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -72,8 +72,8 @@
       "date": "2026-08-05"
     },
     "SOFR": {
-      "value": 3.64,
-      "date": "2026-08-05"
+      "value": 3.65,
+      "date": "2026-08-06"
     },
     "PCEPILFE": {
       "value": 130.266,
@@ -84,12 +84,12 @@
       "date": "2026-06-01"
     },
     "UNRATE": {
-      "value": 4.2,
-      "date": "2026-06-01"
+      "value": 4.1,
+      "date": "2026-07-01"
     },
     "PAYEMS": {
-      "value": 158984.0,
-      "date": "2026-06-01"
+      "value": 158858.0,
+      "date": "2026-07-01"
     },
     "ICSA": {
       "value": 199000.0,
@@ -100,12 +100,12 @@
       "date": "2026-07-31"
     },
     "BAMLH0A0HYM2": {
-      "value": 2.75,
-      "date": "2026-08-05"
+      "value": 2.71,
+      "date": "2026-08-06"
     },
     "VIXCLS": {
-      "value": 15.81,
-      "date": "2026-08-05"
+      "value": 15.15,
+      "date": "2026-08-06"
     },
     "WALCL": {
       "value": 6748567.0,
@@ -120,8 +120,8 @@
       "date": "2026-08-05"
     },
     "RRPONTSYD": {
-      "value": 1.429,
-      "date": "2026-08-06"
+      "value": 1.45,
+      "date": "2026-08-07"
     }
   },
   "derived_current": {
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 102.8984375,
+        "value": 102.98828125,
         "date": "2026-08-07",
-        "return21d_pct": -0.05311883442100651,
-        "return63d_pct": -0.6711915535444923,
-        "realized_vol": 0.0830855989741863,
-        "score": -0.21568366630302138
+        "return21d_pct": -0.037914691943130574,
+        "return63d_pct": -0.49816960410612454,
+        "realized_vol": 0.08325772609391544,
+        "score": -0.15923202278495005
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.265625,
+        "value": 106.4296875,
         "date": "2026-08-07",
-        "return21d_pct": -0.2785923753665709,
-        "return63d_pct": -1.5275465141533329,
-        "realized_vol": 0.19450391910850084,
-        "score": -0.45198674441847847
+        "return21d_pct": -0.29276147259020835,
+        "return63d_pct": -1.2110224800580105,
+        "realized_vol": 0.194919591403628,
+        "score": -0.387537103563128
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.5,
+        "value": 108.6875,
         "date": "2026-08-07",
-        "return21d_pct": -0.4587155963302725,
-        "return63d_pct": -2.073050345508387,
-        "realized_vol": 0.29311235087366777,
-        "score": -0.5447307906343204
+        "return21d_pct": -0.5291005291005346,
+        "return63d_pct": -1.6541778594655776,
+        "realized_vol": 0.2928521272824886,
+        "score": -0.49126957468303184
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 109.25,
+        "value": 109.46875,
         "date": "2026-08-07",
-        "return21d_pct": -1.7701601573475667,
-        "return63d_pct": -3.850385038503845,
-        "realized_vol": 0.5235386494713451,
-        "score": -0.9718444590268629
+        "return21d_pct": -1.7666853617498646,
+        "return63d_pct": -3.258768296050818,
+        "realized_vol": 0.5205631330059296,
+        "score": -0.8935175316854653
       }
     },
-    "composite_score": -0.5460614150956707,
+    "composite_score": -0.4828890581791438,
     "yield_direction": "up",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -221,7 +221,7 @@
             4.029999999999999,
             4.33
           ],
-          "structural_overlay": 0.004703158630924289,
+          "structural_overlay": 0.0038689919642576204,
           "current": 4.18,
           "direction": "flat",
           "investment_environment": {
@@ -286,7 +286,7 @@
             4.470380952380952,
             4.780095238095238
           ],
-          "structural_overlay": 0.003314496395449576,
+          "structural_overlay": 0.003010996395449575,
           "current": 4.63,
           "direction": "flat",
           "investment_environment": {
@@ -351,7 +351,7 @@
             2.2800000000000002,
             2.5304761904761905
           ],
-          "structural_overlay": 0.0021560937500000013,
+          "structural_overlay": 0.0019424270833333342,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -416,7 +416,7 @@
             0.3479999999999995,
             0.5320000000000005
           ],
-          "structural_overlay": -0.001322570535742386,
+          "structural_overlay": -0.0007817372024090509,
           "current": 0.44,
           "direction": "flat",
           "investment_environment": {
@@ -487,7 +487,7 @@
             3.835,
             4.485
           ],
-          "structural_overlay": 0.018812634523697157,
+          "structural_overlay": 0.015475967857030482,
           "current": 4.18,
           "direction": "flat",
           "investment_environment": {
@@ -551,7 +551,7 @@
             4.3,
             4.920000000000001
           ],
-          "structural_overlay": 0.013257985581798304,
+          "structural_overlay": 0.0120439855817983,
           "current": 4.63,
           "direction": "flat",
           "investment_environment": {
@@ -614,7 +614,7 @@
             2.1344838095238097,
             2.6455161904761906
           ],
-          "structural_overlay": 0.008624375000000005,
+          "structural_overlay": 0.007769708333333337,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -677,7 +677,7 @@
             0.24087999999999998,
             0.6270819047619048
           ],
-          "structural_overlay": -0.005290282142969544,
+          "structural_overlay": -0.0031269488096362036,
           "current": 0.44,
           "direction": "flat",
           "investment_environment": {
@@ -745,7 +745,7 @@
             3.5700000000000003,
             4.67
           ],
-          "structural_overlay": 0.059137903571091416,
+          "structural_overlay": 0.05074790357109145,
           "current": 4.18,
           "direction": "down",
           "investment_environment": {
@@ -804,7 +804,7 @@
             4.049969523809524,
             5.090030476190477
           ],
-          "structural_overlay": 0.040823956745394886,
+          "structural_overlay": 0.037811956745394906,
           "current": 4.63,
           "direction": "down",
           "investment_environment": {
@@ -865,7 +865,7 @@
             1.9465066666666666,
             2.7534933333333336
           ],
-          "structural_overlay": 0.026773124999999995,
+          "structural_overlay": 0.02474912500000001,
           "current": 2.41,
           "direction": "down",
           "investment_environment": {
@@ -927,7 +927,7 @@
             0.15999999999999998,
             0.72
           ],
-          "structural_overlay": -0.017520846428908596,
+          "structural_overlay": -0.012020846428908615,
           "current": 0.44,
           "direction": "flat",
           "investment_environment": {
@@ -996,7 +996,7 @@
             3.4799999999999995,
             4.88
           ],
-          "structural_overlay": 0.244275807142183,
+          "structural_overlay": 0.22749580714218276,
           "current": 4.18,
           "direction": "flat",
           "investment_environment": {
@@ -1059,7 +1059,7 @@
             4.096507936507937,
             5.036507936507936
           ],
-          "structural_overlay": 0.13064791349078986,
+          "structural_overlay": 0.12462391349078976,
           "current": 4.63,
           "direction": "down",
           "investment_environment": {
@@ -1120,7 +1120,7 @@
             1.9900000000000002,
             2.83
           ],
-          "structural_overlay": 0.09554625000000005,
+          "structural_overlay": 0.09149824999999998,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -1182,7 +1182,7 @@
             -0.009999999999999953,
             0.8899999999999999
           ],
-          "structural_overlay": -0.11204169285781732,
+          "structural_overlay": -0.10104169285781715,
           "current": 0.44,
           "direction": "flat",
           "investment_environment": {
@@ -1252,7 +1252,7 @@
             2.8159999999999985,
             5.5440000000000005
           ],
-          "structural_overlay": 0.3234758071421826,
+          "structural_overlay": 0.3246958071421826,
           "current": 4.18,
           "direction": "flat",
           "investment_environment": {
@@ -1315,7 +1315,7 @@
             3.7700000000000005,
             5.489999999999999
           ],
-          "structural_overlay": 0.16144791349078969,
+          "structural_overlay": 0.16242391349078972,
           "current": 4.63,
           "direction": "flat",
           "investment_environment": {
@@ -1379,7 +1379,7 @@
             1.4500000000000002,
             3.37
           ],
-          "structural_overlay": 0.12194624999999992,
+          "structural_overlay": 0.12389824999999993,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -1720,8 +1720,8 @@
       "ok": true,
       "label": "SOFR",
       "latest": {
-        "value": 3.64,
-        "date": "2026-08-05"
+        "value": 3.65,
+        "date": "2026-08-06"
       },
       "url": "https://fred.stlouisfed.org/series/SOFR"
     },
@@ -1747,8 +1747,8 @@
       "ok": true,
       "label": "실업률",
       "latest": {
-        "value": 4.2,
-        "date": "2026-06-01"
+        "value": 4.1,
+        "date": "2026-07-01"
       },
       "url": "https://fred.stlouisfed.org/series/UNRATE"
     },
@@ -1756,8 +1756,8 @@
       "ok": true,
       "label": "비농업고용",
       "latest": {
-        "value": 158984.0,
-        "date": "2026-06-01"
+        "value": 158858.0,
+        "date": "2026-07-01"
       },
       "url": "https://fred.stlouisfed.org/series/PAYEMS"
     },
@@ -1783,8 +1783,8 @@
       "ok": true,
       "label": "미국 하이일드 OAS",
       "latest": {
-        "value": 2.75,
-        "date": "2026-08-05"
+        "value": 2.71,
+        "date": "2026-08-06"
       },
       "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
     },
@@ -1792,8 +1792,8 @@
       "ok": true,
       "label": "VIX",
       "latest": {
-        "value": 15.81,
-        "date": "2026-08-05"
+        "value": 15.15,
+        "date": "2026-08-06"
       },
       "url": "https://fred.stlouisfed.org/series/VIXCLS"
     },
@@ -1828,8 +1828,8 @@
       "ok": true,
       "label": "ON RRP",
       "latest": {
-        "value": 1.429,
-        "date": "2026-08-06"
+        "value": 1.45,
+        "date": "2026-08-07"
       },
       "url": "https://fred.stlouisfed.org/series/RRPONTSYD"
     }
