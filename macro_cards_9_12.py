@@ -80,9 +80,9 @@ def _validate_xlsx_response(r: requests.Response) -> None:
 def _parse_dateish(value: Any, *, datemode: int | None = None) -> str | None:
     """Return ISO date for common monthly/date representations.
 
-    The NY Fed GSCPI download is currently served with legacy Excel content
-    despite an .xlsx-looking URL. Legacy workbooks can store month keys as
-    strings, true Excel dates, or plain numeric serials, so accept all three.
+    The NY Fed GSCPI workbook has changed BIFF/XLS layouts over time.  Accept
+    true Excel dates, numeric serials, YYYYMM/YYYMMDD numeric keys, and a broad
+    set of textual date forms without adding another network source.
     """
     if value is None:
         return None
@@ -92,48 +92,98 @@ def _parse_dateish(value: Any, *, datemode: int | None = None) -> str | None:
         except Exception:
             pass
 
-    # Excel serial date occasionally arrives as an ordinary NUMBER cell.
-    if isinstance(value, (int, float)) and math.isfinite(float(value)):
-        serial = float(value)
-        if 1 <= serial <= 80000:
+    def _from_numeric(num: float) -> str | None:
+        if not math.isfinite(num):
+            return None
+        # Numeric YYYYMM / YYYYMMDD keys are common in legacy statistical XLS.
+        rounded = int(round(num))
+        if abs(num - rounded) < 1e-8:
+            text_num = str(abs(rounded))
+            if 190001 <= rounded <= 210012 and len(text_num) == 6:
+                y, m = divmod(rounded, 100)
+                if 1 <= m <= 12:
+                    return f"{y:04d}-{m:02d}-01"
+            if 19000101 <= rounded <= 21001231 and len(text_num) == 8:
+                y = rounded // 10000
+                m = (rounded // 100) % 100
+                d = rounded % 100
+                try:
+                    return datetime(y, m, d).date().isoformat()
+                except ValueError:
+                    pass
+        # Excel serial date. Respect xlrd's workbook date system.
+        if 1 <= num <= 80000:
             try:
-                # Respect the workbook date system when xlrd exposes it.
                 base = datetime(1904, 1, 1) if datemode == 1 else datetime(1899, 12, 30)
-                dt = base + timedelta(days=serial)
+                dt = base + timedelta(days=num)
                 if 1950 <= dt.year <= 2100:
                     return dt.date().isoformat()
             except Exception:
                 pass
-
-    text = str(value).strip()
-    if not text:
         return None
 
-    # Strip common time portions from date text exported by Excel/BIFF.
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        parsed = _from_numeric(float(value))
+        if parsed:
+            return parsed
+
+    text = str(value).strip().strip("'\"")
+    if not text:
+        return None
+    text = (
+        text.replace("\u2212", "-")
+            .replace("\u2013", "-")
+            .replace("\u2014", "-")
+            .replace("\xa0", " ")
+            .replace("\u200b", "")
+            .strip()
+    )
+
+    # Numeric-as-text forms, including strings like '45123.0' or '202607.0'.
+    if re.fullmatch(r"[+-]?\d+(?:\.0+)?", text):
+        try:
+            parsed = _from_numeric(float(text))
+            if parsed:
+                return parsed
+        except ValueError:
+            pass
+
+    # Strip common time portions exported by Excel/BIFF.
     text = re.sub(r"[T ]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?$", "", text).strip()
 
-    # Normalize GSCPI-style month keys such as 1997m1 / 1997M01.
+    # Month keys such as 1997m1 / 1997M01 / 1997-01 / 199701.
     m = re.match(r"^(19\d{2}|20\d{2})\s*[mM]\s*(0?[1-9]|1[0-2])$", text)
     if m:
         return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-01"
-    m = re.match(r"^(19\d{2}|20\d{2})[-_/ ](0?[1-9]|1[0-2])$", text)
+    m = re.match(r"^(19\d{2}|20\d{2})[-_/. ](0?[1-9]|1[0-2])$", text)
     if m:
         return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-01"
     m = re.match(r"^(19\d{2}|20\d{2})(0[1-9]|1[0-2])$", text)
     if m:
         return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-01"
+    m = re.match(r"^(19\d{2}|20\d{2})(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$", text)
+    if m:
+        try:
+            return datetime(int(m.group(1)), int(m.group(2)), int(m.group(3))).date().isoformat()
+        except ValueError:
+            pass
 
     for fmt in (
-        "%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%m/%d/%y",
-        "%Y-%m", "%Y/%m", "%b %Y", "%B %Y", "%b-%Y", "%B-%Y",
+        "%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d",
+        "%m/%d/%Y", "%m/%d/%y", "%m-%d-%Y", "%m-%d-%y",
+        "%d-%b-%Y", "%d-%b-%y", "%d-%B-%Y", "%d-%B-%y",
+        "%d %b %Y", "%d %b %y", "%d %B %Y", "%d %B %y",
+        "%Y-%m", "%Y/%m", "%Y.%m",
+        "%b %Y", "%B %Y", "%b-%Y", "%B-%Y",
         "%b-%y", "%B-%y", "%b %y", "%B %y",
-        "%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M:%S",
-        "%b %d, %Y", "%B %d, %Y",
+        "%b %d, %Y", "%B %d, %Y", "%d %b, %Y", "%d %B, %Y",
     ):
         try:
             dt = datetime.strptime(text, fmt)
             if 1950 <= dt.year <= 2100:
-                return dt.date().replace(day=1 if "%d" not in fmt else dt.day).isoformat()
+                if "%d" not in fmt:
+                    dt = dt.replace(day=1)
+                return dt.date().isoformat()
         except ValueError:
             continue
     return None
@@ -144,9 +194,19 @@ def _floatish(value: Any) -> float | None:
         return None
     try:
         if isinstance(value, str):
-            text = value.strip().replace(",", "")
-            if not text or text in {".", "..", "NA", "N/A", "nan"}:
+            text = (
+                value.strip()
+                     .replace(",", "")
+                     .replace("\u2212", "-")
+                     .replace("\u2013", "-")
+                     .replace("\u2014", "-")
+                     .replace("\xa0", "")
+                     .replace("\u200b", "")
+            )
+            if not text or text in {".", "..", "NA", "N/A", "nan", "null", "None"}:
                 return None
+            # Some legacy Excel exports leave a trailing footnote marker.
+            text = re.sub(r"(?<=\d)[*†‡]+$", "", text)
             value = float(text)
         out = float(value)
     except (TypeError, ValueError):
@@ -156,18 +216,69 @@ def _floatish(value: Any) -> float | None:
     return out
 
 
-def _extract_gscpi_rows_matrix_one_orientation(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
-    """Extract date/value pairs when observations run down rows.
+def _dedup_monthly_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    dedup: dict[str, dict[str, Any]] = {}
+    for x in rows:
+        date = str(x.get("date") or "")
+        value = _floatish(x.get("value"))
+        if len(date) < 7 or value is None:
+            continue
+        key = date[:7] + "-01"
+        dedup[key] = {"date": key, "value": float(value)}
+    return [dedup[k] for k in sorted(dedup)]
 
-    This handles the usual two-column layout and looser row-wise layouts.
+
+def _extract_gscpi_by_column_profile(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
+    """Infer date/value columns from row overlap instead of trusting sheet position.
+
+    The live NY Fed legacy workbook currently exposes a four-column sheet with
+    metadata rows before the observations.  This scorer tests every date/value
+    column pair and keeps the pair with the most valid monthly observations.
     """
+    if not matrix:
+        return []
+    width = max((len(r) for r in matrix), default=0)
+    if width <= 1 or width > 64 or len(matrix) > 10000:
+        return []
+
+    best: list[dict[str, Any]] = []
+    best_score = (-1, -1, -1)
+    for dcol in range(width):
+        for vcol in range(width):
+            if dcol == vcol:
+                continue
+            candidate: list[dict[str, Any]] = []
+            monotonic_pairs = 0
+            prev_month = None
+            for row in matrix:
+                dv = row[dcol] if dcol < len(row) else None
+                vv = row[vcol] if vcol < len(row) else None
+                date_text = _parse_dateish(dv, datemode=datemode)
+                val = _floatish(vv)
+                if not date_text or val is None or not (-20.0 <= val <= 20.0):
+                    continue
+                month = date_text[:7]
+                if prev_month is not None and month >= prev_month:
+                    monotonic_pairs += 1
+                prev_month = month
+                candidate.append({"date": month + "-01", "value": val})
+            candidate = _dedup_monthly_rows(candidate)
+            # Prefer more rows, then chronological consistency, then adjacent columns.
+            score = (len(candidate), monotonic_pairs, -abs(vcol - dcol))
+            if score > best_score:
+                best_score, best = score, candidate
+    return best
+
+
+def _extract_gscpi_rows_matrix_one_orientation(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
+    """Extract date/value pairs when observations run down rows."""
     if not matrix:
         return []
 
     header_row = None
     value_col = None
     date_col = None
-    for ridx, row in enumerate(matrix[:60]):
+    for ridx, row in enumerate(matrix[:80]):
         for cidx, cell in enumerate(row):
             label = str(cell or "").strip().lower()
             if "gscpi" in label or "global supply chain pressure" in label:
@@ -191,47 +302,41 @@ def _extract_gscpi_rows_matrix_one_orientation(matrix: list[list[Any]], *, datem
             date_candidates = []
             if date_col is not None and date_col < len(row):
                 date_candidates.append(row[date_col])
-            date_candidates.extend(row[:min(len(row), max(5, value_col + 2))])
-            date_text = None
-            for v in date_candidates:
-                parsed = _parse_dateish(v, datemode=datemode)
-                if parsed:
-                    date_text = parsed
-                    break
+            date_candidates.extend(row[:min(len(row), max(8, value_col + 3))])
+            date_text = next((p for p in (_parse_dateish(v, datemode=datemode) for v in date_candidates) if p), None)
             val = _floatish(row[value_col])
             if date_text and val is not None and -20.0 <= val <= 20.0:
                 rows.append({"date": date_text, "value": val})
 
+    # Generic row-wise fallback.
     if len(rows) < 36:
         fallback: list[dict[str, Any]] = []
         for row in matrix:
-            date_text = None
-            date_idx = None
-            for idx, value in enumerate(row):
-                parsed = _parse_dateish(value, datemode=datemode)
-                if parsed:
-                    date_text, date_idx = parsed, idx
-                    break
-            if not date_text:
+            date_candidates = [(idx, _parse_dateish(value, datemode=datemode)) for idx, value in enumerate(row)]
+            date_candidates = [(idx, p) for idx, p in date_candidates if p]
+            if not date_candidates:
                 continue
-            numeric: list[tuple[int, float]] = []
+            numeric = []
             for idx, value in enumerate(row):
-                if idx == date_idx:
-                    continue
                 v = _floatish(value)
-                if v is None:
+                if v is None or not (-20.0 <= v <= 20.0):
                     continue
-                if -20.0 <= v <= 20.0:
-                    numeric.append((idx, v))
-            if numeric:
-                numeric.sort(key=lambda x: abs(x[0] - (date_idx or 0)))
-                fallback.append({"date": date_text, "value": numeric[0][1]})
-        if len(fallback) > len(rows):
+                numeric.append((idx, v))
+            for date_idx, date_text in date_candidates:
+                values = [(idx, v) for idx, v in numeric if idx != date_idx]
+                if values:
+                    values.sort(key=lambda x: abs(x[0] - date_idx))
+                    fallback.append({"date": date_text, "value": values[0][1]})
+                    break
+        if len(_dedup_monthly_rows(fallback)) > len(_dedup_monthly_rows(rows)):
             rows = fallback
 
-    dedup = {x["date"][:7] + "-01": {"date": x["date"][:7] + "-01", "value": float(x["value"])} for x in rows}
-    return [dedup[k] for k in sorted(dedup)]
-
+    # Column-profile inference is specifically robust to metadata rows and
+    # shifted Date/GSCPI columns in the live four-column legacy sheet.
+    profiled = _extract_gscpi_by_column_profile(matrix, datemode=datemode)
+    if len(profiled) > len(_dedup_monthly_rows(rows)):
+        return profiled
+    return _dedup_monthly_rows(rows)
 
 def _transpose_matrix(matrix: list[list[Any]]) -> list[list[Any]]:
     if not matrix:
@@ -650,7 +755,7 @@ def build_card10(session:requests.Session)->dict[str,Any]:
     # Pressure index semantics: a rise is adverse, a decline is favorable.
     signal='bad' if delta>.8 else 'good' if delta<-.8 else 'neutral'
     return {
-        'schema_version':'1.1','engine_version':'card10-2.8.0-gscpi-orientation-resilient','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
+        'schema_version':'1.1','engine_version':'card10-2.9.0-gscpi-column-profile-resilient','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
         'market_signal':signal,'current_regime':'공급·원가 부담' if current>=55 else '공급·원가 우호' if current<45 else '중립',

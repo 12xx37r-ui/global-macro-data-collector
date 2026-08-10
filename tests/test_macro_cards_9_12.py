@@ -114,3 +114,90 @@ class TestGscpiOrientationResilience(unittest.TestCase):
         rows=_extract_gscpi_rows_matrix(matrix, datemode=1)
         self.assertEqual(len(rows),48)
         self.assertEqual(rows[0]['date'],'2022-01-01')
+
+class TestGscpiLiveShapeResilience(unittest.TestCase):
+    def test_gscpi_four_column_shifted_yyyymm_numeric_layout(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        # Mimic live legacy sheet shape: 4 columns, metadata rows, actual data shifted right.
+        matrix=[['Date','GSCPI',None,None],
+                ['NEW YORK FED  ECONOMIC RESEARCH',None,None,None],
+                ['https://www.newyorkfed.org/research',None,None,None],
+                [None,None,'Date','GSCPI']]
+        for i in range(120):
+            y=2016+i//12; m=i%12+1
+            val=(i-60)/25
+            matrix.append([None,None,float(f'{y}{m:02d}'), f'{val:.4f}'])
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),120)
+        self.assertEqual(rows[0]['date'],'2016-01-01')
+        self.assertEqual(rows[-1]['date'],'2025-12-01')
+
+    def test_gscpi_day_first_text_dates_and_unicode_minus(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        from datetime import datetime
+        matrix=[['Date','GSCPI']]
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            d=datetime(y,m,1).strftime('%d-%b-%Y')
+            raw=f'{abs((i-24)/10):.2f}'
+            if i < 24:
+                raw='−'+raw
+            matrix.append([d, raw])
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),48)
+        self.assertLess(rows[0]['value'],0)
+        self.assertEqual(rows[-1]['date'],'2025-12-01')
+
+    def test_gscpi_numeric_serial_as_text(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        from datetime import datetime
+        origin=datetime(1899,12,30)
+        matrix=[['Date','GSCPI']]
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            serial=(datetime(y,m,1)-origin).days
+            matrix.append([f'{serial}.0', (i-24)/10])
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),48)
+        self.assertEqual(rows[0]['date'],'2022-01-01')
+
+    def test_gscpi_profile_inference_ignores_metadata_headers(self):
+        from macro_cards_9_12 import _extract_gscpi_by_column_profile
+        matrix=[['Date','GSCPI',None,None],
+                ['NEW YORK FED  ECONOMIC RESEARCH',None,None,None],
+                ['https://www.newyorkfed.org/research',None,None,None]]
+        for i in range(72):
+            y=2020+i//12; m=i%12+1
+            matrix.append([None,'note',f'{y}-{m:02d}-01', (i-36)/10])
+        rows=_extract_gscpi_by_column_profile(matrix)
+        self.assertEqual(len(rows),72)
+        self.assertEqual(rows[-1]['date'],'2025-12-01')
+
+class TestGscpiLowCallPolicy(unittest.TestCase):
+    def test_gscpi_success_uses_one_official_request(self):
+        from unittest.mock import Mock, patch
+        from macro_cards_9_12 import fetch_gscpi_official
+        session=Mock(); response=Mock()
+        response.content=b'PK'+b'x'*4096
+        response.raise_for_status=Mock()
+        session.get.return_value=response
+        fake=[{'date':f'2023-{m:02d}-01','value':0.1} for m in range(1,13)]*3
+        with patch('macro_cards_9_12._parse_gscpi_excel', return_value=fake), \
+             patch('macro_cards_9_12._write_gscpi_cache'):
+            rows,source=fetch_gscpi_official(session)
+        self.assertEqual(session.get.call_count,1)
+        self.assertEqual(len(rows),36)
+        self.assertEqual(source,'New York Fed official workbook')
+
+    def test_gscpi_failure_does_not_add_network_fallback(self):
+        from unittest.mock import Mock, patch
+        from macro_cards_9_12 import fetch_gscpi_official
+        session=Mock(); response=Mock()
+        response.content=b'PK'+b'x'*4096
+        response.raise_for_status=Mock()
+        session.get.return_value=response
+        with patch('macro_cards_9_12._parse_gscpi_excel', side_effect=ValueError('bad layout')), \
+             patch('macro_cards_9_12._read_gscpi_cache', return_value=[]):
+            with self.assertRaises(RuntimeError):
+                fetch_gscpi_official(session)
+        self.assertEqual(session.get.call_count,1)

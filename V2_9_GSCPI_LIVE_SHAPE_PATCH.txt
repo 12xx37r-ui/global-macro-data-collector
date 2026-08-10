@@ -1,0 +1,27 @@
+GLOBAL ENGINE V2.9 - GSCPI live legacy-sheet shape parser
+
+Observed live GitHub Actions diagnostic from V2.8:
+- Sheet: GSCPI Monthly Data
+- rows=348, cols=4, nonempty=690
+- header sample includes Date | GSCPI
+- old parser produced 0 observations
+
+V2.9 changes:
+1) Adds column-profile inference: every plausible date/value column pair is scored by valid monthly row overlap.
+2) Supports shifted data columns after metadata rows instead of assuming the header columns contain the series.
+3) Extends date parsing for numeric YYYYMM/YYYMMDD, numeric-as-text Excel serials, day-first month-name dates, and common separators.
+4) Normalizes Unicode minus/dashes and simple footnote markers in numeric cells.
+5) Keeps the existing vertical + transposed/wide parser and chooses the richest valid series.
+6) No extra network source or retry was added. GSCPI remains one New York Fed workbook request, then local last-good only.
+
+Validation:
+- Python compile: all project Python files passed.
+- unittest: 42/42 passed.
+- Exact-shape simulation: rows=348, cols=4, nonempty=690 -> 343 monthly observations parsed.
+- Shifted C/D columns with numeric YYYYMM dates: passed.
+- Day-first text dates + Unicode minus: passed.
+- Numeric Excel serial stored as text: passed.
+- Horizontal/wide, XLSX, legacy XLS dispatch, 1904 dates: regression tests passed.
+- Low-call policy: success path 1 official GET; failure path 1 official GET and no network fallback.
+
+The external New York Fed binary workbook cannot be executed inside the offline build container. GitHub Actions is the live HTTP/parser verification.
