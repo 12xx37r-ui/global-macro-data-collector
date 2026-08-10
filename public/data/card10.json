@@ -1,8 +1,9 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "engine_version": "card10-2.6.0-gscpi-official-excel",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-08-09T17:07:15.620513+00:00",
+  "generated_at_utc": "2026-08-10T02:57:52.319242+00:00",
   "current": 44.767010422946505,
   "current_date": "2026-08-01",
   "forecast_3m": 47.74288105543978,
@@ -176,7 +177,7 @@
     ],
     "stale_series": [],
     "warnings": [
-      "GSCPI collection failed after official, fallback and cache attempts: official workbook: not an XLSX/ZIP response; content-type=application/vnd.ms-excel; preview='\\x11ࡱ\\x1a\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00>\\x00\\x03\\x00\\t\\x00\\x06\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x04\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x10\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'; FRED CSV fallback: 404 Client Error: Not Found for url: https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI"
+      "GSCPI collection failed after official, fallback and cache attempts: official workbook/cache unavailable: official XLS contained only 0 usable observations"
     ],
     "release_lag_policy": "월간·주간 자료는 공표시차와 계열별 최신성 기준을 함께 반영",
     "real_time_vintage": false
@@ -185,7 +186,7 @@
     "PALLFNFINDEXM": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "IMF 글로벌 원자재 종합지수",
       "latest": {
@@ -198,7 +199,7 @@
     "PNRGINDEXM": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "IMF 글로벌 에너지지수",
       "latest": {
@@ -211,7 +212,7 @@
     "DCOILWTICO": {
       "ok": true,
       "fresh": true,
-      "age_days": 6,
+      "age_days": 7,
       "max_age_days": 120,
       "label": "WTI 유가",
       "latest": {
@@ -224,7 +225,7 @@
     "DCOILBRENTEU": {
       "ok": true,
       "fresh": true,
-      "age_days": 6,
+      "age_days": 7,
       "max_age_days": 120,
       "label": "브렌트유",
       "latest": {
@@ -237,7 +238,7 @@
     "DHHNGSP": {
       "ok": true,
       "fresh": true,
-      "age_days": 6,
+      "age_days": 7,
       "max_age_days": 120,
       "label": "미국 천연가스",
       "latest": {
@@ -250,7 +251,7 @@
     "PCOPPUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "글로벌 구리가격",
       "latest": {
@@ -263,7 +264,7 @@
     "PALUMUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "글로벌 알루미늄가격",
       "latest": {
@@ -276,7 +277,7 @@
     "PIORECRUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "글로벌 철광석가격",
       "latest": {
@@ -289,7 +290,7 @@
     "PWHEAMTUSDM": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "글로벌 밀가격",
       "latest": {
@@ -312,7 +313,7 @@
     "PPIFIS": {
       "ok": true,
       "fresh": true,
-      "age_days": 69,
+      "age_days": 70,
       "max_age_days": 120,
       "label": "미국 최종수요 생산자물가",
       "latest": {
