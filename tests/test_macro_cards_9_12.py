@@ -75,3 +75,42 @@ class TestGscpiLegacyLayouts(unittest.TestCase):
         rows=_extract_gscpi_rows_matrix(matrix)
         self.assertEqual(len(rows),48)
         self.assertEqual(rows[0]['date'],'2022-01-01')
+
+
+class TestGscpiOrientationResilience(unittest.TestCase):
+    def test_gscpi_matrix_accepts_horizontal_wide_layout(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        dates=['Month']
+        values=['GSCPI']
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            dates.append(f'{y}-{m:02d}')
+            values.append((i-24)/10)
+        matrix=[['NY Fed GSCPI chart data'], dates, values]
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),48)
+        self.assertEqual(rows[0]['date'],'2022-01-01')
+        self.assertEqual(rows[-1]['date'],'2025-12-01')
+
+    def test_gscpi_matrix_accepts_iso_timestamp_strings(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        matrix=[['Date','GSCPI']]
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            matrix.append([f'{y}-{m:02d}-01 00:00:00', (i-24)/10])
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),48)
+        self.assertEqual(rows[-1]['date'],'2025-12-01')
+
+    def test_gscpi_numeric_serial_respects_1904_datemode(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        from datetime import datetime
+        origin=datetime(1904,1,1)
+        matrix=[['Date','GSCPI']]
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            serial=(datetime(y,m,1)-origin).days
+            matrix.append([serial, (i-24)/10])
+        rows=_extract_gscpi_rows_matrix(matrix, datemode=1)
+        self.assertEqual(len(rows),48)
+        self.assertEqual(rows[0]['date'],'2022-01-01')

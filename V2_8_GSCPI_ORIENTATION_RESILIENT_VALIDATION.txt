@@ -1,0 +1,36 @@
+GLOBAL ENGINE V2.7 - ISM + GSCPI resilient low-call patch
+
+Scope
+- OECD G20 CLI V2.6 path retained unchanged because live run is already fresh/100% complete.
+- ISM collector repaired for hub responses that show the Manufacturing card but omit the href.
+- GSCPI legacy Excel parser broadened for the New York Fed workbook response served as application/vnd.ms-excel.
+
+Low-call behavior
+- ISM: 0 requests when last-good already equals latest releasable data month; otherwise max 2 official requests (hub + one discovered/deterministic next-month report). No month fan-out.
+- GSCPI: 1 official workbook request when card collection runs; on failure only local last-good cache is reused. No dead FRED GSCPI retry.
+- OECD: 1 official SDMX incremental request with 24-month overlap and local merge, unchanged from V2.6.
+
+ISM robustness
+- BeautifulSoup href discovery + raw HTML href regex.
+- If href metadata is missing, derives exactly one next-month official report URL from last-good month.
+- Does not request an unreleased/future month.
+- Adds browser-like request headers and keeps last-good on transient failure.
+
+GSCPI robustness
+- XLSX and legacy OLE/XLS dispatch.
+- Date parser accepts real date cells, Excel serial dates, YYYYmM, YYYY-MM, YYYYMM, and common month-name formats.
+- Header-aware GSCPI value-column detection plus conservative generic row fallback.
+- Monthly normalization/deduplication; requires >=36 usable observations.
+- Failure source label is now New York Fed workbook unavailable, not misleading FRED.
+
+Validation performed before packaging
+- Python compile: pass for all .py files.
+- unittest discover: 33/33 pass.
+- Simulated exact ISM V2.6 failure mode (hub card text but no href): next-month deterministic fallback succeeds with exactly 2 GET calls.
+- Simulated GSCPI legacy layouts: YYYYmM text dates and raw Excel serial dates both parse successfully.
+- Existing XLSX parser/legacy-XLS dispatch/OECD parser tests pass.
+
+Important live check
+The actual external ISM/GSCPI servers cannot be executed from the offline build sandbox. The next GitHub Actions run is the final live HTTP/parser check. If GSCPI still fails, the collector keeps the model operational without inventing a value and reports a narrow source warning.
+
+V2.8: GSCPI parser now supports both vertical and horizontal/wide official Excel layouts, ISO timestamp text, and 1904 numeric date system. Added failure shape diagnostics without additional network calls.

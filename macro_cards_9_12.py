@@ -95,10 +95,11 @@ def _parse_dateish(value: Any, *, datemode: int | None = None) -> str | None:
     # Excel serial date occasionally arrives as an ordinary NUMBER cell.
     if isinstance(value, (int, float)) and math.isfinite(float(value)):
         serial = float(value)
-        if 20000 <= serial <= 80000:
+        if 1 <= serial <= 80000:
             try:
-                # Works for the modern 1900-date-system range used here.
-                dt = datetime(1899, 12, 30) + timedelta(days=serial)
+                # Respect the workbook date system when xlrd exposes it.
+                base = datetime(1904, 1, 1) if datemode == 1 else datetime(1899, 12, 30)
+                dt = base + timedelta(days=serial)
                 if 1950 <= dt.year <= 2100:
                     return dt.date().isoformat()
             except Exception:
@@ -107,6 +108,9 @@ def _parse_dateish(value: Any, *, datemode: int | None = None) -> str | None:
     text = str(value).strip()
     if not text:
         return None
+
+    # Strip common time portions from date text exported by Excel/BIFF.
+    text = re.sub(r"[T ]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?$", "", text).strip()
 
     # Normalize GSCPI-style month keys such as 1997m1 / 1997M01.
     m = re.match(r"^(19\d{2}|20\d{2})\s*[mM]\s*(0?[1-9]|1[0-2])$", text)
@@ -123,6 +127,8 @@ def _parse_dateish(value: Any, *, datemode: int | None = None) -> str | None:
         "%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%m/%d/%y",
         "%Y-%m", "%Y/%m", "%b %Y", "%B %Y", "%b-%Y", "%B-%Y",
         "%b-%y", "%B-%y", "%b %y", "%B %y",
+        "%Y-%m-%d %H:%M:%S", "%m/%d/%Y %H:%M:%S",
+        "%b %d, %Y", "%B %d, %Y",
     ):
         try:
             dt = datetime.strptime(text, fmt)
@@ -150,12 +156,10 @@ def _floatish(value: Any) -> float | None:
     return out
 
 
-def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
-    """Extract GSCPI date/value pairs from a generic worksheet matrix.
+def _extract_gscpi_rows_matrix_one_orientation(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
+    """Extract date/value pairs when observations run down rows.
 
-    Prefer a header-named GSCPI column. If the workbook layout changes, fall
-    back to row-wise date + plausible z-score detection. This avoids assuming
-    that the value is the last numeric cell in each row.
+    This handles the usual two-column layout and looser row-wise layouts.
     """
     if not matrix:
         return []
@@ -163,14 +167,13 @@ def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None 
     header_row = None
     value_col = None
     date_col = None
-    for ridx, row in enumerate(matrix[:40]):
+    for ridx, row in enumerate(matrix[:60]):
         for cidx, cell in enumerate(row):
             label = str(cell or "").strip().lower()
             if "gscpi" in label or "global supply chain pressure" in label:
                 header_row, value_col = ridx, cidx
                 break
         if value_col is not None:
-            # Look for an explicit date/month/time header on the same row.
             for cidx, cell in enumerate(row):
                 label = str(cell or "").strip().lower()
                 if any(k in label for k in ("date", "month", "time", "period")):
@@ -188,17 +191,18 @@ def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None 
             date_candidates = []
             if date_col is not None and date_col < len(row):
                 date_candidates.append(row[date_col])
-            # Allow nearby columns because the official workbook has changed
-            # layout over time.
-            date_candidates.extend(row[:min(len(row), max(3, value_col + 1))])
-            date_text = next((_parse_dateish(v, datemode=datemode) for v in date_candidates if _parse_dateish(v, datemode=datemode)), None)
+            date_candidates.extend(row[:min(len(row), max(5, value_col + 2))])
+            date_text = None
+            for v in date_candidates:
+                parsed = _parse_dateish(v, datemode=datemode)
+                if parsed:
+                    date_text = parsed
+                    break
             val = _floatish(row[value_col])
             if date_text and val is not None and -20.0 <= val <= 20.0:
                 rows.append({"date": date_text, "value": val})
 
     if len(rows) < 36:
-        # Generic fallback: locate one date-like cell and a plausible GSCPI
-        # z-score on the same row. Exclude date serials and obvious years.
         fallback: list[dict[str, Any]] = []
         for row in matrix:
             date_text = None
@@ -220,8 +224,6 @@ def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None 
                 if -20.0 <= v <= 20.0:
                     numeric.append((idx, v))
             if numeric:
-                # GSCPI is a standardized index, so choose the closest
-                # plausible numeric cell to the date rather than a remote note.
                 numeric.sort(key=lambda x: abs(x[0] - (date_idx or 0)))
                 fallback.append({"date": date_text, "value": numeric[0][1]})
         if len(fallback) > len(rows):
@@ -229,6 +231,46 @@ def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None 
 
     dedup = {x["date"][:7] + "-01": {"date": x["date"][:7] + "-01", "value": float(x["value"])} for x in rows}
     return [dedup[k] for k in sorted(dedup)]
+
+
+def _transpose_matrix(matrix: list[list[Any]]) -> list[list[Any]]:
+    if not matrix:
+        return []
+    width = max((len(r) for r in matrix), default=0)
+    if width == 0:
+        return []
+    # Bound only absurdly wide sheets; the official series is ~350 monthly rows.
+    if width > 5000 or len(matrix) > 5000:
+        return []
+    padded = [list(r) + [None] * (width - len(r)) for r in matrix]
+    return [list(col) for col in zip(*padded)]
+
+
+def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
+    """Extract GSCPI observations regardless of workbook orientation.
+
+    NY Fed chart workbooks can be stored vertically (Date/GSCPI columns) or
+    horizontally (dates across one row and values across another). Parse the
+    original matrix first, then its transpose and keep the richer valid series.
+    No network fallback is added here.
+    """
+    direct = _extract_gscpi_rows_matrix_one_orientation(matrix, datemode=datemode)
+    transposed = _extract_gscpi_rows_matrix_one_orientation(_transpose_matrix(matrix), datemode=datemode)
+    return transposed if len(transposed) > len(direct) else direct
+
+
+def _sheet_shape_diagnostic(matrix: list[list[Any]]) -> str:
+    rows = len(matrix)
+    cols = max((len(r) for r in matrix), default=0)
+    nonempty = sum(1 for r in matrix for v in r if v not in (None, ""))
+    samples = []
+    for r in matrix[:12]:
+        vals = [str(v)[:40] for v in r[:12] if v not in (None, "")]
+        if vals:
+            samples.append("|".join(vals[:4]))
+        if len(samples) >= 3:
+            break
+    return f"rows={rows},cols={cols},nonempty={nonempty},samples={samples}"
 
 
 def _parse_gscpi_xlsx(content: bytes) -> list[dict[str, Any]]:
@@ -248,6 +290,7 @@ def _parse_gscpi_xls(content: bytes) -> list[dict[str, Any]]:
     import xlrd  # type: ignore
     book = xlrd.open_workbook(file_contents=content)
     best: list[dict[str, Any]] = []
+    diagnostics: list[str] = []
     for sheet in book.sheets():
         matrix: list[list[Any]] = []
         for r in range(sheet.nrows):
@@ -263,10 +306,12 @@ def _parse_gscpi_xls(content: bytes) -> list[dict[str, Any]]:
                 row.append(value)
             matrix.append(row)
         parsed = _extract_gscpi_rows_matrix(matrix, datemode=book.datemode)
+        diagnostics.append(f"{sheet.name}:{_sheet_shape_diagnostic(matrix)}:parsed={len(parsed)}")
         if len(parsed) > len(best):
             best = parsed
     if len(best) < 36:
-        raise ValueError(f"official XLS contained only {len(best)} usable observations")
+        diag = "; ".join(diagnostics[:4])
+        raise ValueError(f"official XLS contained only {len(best)} usable observations; {diag}")
     return best
 
 
@@ -605,7 +650,7 @@ def build_card10(session:requests.Session)->dict[str,Any]:
     # Pressure index semantics: a rise is adverse, a decline is favorable.
     signal='bad' if delta>.8 else 'good' if delta<-.8 else 'neutral'
     return {
-        'schema_version':'1.1','engine_version':'card10-2.7.0-gscpi-legacy-layout-resilient','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
+        'schema_version':'1.1','engine_version':'card10-2.8.0-gscpi-orientation-resilient','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
         'market_signal':signal,'current_regime':'공급·원가 부담' if current>=55 else '공급·원가 우호' if current<45 else '중립',

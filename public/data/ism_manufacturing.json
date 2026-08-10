@@ -1,19 +1,18 @@
 {
-  "schema_version": "1.1",
-  "collector_version": "2.7.0-low-call-ism-resilient-discovery",
-  "generated_at_utc": "2026-08-10T03:12:30.095740+00:00",
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-08-09T17:06:56.654017+00:00",
   "source": "Institute for Supply Management Manufacturing PMI reports",
-  "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/",
+  "source_url": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/june/",
   "latest": {
-    "date": "2026-07",
-    "pmi": 55.6,
-    "newOrders": 56.7,
-    "production": 58.5,
-    "employment": 52.8,
-    "supplierDeliveries": 58.9,
-    "inventories": 51.2,
-    "prices": 71.1,
-    "sourceUrl": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/"
+    "date": "2026-06",
+    "pmi": 53.3,
+    "newOrders": 56.0,
+    "production": 52.2,
+    "employment": 49.7,
+    "supplierDeliveries": 57.4,
+    "inventories": 51.4,
+    "prices": 73.0,
+    "sourceUrl": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/june/"
   },
   "history": [
     {
@@ -48,18 +47,13 @@
       "inventories": 51.4,
       "prices": 73.0,
       "sourceUrl": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/june/"
-    },
-    {
-      "date": "2026-07",
-      "pmi": 55.6,
-      "newOrders": 56.7,
-      "production": 58.5,
-      "employment": 52.8,
-      "supplierDeliveries": 58.9,
-      "inventories": 51.2,
-      "prices": 71.1,
-      "sourceUrl": "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/"
     }
   ],
-  "warnings": []
+  "warnings": [
+    "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/february/: 404 Client Error: Not Found for url: https://ecommerce.ismworld.org/SSO/Login.aspx?DPLF=Y&vi=10&vt=78f6f1938cec26cc761c7cda2d1bc12adaf82df6172685cd89e1ca30b2fef31d7bece5a25b00de8335c4530d7989ef16f3024b8a73e86b458e60afbd783fc212455cfd3d4101f1ce96c3710c3f8f5a72fe275d74887b7afdf1ed47cb86c45d59573fa28ba979dc00ce4fb02a1e0c9bfd3dca2f3e54e87c254d3ce6697a18f0d3",
+    "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+    "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/march/: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+    "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/may/: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+    "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/january/: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+  ]
 }
