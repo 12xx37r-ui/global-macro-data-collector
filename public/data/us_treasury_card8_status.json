@@ -1,34 +1,45 @@
 {
-  "generated_at_utc": "2026-08-10T02:57:45.820491+00:00",
+  "generated_at_utc": "2026-08-09T17:07:08.194253+00:00",
   "ok": true,
   "production_level": "기간별 게이트 적용",
   "quality_gates": {
     "5d": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     },
     "1m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     },
     "3m": {
       "passed": false,
       "level": "부분통과/참고용",
       "passed_targets": [
         "DGS2"
+      ],
+      "performance_candidates": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
       ]
     },
     "6m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": [
+        "DGS10"
+      ]
     },
     "12m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     }
   },
   "completeness": 100.0,

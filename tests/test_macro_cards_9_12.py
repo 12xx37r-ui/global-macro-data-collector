@@ -50,3 +50,28 @@ class TestOfficialSourceParsers(unittest.TestCase):
             out=_parse_gscpi_excel(ole)
             self.assertEqual(len(out),36)
             fn.assert_called_once()
+
+class TestGscpiLegacyLayouts(unittest.TestCase):
+    def test_gscpi_matrix_accepts_yyyym_month_keys_and_numeric_strings(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        matrix=[['Month','GSCPI']]
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            matrix.append([f'{y}m{m}', str((i-24)/10)])
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),48)
+        self.assertEqual(rows[-1]['date'],'2025-12-01')
+        self.assertAlmostEqual(rows[-1]['value'],2.3)
+
+    def test_gscpi_matrix_accepts_plain_excel_serial_dates(self):
+        from macro_cards_9_12 import _extract_gscpi_rows_matrix
+        from datetime import datetime
+        origin=datetime(1899,12,30)
+        matrix=[['Date','GSCPI']]
+        for i in range(48):
+            y=2022+i//12; m=i%12+1
+            serial=(datetime(y,m,1)-origin).days
+            matrix.append([serial, (i-24)/10])
+        rows=_extract_gscpi_rows_matrix(matrix)
+        self.assertEqual(len(rows),48)
+        self.assertEqual(rows[0]['date'],'2022-01-01')

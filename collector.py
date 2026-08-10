@@ -97,12 +97,14 @@ def parse_report(html: str, url: str) -> dict[str, Any] | None:
     return {"date": date, **fields, "sourceUrl": url}
 
 
-def current_report_url(session: requests.Session) -> str:
+def current_report_url(session: requests.Session, expected_month_url: str | None = None) -> str:
     """Discover the current Manufacturing PMI report from the official ISM hub.
 
-    One hub request replaces the old 12-month fan-out.  The hub owns the current
-    report link, so we do not guess future month slugs (which previously caused
-    SSO/404 noise).
+    The preferred path is one hub request plus one report request.  Some ISM
+    responses served to GitHub Actions expose the visible report card but omit
+    or transform its href, so we also inspect raw HTML.  If discovery still
+    fails, we use one deterministic expected-month official URL derived from
+    last-good history; there is no month fan-out.
     """
     hub = "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/"
     response = session.get(hub, timeout=(4, 8))
@@ -119,16 +121,60 @@ def current_report_url(session: requests.Session) -> str:
             href = "https://www.ismworld.org" + href
         if href.startswith("https://www.ismworld.org/"):
             candidates.append(href)
-            if "view report" in text:
+            if "view report" in text or "manufacturing" in text:
                 return href
+
+    raw_matches = re.findall(
+        r"href=['\"]([^'\"]*/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/[a-z]+/?)['\"]",
+        response.text,
+        re.I,
+    )
+    for href in raw_matches:
+        if "/services/" in href.lower():
+            continue
+        if href.startswith("/"):
+            href = "https://www.ismworld.org" + href
+        if href.startswith("https://www.ismworld.org/"):
+            return href
+
     if candidates:
         return candidates[0]
+    if expected_month_url:
+        return expected_month_url
     raise ValueError("ISM current Manufacturing report link not found on official hub")
 
 
-def fetch_current_report(session: requests.Session) -> tuple[str, dict[str, Any] | None]:
-    url = current_report_url(session)
-    response = session.get(url, timeout=(4, 8))
+def _next_month_report_url(latest_date: str | None) -> str | None:
+    """Return exactly one expected official month URL from last-good history."""
+    if not latest_date or not re.fullmatch(r"20\d{2}-\d{2}", str(latest_date)):
+        return None
+    y, m = map(int, str(latest_date).split("-"))
+    if m == 12:
+        y += 1
+        m = 1
+    else:
+        m += 1
+
+    # Do not request a future/unreleased data month. Since an ISM Manufacturing
+    # report published in month T describes month T-1, previous calendar month
+    # is the furthest safe deterministic fallback.
+    now = datetime.now(timezone.utc)
+    prev_y, prev_m = ((now.year - 1, 12) if now.month == 1 else (now.year, now.month - 1))
+    if (y, m) > (prev_y, prev_m):
+        return None
+    slug = MONTHS[m - 1]
+    return f"https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/{slug}/"
+
+
+def _latest_expected_data_month() -> str:
+    now = datetime.now(timezone.utc)
+    y, m = ((now.year - 1, 12) if now.month == 1 else (now.year, now.month - 1))
+    return f"{y:04d}-{m:02d}"
+
+
+def fetch_current_report(session: requests.Session, latest_date: str | None = None) -> tuple[str, dict[str, Any] | None]:
+    url = current_report_url(session, _next_month_report_url(latest_date))
+    response = session.get(url, timeout=(4, 8), headers={"Connection": "close", "Accept-Language": "en-US,en;q=0.9"})
     response.raise_for_status()
     return url, parse_report(response.text, url)
 
@@ -158,17 +204,22 @@ def main() -> None:
         "Accept": "text/html,application/xhtml+xml",
     })
 
-    # Low-call path: one official hub request + one current-report request.
-    # If ISM transiently blocks GitHub Actions, keep the last-good history and
-    # report degraded status instead of fanning out across 12 month URLs.
-    try:
-        url, parsed = fetch_current_report(session)
-        if parsed:
-            found.append(parsed)
-        else:
-            errors.append(f"{url}: report page fetched but required PMI fields were not parsed")
-    except Exception as exc:
-        errors.append(f"official current-report discovery/fetch: {type(exc).__name__}: {exc}")
+    # Zero-call fast path: once the latest released data month is already in
+    # local history, do not hit ISM again until a newer month can exist.
+    latest_before = history[-1].get("date") if history else None
+    already_current = bool(latest_before and latest_before >= _latest_expected_data_month())
+    if not already_current:
+        # Low-call refresh path: one official hub request + one current-report
+        # request. If the hub omits href metadata, the second request uses the
+        # single deterministic next-month official URL. No month fan-out.
+        try:
+            url, parsed = fetch_current_report(session, latest_before)
+            if parsed:
+                found.append(parsed)
+            else:
+                errors.append(f"{url}: report page fetched but required PMI fields were not parsed")
+        except Exception as exc:
+            errors.append(f"official current-report discovery/fetch: {type(exc).__name__}: {exc}")
 
     history = merge_history(history, found)
     if not history:
@@ -177,7 +228,7 @@ def main() -> None:
     latest = history[-1]
     payload = {
         "schema_version": "1.1",
-        "collector_version": "2.6.0-low-call-ism-current-report",
+        "collector_version": "2.7.0-low-call-ism-resilient-discovery",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "source": "Institute for Supply Management Manufacturing PMI reports",
         "source_url": latest.get("sourceUrl"),
@@ -189,13 +240,14 @@ def main() -> None:
 
     status = {
         "generated_at_utc": payload["generated_at_utc"],
-        "ok": bool(found),
+        "ok": bool(found) or already_current,
         "new_reports_found": len(found),
         "history_count": len(history),
         "latest_date": latest.get("date"),
         "errors": errors[-10:],
-        "request_strategy": "official_hub_then_current_report_max_2_requests",
-        "last_good_reused": not bool(found),
+        "request_strategy": "zero_if_current_else_official_hub_then_discovered_or_expected_next_report_max_2_requests",
+        "network_skipped_fresh": already_current,
+        "last_good_reused": (not bool(found)) and (not already_current),
     }
     STATUS.write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
 

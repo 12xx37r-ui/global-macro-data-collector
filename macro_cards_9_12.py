@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import json, math, os, statistics, io, csv
-from datetime import datetime, timezone
+import json, math, os, statistics, io, csv, re
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -77,8 +77,13 @@ def _validate_xlsx_response(r: requests.Response) -> None:
     raise ValueError(f"not an Excel workbook; content-type={content_type}; preview={preview!r}")
 
 
-def _parse_dateish(value: Any) -> str | None:
-    """Return ISO date for datetime/date or common monthly/date strings."""
+def _parse_dateish(value: Any, *, datemode: int | None = None) -> str | None:
+    """Return ISO date for common monthly/date representations.
+
+    The NY Fed GSCPI download is currently served with legacy Excel content
+    despite an .xlsx-looking URL. Legacy workbooks can store month keys as
+    strings, true Excel dates, or plain numeric serials, so accept all three.
+    """
     if value is None:
         return None
     if hasattr(value, "date"):
@@ -86,64 +91,183 @@ def _parse_dateish(value: Any) -> str | None:
             return value.date().isoformat()
         except Exception:
             pass
+
+    # Excel serial date occasionally arrives as an ordinary NUMBER cell.
+    if isinstance(value, (int, float)) and math.isfinite(float(value)):
+        serial = float(value)
+        if 20000 <= serial <= 80000:
+            try:
+                # Works for the modern 1900-date-system range used here.
+                dt = datetime(1899, 12, 30) + timedelta(days=serial)
+                if 1950 <= dt.year <= 2100:
+                    return dt.date().isoformat()
+            except Exception:
+                pass
+
     text = str(value).strip()
-    for fmt in ("%Y-%m-%d", "%Y-%m", "%Y/%m/%d", "%Y/%m", "%b %Y", "%B %Y"):
+    if not text:
+        return None
+
+    # Normalize GSCPI-style month keys such as 1997m1 / 1997M01.
+    m = re.match(r"^(19\d{2}|20\d{2})\s*[mM]\s*(0?[1-9]|1[0-2])$", text)
+    if m:
+        return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-01"
+    m = re.match(r"^(19\d{2}|20\d{2})[-_/ ](0?[1-9]|1[0-2])$", text)
+    if m:
+        return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-01"
+    m = re.match(r"^(19\d{2}|20\d{2})(0[1-9]|1[0-2])$", text)
+    if m:
+        return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-01"
+
+    for fmt in (
+        "%Y-%m-%d", "%Y/%m/%d", "%m/%d/%Y", "%m/%d/%y",
+        "%Y-%m", "%Y/%m", "%b %Y", "%B %Y", "%b-%Y", "%B-%Y",
+        "%b-%y", "%B-%y", "%b %y", "%B %y",
+    ):
         try:
             dt = datetime.strptime(text, fmt)
-            return dt.date().replace(day=1 if "%d" not in fmt else dt.day).isoformat()
+            if 1950 <= dt.year <= 2100:
+                return dt.date().replace(day=1 if "%d" not in fmt else dt.day).isoformat()
         except ValueError:
             continue
     return None
 
 
+def _floatish(value: Any) -> float | None:
+    if value is None or isinstance(value, bool):
+        return None
+    try:
+        if isinstance(value, str):
+            text = value.strip().replace(",", "")
+            if not text or text in {".", "..", "NA", "N/A", "nan"}:
+                return None
+            value = float(text)
+        out = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(out):
+        return None
+    return out
+
+
+def _extract_gscpi_rows_matrix(matrix: list[list[Any]], *, datemode: int | None = None) -> list[dict[str, Any]]:
+    """Extract GSCPI date/value pairs from a generic worksheet matrix.
+
+    Prefer a header-named GSCPI column. If the workbook layout changes, fall
+    back to row-wise date + plausible z-score detection. This avoids assuming
+    that the value is the last numeric cell in each row.
+    """
+    if not matrix:
+        return []
+
+    header_row = None
+    value_col = None
+    date_col = None
+    for ridx, row in enumerate(matrix[:40]):
+        for cidx, cell in enumerate(row):
+            label = str(cell or "").strip().lower()
+            if "gscpi" in label or "global supply chain pressure" in label:
+                header_row, value_col = ridx, cidx
+                break
+        if value_col is not None:
+            # Look for an explicit date/month/time header on the same row.
+            for cidx, cell in enumerate(row):
+                label = str(cell or "").strip().lower()
+                if any(k in label for k in ("date", "month", "time", "period")):
+                    date_col = cidx
+                    break
+            if date_col is None:
+                date_col = max(0, value_col - 1)
+            break
+
+    rows: list[dict[str, Any]] = []
+    if value_col is not None and header_row is not None:
+        for row in matrix[header_row + 1:]:
+            if value_col >= len(row):
+                continue
+            date_candidates = []
+            if date_col is not None and date_col < len(row):
+                date_candidates.append(row[date_col])
+            # Allow nearby columns because the official workbook has changed
+            # layout over time.
+            date_candidates.extend(row[:min(len(row), max(3, value_col + 1))])
+            date_text = next((_parse_dateish(v, datemode=datemode) for v in date_candidates if _parse_dateish(v, datemode=datemode)), None)
+            val = _floatish(row[value_col])
+            if date_text and val is not None and -20.0 <= val <= 20.0:
+                rows.append({"date": date_text, "value": val})
+
+    if len(rows) < 36:
+        # Generic fallback: locate one date-like cell and a plausible GSCPI
+        # z-score on the same row. Exclude date serials and obvious years.
+        fallback: list[dict[str, Any]] = []
+        for row in matrix:
+            date_text = None
+            date_idx = None
+            for idx, value in enumerate(row):
+                parsed = _parse_dateish(value, datemode=datemode)
+                if parsed:
+                    date_text, date_idx = parsed, idx
+                    break
+            if not date_text:
+                continue
+            numeric: list[tuple[int, float]] = []
+            for idx, value in enumerate(row):
+                if idx == date_idx:
+                    continue
+                v = _floatish(value)
+                if v is None:
+                    continue
+                if -20.0 <= v <= 20.0:
+                    numeric.append((idx, v))
+            if numeric:
+                # GSCPI is a standardized index, so choose the closest
+                # plausible numeric cell to the date rather than a remote note.
+                numeric.sort(key=lambda x: abs(x[0] - (date_idx or 0)))
+                fallback.append({"date": date_text, "value": numeric[0][1]})
+        if len(fallback) > len(rows):
+            rows = fallback
+
+    dedup = {x["date"][:7] + "-01": {"date": x["date"][:7] + "-01", "value": float(x["value"])} for x in rows}
+    return [dedup[k] for k in sorted(dedup)]
+
+
 def _parse_gscpi_xlsx(content: bytes) -> list[dict[str, Any]]:
     wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
-    out: list[dict[str, Any]] = []
+    best: list[dict[str, Any]] = []
     for ws in wb.worksheets:
-        for row in ws.iter_rows(values_only=True):
-            if not row or len(row) < 2:
-                continue
-            date_value = next((_parse_dateish(x) for x in row if _parse_dateish(x)), None)
-            numeric_values = [float(x) for x in row if finite(x)]
-            if date_value is None or not numeric_values:
-                continue
-            out.append({"date": date_value, "value": numeric_values[-1]})
-    dedup = {x["date"]: x for x in out}
-    result = [dedup[k] for k in sorted(dedup)]
-    if len(result) < 36:
-        raise ValueError(f"official XLSX contained only {len(result)} usable observations")
-    return result
+        matrix = [list(row) for row in ws.iter_rows(values_only=True)]
+        parsed = _extract_gscpi_rows_matrix(matrix)
+        if len(parsed) > len(best):
+            best = parsed
+    if len(best) < 36:
+        raise ValueError(f"official XLSX contained only {len(best)} usable observations")
+    return best
 
 
 def _parse_gscpi_xls(content: bytes) -> list[dict[str, Any]]:
-    # New York Fed currently can serve the historical workbook as legacy OLE/XLS
-    # despite the .xlsx-looking download path. xlrd is intentionally lazy-loaded.
     import xlrd  # type: ignore
     book = xlrd.open_workbook(file_contents=content)
-    out: list[dict[str, Any]] = []
+    best: list[dict[str, Any]] = []
     for sheet in book.sheets():
+        matrix: list[list[Any]] = []
         for r in range(sheet.nrows):
-            values = sheet.row_values(r)
-            date_text = None
-            numeric_values: list[float] = []
-            for c, value in enumerate(values):
+            row: list[Any] = []
+            for c in range(sheet.ncols):
                 cell = sheet.cell(r, c)
+                value = cell.value
                 if cell.ctype == xlrd.XL_CELL_DATE:
                     try:
-                        date_text = xlrd.xldate_as_datetime(value, book.datemode).date().isoformat()
+                        value = xlrd.xldate_as_datetime(value, book.datemode)
                     except Exception:
                         pass
-                if date_text is None:
-                    date_text = _parse_dateish(value) or date_text
-                if isinstance(value, (int, float)) and math.isfinite(float(value)) and cell.ctype != xlrd.XL_CELL_DATE:
-                    numeric_values.append(float(value))
-            if date_text and numeric_values:
-                out.append({"date": date_text, "value": numeric_values[-1]})
-    dedup = {x["date"]: x for x in out}
-    result = [dedup[k] for k in sorted(dedup)]
-    if len(result) < 36:
-        raise ValueError(f"official XLS contained only {len(result)} usable observations")
-    return result
+                row.append(value)
+            matrix.append(row)
+        parsed = _extract_gscpi_rows_matrix(matrix, datemode=book.datemode)
+        if len(parsed) > len(best):
+            best = parsed
+    if len(best) < 36:
+        raise ValueError(f"official XLS contained only {len(best)} usable observations")
+    return best
 
 
 def _parse_gscpi_excel(content: bytes) -> list[dict[str, Any]]:
@@ -152,7 +276,6 @@ def _parse_gscpi_excel(content: bytes) -> list[dict[str, Any]]:
     if content[:8] == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1":
         return _parse_gscpi_xls(content)
     raise ValueError(f"unsupported official workbook signature={content[:8]!r}")
-
 
 def _write_gscpi_cache(rows: list[dict[str, Any]]) -> None:
     GSCPI_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -284,7 +407,8 @@ def fetch_card10_data(session: requests.Session) -> tuple[dict[str, list[dict[st
         data["GSCPI"], source_overrides["GSCPI"] = fetch_gscpi_official(session)
     except Exception as exc:
         data["GSCPI"] = []
-        errors.append(f"GSCPI collection failed after official, fallback and cache attempts: {exc}")
+        source_overrides["GSCPI"] = "New York Fed official workbook (unavailable)"
+        errors.append(f"GSCPI collection failed after official workbook and local last-good cache attempts: {exc}")
     return data, errors, source_overrides
 
 def aligned_group_index(histories: dict[str, list[dict[str, Any]]], symbols: list[str]) -> list[dict[str, Any]]:
@@ -481,7 +605,7 @@ def build_card10(session:requests.Session)->dict[str,Any]:
     # Pressure index semantics: a rise is adverse, a decline is favorable.
     signal='bad' if delta>.8 else 'good' if delta<-.8 else 'neutral'
     return {
-        'schema_version':'1.1','engine_version':'card10-2.6.0-gscpi-official-excel','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
+        'schema_version':'1.1','engine_version':'card10-2.7.0-gscpi-legacy-layout-resilient','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
         'market_signal':signal,'current_regime':'공급·원가 부담' if current>=55 else '공급·원가 우호' if current<45 else '중립',

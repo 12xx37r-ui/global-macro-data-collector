@@ -52,3 +52,18 @@ class CollectorLowCallTest(unittest.TestCase):
         self.assertEqual(row['date'],'2026-07')
         self.assertEqual(row['newOrders'],56.7)
         self.assertEqual(len(session.calls),2)
+
+class CollectorDiscoveryFallbackTest(unittest.TestCase):
+    def test_hub_without_href_uses_expected_next_month_and_stays_two_calls(self):
+        from collector import fetch_current_report
+        hub='https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/'
+        report='https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/july/'
+        pages={
+          hub:'<html><body><h3>Manufacturing PMI</h3><span>View Report</span></body></html>',
+          report:'''Jul 2026 The Manufacturing PMI registered 55.6 percent. The New Orders Index reading of 56.7 percent. The Production Index reading of 58.5 percent. The Employment Index registered 52.8 percent. The Supplier Deliveries Index reading of 58.9 percent. The Inventories Index registered 51.2 percent. The Prices Index registered 71.1 percent.'''
+        }
+        session=_FakeSession(pages)
+        url,row=fetch_current_report(session, '2026-06')
+        self.assertEqual(url, report)
+        self.assertEqual(row['date'],'2026-07')
+        self.assertEqual(len(session.calls),2)
