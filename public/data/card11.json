@@ -2,8 +2,8 @@
   "schema_version": "1.1",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-09T17:07:19.379216+00:00",
-  "score": 5.6,
+  "generated_at_utc": "2026-08-10T03:26:07.984508+00:00",
+  "score": -13.3,
   "market_signal": "neutral",
   "current_regime": "혼합·중립",
   "future_regime": "중립적 투자환경",
@@ -34,10 +34,8 @@
       "label": "글로벌 고용·소비",
       "signal": "good",
       "validation": {
-        "passed": true,
-        "passed_horizons": [
-          "3m"
-        ]
+        "passed": false,
+        "passed_horizons": []
       }
     },
     "card10": {
@@ -70,7 +68,7 @@
     "level": "조건부 통합판정",
     "checks": {
       "card8_validation": false,
-      "card9_validation": true,
+      "card9_validation": false,
       "card10_validation": true,
       "card12_validation": true,
       "card8_data": true,
