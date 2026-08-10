@@ -1,0 +1,23 @@
+GLOBAL ENGINE V2.6 — OFFICIAL-SOURCE / LOW-CALL VALIDATION
+
+Scope
+- ISM Manufacturing: 12-month guessed URL fan-out removed.
+  One official reports-hub request discovers the current report; one report request parses it.
+  Maximum normal ISM calls per run: 2. Failure => committed last-good history, no month-by-month retry storm.
+- OECD CLI: stale FRED proxy removed. Official OECD Data Explorer SDMX G20 monthly CLI added.
+  First run bootstrap; later runs request only a 24-month revision overlap and merge locally.
+- GSCPI: official New York Fed workbook remains primary. Parser now accepts XLSX ZIP and legacy OLE/XLS.
+  Known-dead FRED GSCPI retry removed. One official request, then committed local last-good cache only.
+- Workflow now commits public/data/cache so monthly official-source caches survive GitHub Actions runs.
+
+Validation performed in build sandbox
+- Python compile: 17 Python files OK.
+- unittest: 30/30 passed.
+- ISM simulated official hub -> current July report: exactly 2 GETs, parsed July 2026/new orders 56.7.
+- OECD SDMX CSV parser: monthly TIME_PERIOD/OBS_VALUE parsed and deduplicated.
+- GSCPI XLSX parser: 48 synthetic monthly observations parsed.
+- GSCPI legacy OLE/XLS dispatcher: legacy signature routes to xlrd parser.
+
+Important
+- The build sandbox has no outbound package/network access, so live OECD/New York Fed/ISM HTTP execution is not claimed here.
+- GitHub Actions installs xlrd==2.0.1 from requirements.txt before collection.

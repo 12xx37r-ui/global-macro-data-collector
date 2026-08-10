@@ -5,7 +5,6 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 from bs4 import BeautifulSoup
@@ -98,16 +97,40 @@ def parse_report(html: str, url: str) -> dict[str, Any] | None:
     return {"date": date, **fields, "sourceUrl": url}
 
 
-def candidate_urls() -> list[str]:
-    now = datetime.now(timezone.utc)
-    ordered: list[str] = []
-    for offset in range(0, 13):
-        month = ((now.month - 1 - offset) % 12)
-        ordered.append(
-            f"https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/pmi/{MONTHS[month]}/"
-        )
-    return ordered
+def current_report_url(session: requests.Session) -> str:
+    """Discover the current Manufacturing PMI report from the official ISM hub.
 
+    One hub request replaces the old 12-month fan-out.  The hub owns the current
+    report link, so we do not guess future month slugs (which previously caused
+    SSO/404 noise).
+    """
+    hub = "https://www.ismworld.org/supply-management-news-and-reports/reports/ism-pmi-reports/"
+    response = session.get(hub, timeout=(4, 8))
+    response.raise_for_status()
+    soup = BeautifulSoup(response.text, "html.parser")
+    candidates: list[str] = []
+    for anchor in soup.find_all("a", href=True):
+        href = str(anchor.get("href") or "").strip()
+        text = " ".join(anchor.stripped_strings).lower()
+        low = href.lower()
+        if "/ism-pmi-reports/pmi/" not in low or "/services/" in low:
+            continue
+        if href.startswith("/"):
+            href = "https://www.ismworld.org" + href
+        if href.startswith("https://www.ismworld.org/"):
+            candidates.append(href)
+            if "view report" in text:
+                return href
+    if candidates:
+        return candidates[0]
+    raise ValueError("ISM current Manufacturing report link not found on official hub")
+
+
+def fetch_current_report(session: requests.Session) -> tuple[str, dict[str, Any] | None]:
+    url = current_report_url(session)
+    response = session.get(url, timeout=(4, 8))
+    response.raise_for_status()
+    return url, parse_report(response.text, url)
 
 def merge_history(existing: list[dict[str, Any]], incoming: list[dict[str, Any]]) -> list[dict[str, Any]]:
     by_date = {str(row["date"]): row for row in existing if row.get("date")}
@@ -135,24 +158,17 @@ def main() -> None:
         "Accept": "text/html,application/xhtml+xml",
     })
 
-    def fetch_report(url: str):
-        try:
-            response = session.get(url, timeout=(4, 8))
-            response.raise_for_status()
-            return url, parse_report(response.text, url), None
-        except Exception as exc:
-            return url, None, exc
-
-    # Fetch candidate reports concurrently so a slow ISM page cannot block the
-    # entire workflow for several minutes.
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        futures = [pool.submit(fetch_report, url) for url in candidate_urls()]
-        for fut in as_completed(futures):
-            url, parsed, exc = fut.result()
-            if parsed:
-                found.append(parsed)
-            elif exc is not None:
-                errors.append(f"{url}: {exc}")
+    # Low-call path: one official hub request + one current-report request.
+    # If ISM transiently blocks GitHub Actions, keep the last-good history and
+    # report degraded status instead of fanning out across 12 month URLs.
+    try:
+        url, parsed = fetch_current_report(session)
+        if parsed:
+            found.append(parsed)
+        else:
+            errors.append(f"{url}: report page fetched but required PMI fields were not parsed")
+    except Exception as exc:
+        errors.append(f"official current-report discovery/fetch: {type(exc).__name__}: {exc}")
 
     history = merge_history(history, found)
     if not history:
@@ -160,7 +176,8 @@ def main() -> None:
 
     latest = history[-1]
     payload = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
+        "collector_version": "2.6.0-low-call-ism-current-report",
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "source": "Institute for Supply Management Manufacturing PMI reports",
         "source_url": latest.get("sourceUrl"),
@@ -177,6 +194,8 @@ def main() -> None:
         "history_count": len(history),
         "latest_date": latest.get("date"),
         "errors": errors[-10:],
+        "request_strategy": "official_hub_then_current_report_max_2_requests",
+        "last_good_reused": not bool(found),
     }
     STATUS.write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")
 

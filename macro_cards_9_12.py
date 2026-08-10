@@ -29,7 +29,7 @@ CARD9_SERIES = {
     'UMCSENT': {'label':'미시간 소비심리','core':False,'adverse_up':False},
     'TOTALSL': {'label':'미국 소비자신용','core':False,'adverse_up':False},
     'PSAVERT': {'label':'미국 개인저축률','core':False,'adverse_up':False},
-    'OECDSLRTTO01IXOBSAM': {'label':'OECD 소매판매량','core':False,'adverse_up':False,'max_age_days':180},
+    'OECD_G20_CLI': {'label':'OECD G20 경기선행지수(CLI)','core':False,'adverse_up':False,'direct':True,'max_age_days':180},
 }
 
 # Card 10: commodities, energy, supply chain.
@@ -60,56 +60,98 @@ HORIZONS = {'5d':5,'1m':21,'3m':63,'6m':126,'12m':252}
 def now_iso(): return datetime.now(timezone.utc).isoformat()
 
 GSCPI_XLSX_URL = "https://www.newyorkfed.org/medialibrary/research/interactives/gscpi/downloads/gscpi_data.xlsx"
-GSCPI_FRED_CSV_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GSCPI"
 GSCPI_CACHE_PATH = OUT_DIR / "cache" / "gscpi_official.json"
+OECD_G20_CLI_URL = "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/G20.M.LI...AA...H"
+OECD_CLI_CACHE_PATH = OUT_DIR / "cache" / "oecd_g20_cli.json"
 
 
 def _validate_xlsx_response(r: requests.Response) -> None:
-    content_type = (r.headers.get("content-type") or "").lower()
+    """Compatibility validator: accept both XLSX ZIP and legacy OLE/XLS."""
     body = r.content or b""
+    content_type = (r.headers.get("content-type") or "").lower()
     if len(body) < 1024:
         raise ValueError(f"download too small ({len(body)} bytes)")
-    if body[:2] != b"PK":
-        preview = body[:80].decode("utf-8", errors="ignore").replace("\n", " ")
-        raise ValueError(f"not an XLSX/ZIP response; content-type={content_type}; preview={preview!r}")
+    if body[:2] == b"PK" or body[:8] == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1":
+        return
+    preview = body[:80].decode("utf-8", errors="ignore").replace("\n", " ")
+    raise ValueError(f"not an Excel workbook; content-type={content_type}; preview={preview!r}")
 
 
-def _parse_gscpi_workbook(content: bytes) -> list[dict[str, Any]]:
+def _parse_dateish(value: Any) -> str | None:
+    """Return ISO date for datetime/date or common monthly/date strings."""
+    if value is None:
+        return None
+    if hasattr(value, "date"):
+        try:
+            return value.date().isoformat()
+        except Exception:
+            pass
+    text = str(value).strip()
+    for fmt in ("%Y-%m-%d", "%Y-%m", "%Y/%m/%d", "%Y/%m", "%b %Y", "%B %Y"):
+        try:
+            dt = datetime.strptime(text, fmt)
+            return dt.date().replace(day=1 if "%d" not in fmt else dt.day).isoformat()
+        except ValueError:
+            continue
+    return None
+
+
+def _parse_gscpi_xlsx(content: bytes) -> list[dict[str, Any]]:
     wb = load_workbook(io.BytesIO(content), read_only=True, data_only=True)
     out: list[dict[str, Any]] = []
     for ws in wb.worksheets:
         for row in ws.iter_rows(values_only=True):
             if not row or len(row) < 2:
                 continue
-            # Official workbook layouts have changed; locate a date-like cell and a finite numeric cell.
-            date_value = next((x for x in row if hasattr(x, "date")), None)
-            numeric_values = [x for x in row if finite(x)]
+            date_value = next((_parse_dateish(x) for x in row if _parse_dateish(x)), None)
+            numeric_values = [float(x) for x in row if finite(x)]
             if date_value is None or not numeric_values:
                 continue
-            value = float(numeric_values[-1])
-            out.append({"date": date_value.date().isoformat(), "value": value})
-    # Deduplicate and sort because some workbook versions contain charts/helper sheets.
+            out.append({"date": date_value, "value": numeric_values[-1]})
     dedup = {x["date"]: x for x in out}
     result = [dedup[k] for k in sorted(dedup)]
     if len(result) < 36:
-        raise ValueError(f"official workbook contained only {len(result)} usable observations")
+        raise ValueError(f"official XLSX contained only {len(result)} usable observations")
     return result
 
 
-def _fetch_gscpi_fred_csv(session: requests.Session) -> list[dict[str, Any]]:
-    r = session.get(GSCPI_FRED_CSV_URL, timeout=(15, 60), headers={"Accept": "text/csv,*/*"})
-    r.raise_for_status()
-    text = r.text
-    if "DATE" not in text.upper() or "GSCPI" not in text.upper():
-        raise ValueError("FRED fallback did not return a GSCPI CSV")
-    out = []
-    for row in csv.DictReader(io.StringIO(text)):
-        value = row.get("GSCPI")
-        if value not in (None, "", ".") and finite(value):
-            out.append({"date": row.get("DATE"), "value": float(value)})
-    if len(out) < 36:
-        raise ValueError(f"FRED fallback contained only {len(out)} observations")
-    return out
+def _parse_gscpi_xls(content: bytes) -> list[dict[str, Any]]:
+    # New York Fed currently can serve the historical workbook as legacy OLE/XLS
+    # despite the .xlsx-looking download path. xlrd is intentionally lazy-loaded.
+    import xlrd  # type: ignore
+    book = xlrd.open_workbook(file_contents=content)
+    out: list[dict[str, Any]] = []
+    for sheet in book.sheets():
+        for r in range(sheet.nrows):
+            values = sheet.row_values(r)
+            date_text = None
+            numeric_values: list[float] = []
+            for c, value in enumerate(values):
+                cell = sheet.cell(r, c)
+                if cell.ctype == xlrd.XL_CELL_DATE:
+                    try:
+                        date_text = xlrd.xldate_as_datetime(value, book.datemode).date().isoformat()
+                    except Exception:
+                        pass
+                if date_text is None:
+                    date_text = _parse_dateish(value) or date_text
+                if isinstance(value, (int, float)) and math.isfinite(float(value)) and cell.ctype != xlrd.XL_CELL_DATE:
+                    numeric_values.append(float(value))
+            if date_text and numeric_values:
+                out.append({"date": date_text, "value": numeric_values[-1]})
+    dedup = {x["date"]: x for x in out}
+    result = [dedup[k] for k in sorted(dedup)]
+    if len(result) < 36:
+        raise ValueError(f"official XLS contained only {len(result)} usable observations")
+    return result
+
+
+def _parse_gscpi_excel(content: bytes) -> list[dict[str, Any]]:
+    if content[:2] == b"PK":
+        return _parse_gscpi_xlsx(content)
+    if content[:8] == b"\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1":
+        return _parse_gscpi_xls(content)
+    raise ValueError(f"unsupported official workbook signature={content[:8]!r}")
 
 
 def _write_gscpi_cache(rows: list[dict[str, Any]]) -> None:
@@ -127,34 +169,111 @@ def _read_gscpi_cache() -> list[dict[str, Any]]:
 
 
 def fetch_gscpi_official(session: requests.Session) -> tuple[list[dict[str, Any]], str]:
-    errors = []
+    """One official request, then local last-good only. No known-dead FRED retry."""
     try:
         r = session.get(
             GSCPI_XLSX_URL,
-            timeout=(15, 60),
+            timeout=(4, 12),
             allow_redirects=True,
             headers={
-                "Accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream;q=0.9,*/*;q=0.5",
+                "Accept": "application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/octet-stream;q=0.9,*/*;q=0.3",
                 "Referer": "https://www.newyorkfed.org/research/policy/gscpi",
             },
         )
         r.raise_for_status()
-        _validate_xlsx_response(r)
-        rows = _parse_gscpi_workbook(r.content)
+        if len(r.content or b"") < 1024:
+            raise ValueError(f"official workbook too small ({len(r.content or b'')} bytes)")
+        rows = _parse_gscpi_excel(r.content)
         _write_gscpi_cache(rows)
         return rows, "New York Fed official workbook"
     except Exception as exc:
-        errors.append(f"official workbook: {exc}")
+        cached = _read_gscpi_cache()
+        if cached:
+            return cached, f"local last-good cache (official refresh failed: {type(exc).__name__})"
+        raise RuntimeError(f"official workbook/cache unavailable: {exc}")
+
+
+def _read_oecd_cli_cache() -> list[dict[str, Any]]:
     try:
-        rows = _fetch_gscpi_fred_csv(session)
-        _write_gscpi_cache(rows)
-        return rows, "FRED CSV fallback"
+        payload = json.loads(OECD_CLI_CACHE_PATH.read_text(encoding="utf-8"))
+        return list(payload.get("rows") or [])
+    except Exception:
+        return []
+
+
+def _write_oecd_cli_cache(rows: list[dict[str, Any]]) -> None:
+    OECD_CLI_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    OECD_CLI_CACHE_PATH.write_text(json.dumps({"saved_at_utc": now_iso(), "rows": rows}, ensure_ascii=False), encoding="utf-8")
+
+
+def _oecd_start(previous_rows: list[dict[str, Any]]) -> tuple[str, str]:
+    if not previous_rows:
+        return "2010-01", "bootstrap"
+    dates = [str(r.get("date") or "")[:7] for r in previous_rows if r.get("date")]
+    dates = [d for d in dates if len(d) == 7]
+    if not dates:
+        return "2010-01", "bootstrap"
+    latest = datetime.strptime(max(dates), "%Y-%m")
+    # monthly release: 24-month overlap safely handles revisions with one request
+    month_index = latest.year * 12 + latest.month - 1 - 24
+    return f"{month_index//12:04d}-{month_index%12+1:02d}", "incremental"
+
+
+def _parse_oecd_cli_csv(text: str) -> list[dict[str, Any]]:
+    reader = csv.DictReader(io.StringIO(text))
+    out: list[dict[str, Any]] = []
+    for row in reader:
+        period = row.get("TIME_PERIOD") or row.get("Time period") or row.get("TIME")
+        raw = row.get("OBS_VALUE") or row.get("Observation value") or row.get("Value")
+        if not period or raw in (None, "", ".."): continue
+        try: value = float(raw)
+        except (TypeError, ValueError): continue
+        out.append({"date": str(period)[:7] + "-01", "value": value})
+    dedup = {r["date"]: r for r in out}
+    result = [dedup[d] for d in sorted(dedup)]
+    if len(result) < 1:
+        raise ValueError("OECD CLI CSV contained no usable observations")
+    return result
+
+
+def fetch_oecd_g20_cli(session: requests.Session) -> tuple[list[dict[str, Any]], str]:
+    previous = _read_oecd_cli_cache()
+    start_period, mode = _oecd_start(previous)
+    try:
+        r = session.get(
+            OECD_G20_CLI_URL,
+            params={"startPeriod": start_period, "dimensionAtObservation": "AllDimensions", "format": "csvfile"},
+            timeout=(4, 12),
+            headers={"Accept": "text/csv,*/*;q=0.2", "User-Agent": "global-macro-engine/2.6"},
+        )
+        r.raise_for_status()
+        fresh = _parse_oecd_cli_csv(r.text)
+        merged = _merge_direct_rows(previous, fresh)
+        _write_oecd_cli_cache(merged)
+        return merged, f"OECD Data Explorer SDMX ({mode}, one request)"
     except Exception as exc:
-        errors.append(f"FRED CSV fallback: {exc}")
-    cached = _read_gscpi_cache()
-    if cached:
-        return cached, "local cache from last successful official collection"
-    raise RuntimeError("; ".join(errors))
+        if previous:
+            return previous, f"local last-good cache (OECD refresh failed: {type(exc).__name__})"
+        raise
+
+
+def _merge_direct_rows(previous: list[dict[str, Any]], fresh: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    by = {str(r.get("date")): r for r in previous if r.get("date")}
+    for row in fresh:
+        if row.get("date"): by[str(row["date"])] = row
+    return [by[d] for d in sorted(by)]
+
+
+def fetch_card9_data(session: requests.Session) -> tuple[dict[str, list[dict[str, Any]]], list[str], dict[str, str]]:
+    fred_ids = [sid for sid, meta in CARD9_SERIES.items() if not meta.get("direct")]
+    data, errors = fetch_fred_all(session, fred_ids)
+    source_overrides: dict[str, str] = {}
+    try:
+        data["OECD_G20_CLI"], source_overrides["OECD_G20_CLI"] = fetch_oecd_g20_cli(session)
+    except Exception as exc:
+        data["OECD_G20_CLI"] = []
+        errors.append(f"OECD G20 CLI collection failed after official/cache attempt: {exc}")
+    return data, errors, source_overrides
 
 
 def fetch_card10_data(session: requests.Session) -> tuple[dict[str, list[dict[str, Any]]], list[str], dict[str, str]]:
@@ -244,7 +363,7 @@ def composite_history(data:dict[str,list[dict[str,Any]]], spec:dict[str,dict[str
             if mode=='employment':
                 if sid in ('UNRATE','ICSA','CCSA','PSAVERT'):
                     v=-(vals[i]-vals[max(0,i-3)])
-                elif sid in ('PAYEMS','JTSJOL','RSAFS','PCE','TOTALSL','OECDSLRTTO01IXOBSAM'):
+                elif sid in ('PAYEMS','JTSJOL','RSAFS','PCE','TOTALSL','OECD_G20_CLI'):
                     v=(vals[i]/vals[max(0,i-3)]-1)*100 if vals[max(0,i-3)] else 0
                 else:
                     v=(vals[i]/vals[max(0,i-3)]-1)*100 if vals[max(0,i-3)] else 0
@@ -327,7 +446,7 @@ def walk_forward(vals:list[float], h:int, min_samples:int=60)->dict[str,Any]:
                             'requirements':{'skill_pct_min':3.0,'direction_accuracy_min':.55,'dm_p_value_max':.05,'hac_lag':max(0,h-1)}}}
 
 def build_card9(session:requests.Session)->dict[str,Any]:
-    data,errors=fetch_fred_all(session,list(CARD9_SERIES))
+    data,errors,source_overrides=fetch_card9_data(session)
     hist=composite_history(data,CARD9_SERIES,'employment')
     vals=values(hist)
     if len(vals)<60: raise RuntimeError('Card9 composite history insufficient')
@@ -338,14 +457,14 @@ def build_card9(session:requests.Session)->dict[str,Any]:
     f3=forecasts['3m']['forecast']; delta=f3-current
     signal='good' if delta>.8 else 'bad' if delta<-.8 else 'neutral'
     return {
-        'schema_version':'1.0','card':9,'title':'글로벌 고용·소비 경기','generated_at_utc':now_iso(),
+        'schema_version':'1.1','engine_version':'card9-2.6.0-oecd-cli-direct','card':9,'title':'글로벌 고용·소비 경기','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
         'market_signal':signal,'current_regime':'고용·소비 강함' if current>=55 else '고용·소비 약함' if current<45 else '고용·소비 보통',
         'future_regime':'회복' if signal=='good' else '둔화' if signal=='bad' else '보합',
         'investment_conclusion':'고용과 소비의 향후 방향을 경기민감주·내수·신용위험 판단에 반영합니다.',
         'forecasts':forecasts,'data_quality':quality(data,CARD9_SERIES,errors),
-        'source_status':source_status(data,CARD9_SERIES),
+        'source_status':source_status(data,CARD9_SERIES,source_overrides),
         'model_specification':{'selection':'expanding walk-forward','benchmark':'persistence','inputs':list(CARD9_SERIES)},
     }
 
@@ -362,7 +481,7 @@ def build_card10(session:requests.Session)->dict[str,Any]:
     # Pressure index semantics: a rise is adverse, a decline is favorable.
     signal='bad' if delta>.8 else 'good' if delta<-.8 else 'neutral'
     return {
-        'schema_version':'1.0','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
+        'schema_version':'1.1','engine_version':'card10-2.6.0-gscpi-official-excel','card':10,'title':'원자재·에너지·공급망 압력','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
         'market_signal':signal,'current_regime':'공급·원가 부담' if current>=55 else '공급·원가 우호' if current<45 else '중립',
@@ -466,7 +585,7 @@ def source_status(data, spec, source_overrides=None):
             'max_age_days': max_age,
             'label': meta['label'],
             'latest': row,
-            'url': GSCPI_XLSX_URL if sid == 'GSCPI' else f'https://fred.stlouisfed.org/series/{sid}',
+            'url': (GSCPI_XLSX_URL if sid == 'GSCPI' else OECD_G20_CLI_URL if sid == 'OECD_G20_CLI' else f'https://fred.stlouisfed.org/series/{sid}'),
             'collection_source': source_overrides.get(sid, 'FRED'),
         }
     return out

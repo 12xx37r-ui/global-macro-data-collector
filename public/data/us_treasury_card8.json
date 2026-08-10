@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-10T02:26:27.320784+00:00",
+  "generated_at_utc": "2026-08-09T17:07:08.194253+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 102.96484375,
-        "date": "2026-08-10",
-        "return21d_pct": 0.022767806321866146,
-        "return63d_pct": -0.5620944620491897,
-        "realized_vol": 0.08282588998459571,
-        "score": -0.14572466291266367
+        "value": 102.9765625,
+        "date": "2026-08-07",
+        "return21d_pct": -0.049289099526061975,
+        "return63d_pct": -0.5094916405630867,
+        "realized_vol": 0.08306821470870614,
+        "score": -0.16839513836115944
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.375,
-        "date": "2026-08-10",
-        "return21d_pct": -0.1686340640809414,
-        "return63d_pct": -1.3833562685594214,
-        "realized_vol": 0.19367007114873291,
-        "score": -0.37557431988633744
+        "value": 106.3984375,
+        "date": "2026-08-07",
+        "return21d_pct": -0.32203761984922474,
+        "return63d_pct": -1.2400290065264663,
+        "realized_vol": 0.19453212901226896,
+        "score": -0.40624909885659305
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.609375,
-        "date": "2026-08-10",
-        "return21d_pct": -0.38693035253654084,
-        "return63d_pct": -1.93284424379232,
-        "realized_vol": 0.29082679403580597,
-        "score": -0.4955994323591409
+        "value": 108.640625,
+        "date": "2026-08-07",
+        "return21d_pct": -0.572000572000575,
+        "return63d_pct": -1.6965926763749417,
+        "realized_vol": 0.29242922885925027,
+        "score": -0.5143632568601579
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 109.46875,
-        "date": "2026-08-10",
-        "return21d_pct": -1.5181332583637852,
-        "return63d_pct": -3.604843148046233,
-        "realized_vol": 0.5178817299457458,
-        "score": -0.8804988761559135
+        "value": 109.375,
+        "date": "2026-08-07",
+        "return21d_pct": -1.8508132361188978,
+        "return63d_pct": -3.341618337475838,
+        "realized_vol": 0.520235298798506,
+        "score": -0.9265394456011217
       }
     },
-    "composite_score": -0.4743493228285139,
+    "composite_score": -0.503886734919758,
     "yield_direction": "up",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -221,7 +221,7 @@
             4.1,
             4.4
           ],
-          "structural_overlay": 0.004180241964257623,
+          "structural_overlay": 0.003895241964257621,
           "current": 4.25,
           "direction": "flat",
           "investment_environment": {
@@ -231,7 +231,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 0.25% 미달",
@@ -248,7 +247,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -286,7 +286,7 @@
             4.530380952380953,
             4.8400952380952385
           ],
-          "structural_overlay": 0.003171413062116244,
+          "structural_overlay": 0.00306057972878291,
           "current": 4.69,
           "direction": "flat",
           "investment_environment": {
@@ -296,7 +296,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.19%로 최소 0.25% 미달",
@@ -313,7 +312,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DFII10": {
@@ -352,7 +352,7 @@
             2.3000000000000003,
             2.5504761904761906
           ],
-          "structural_overlay": 0.0020374270833333347,
+          "structural_overlay": 0.0019424270833333342,
           "current": 2.43,
           "direction": "flat",
           "investment_environment": {
@@ -362,7 +362,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.21%로 최소 0.25% 미달",
@@ -379,7 +378,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -418,7 +418,7 @@
             0.3679999999999995,
             0.5520000000000005
           ],
-          "structural_overlay": -0.0009296538690757184,
+          "structural_overlay": -0.0007554872024090505,
           "current": 0.46,
           "direction": "flat",
           "investment_environment": {
@@ -428,7 +428,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 0.25% 미달",
@@ -446,7 +445,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -490,7 +490,7 @@
             3.9050000000000002,
             4.555000000000001
           ],
-          "structural_overlay": 0.01672096785703049,
+          "structural_overlay": 0.015580967857030484,
           "current": 4.25,
           "direction": "flat",
           "investment_environment": {
@@ -500,7 +500,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.15%로 최소 0.50% 미달",
@@ -517,7 +516,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -555,7 +555,7 @@
             4.36,
             4.980000000000001
           ],
-          "structural_overlay": 0.012685652248464976,
+          "structural_overlay": 0.01224231891513164,
           "current": 4.69,
           "direction": "flat",
           "investment_environment": {
@@ -565,7 +565,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "활성 방향 적중률 29.4%로 52% 미달",
@@ -581,7 +580,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DFII10": {
@@ -619,7 +619,7 @@
             2.1544838095238097,
             2.6655161904761906
           ],
-          "structural_overlay": 0.008149708333333339,
+          "structural_overlay": 0.007769708333333337,
           "current": 2.43,
           "direction": "flat",
           "investment_environment": {
@@ -629,7 +629,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "활성 방향예측 표본 없음",
@@ -645,7 +644,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -683,7 +683,7 @@
             0.2576038095238095,
             0.6438057142857143
           ],
-          "structural_overlay": -0.0037186154763028736,
+          "structural_overlay": -0.003021948809636202,
           "current": 0.46,
           "direction": "flat",
           "investment_environment": {
@@ -693,7 +693,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "활성 방향예측 비중 13.9%로 기준 미달",
@@ -708,7 +707,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -752,7 +752,7 @@
             3.6400000000000006,
             4.74
           ],
-          "structural_overlay": 0.05286290357109142,
+          "structural_overlay": 0.05106290357109146,
           "current": 4.25,
           "direction": "down",
           "investment_environment": {
@@ -762,7 +762,6 @@
           },
           "quality_gate": {
             "passed": true,
-            "performance_candidate": true,
             "level": "독립검증 통과",
             "reasons": [],
             "thresholds": {
@@ -774,7 +773,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "DGS10": {
@@ -812,7 +812,7 @@
             4.109969523809524,
             5.150030476190477
           ],
-          "structural_overlay": 0.039106956745394904,
+          "structural_overlay": 0.03840695674539492,
           "current": 4.69,
           "direction": "down",
           "investment_environment": {
@@ -822,7 +822,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": true,
             "level": "OOS 성능후보·통계유의성 미확인",
             "reasons": [
               "지속성 대비 예측력 개선의 통계적 유의성 미확인"
@@ -836,7 +835,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "DFII10": {
@@ -874,7 +874,7 @@
             1.9647009523809527,
             2.7752990476190478
           ],
-          "structural_overlay": 0.025349125,
+          "structural_overlay": 0.02474912500000001,
           "current": 2.43,
           "direction": "down",
           "investment_environment": {
@@ -884,7 +884,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": true,
             "level": "OOS 성능후보·통계유의성 미확인",
             "reasons": [
               "지속성 대비 예측력 개선의 통계적 유의성 미확인"
@@ -898,7 +897,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "T10Y2Y": {
@@ -937,7 +937,7 @@
             0.18,
             0.74
           ],
-          "structural_overlay": -0.012805846428908585,
+          "structural_overlay": -0.011705846428908609,
           "current": 0.46,
           "direction": "flat",
           "investment_environment": {
@@ -947,7 +947,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 1.50% 미달",
@@ -964,7 +963,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -1017,7 +1017,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 2.00% 미달",
@@ -1033,7 +1032,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -1081,7 +1081,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": true,
             "level": "OOS 성능후보·통계유의성 미확인",
             "reasons": [
               "지속성 대비 예측력 개선의 통계적 유의성 미확인"
@@ -1095,7 +1094,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "DFII10": {
@@ -1143,7 +1143,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 2.00% 미달",
@@ -1159,7 +1158,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -1206,7 +1206,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 2.00% 미달",
@@ -1223,7 +1222,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -1267,7 +1267,7 @@
             2.8899999999999997,
             5.61
           ],
-          "structural_overlay": 0.3289258071421832,
+          "structural_overlay": 0.3253258071421826,
           "current": 4.25,
           "direction": "flat",
           "investment_environment": {
@@ -1277,7 +1277,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 3.00% 미달",
@@ -1293,7 +1292,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -1331,7 +1331,7 @@
             3.838,
             5.542000000000001
           ],
-          "structural_overlay": 0.16501391349078998,
+          "structural_overlay": 0.16361391349078974,
           "current": 4.69,
           "direction": "flat",
           "investment_environment": {
@@ -1341,7 +1341,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 3.00% 미달",
@@ -1358,7 +1357,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DFII10": {
@@ -1396,7 +1396,7 @@
             1.4700000000000002,
             3.39
           ],
-          "structural_overlay": 0.12509825000000013,
+          "structural_overlay": 0.12389824999999993,
           "current": 2.43,
           "direction": "flat",
           "investment_environment": {
@@ -1406,7 +1406,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 3.00% 미달",
@@ -1422,7 +1421,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -1460,7 +1460,7 @@
             -0.32,
             1.24
           ],
-          "structural_overlay": -0.16201169285781739,
+          "structural_overlay": -0.15981169285781704,
           "current": 0.46,
           "direction": "flat",
           "investment_environment": {
@@ -1470,7 +1470,6 @@
           },
           "quality_gate": {
             "passed": false,
-            "performance_candidate": false,
             "level": "참고용/관망",
             "reasons": [
               "지속성 대비 RMSE 개선 0.00%로 최소 3.00% 미달",
@@ -1487,7 +1486,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -1497,29 +1497,40 @@
     "5d": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     },
     "1m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     },
     "3m": {
       "passed": false,
       "level": "부분통과/참고용",
       "passed_targets": [
         "DGS2"
+      ],
+      "performance_candidates": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
       ]
     },
     "6m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": [
+        "DGS10"
+      ]
     },
     "12m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     }
   },
   "production_level": "기간별 게이트 적용",
@@ -1576,7 +1587,6 @@
       "mean_reversion_1y",
       "structural_blend"
     ],
-    "gate_semantics": "performance_candidate는 표본·skill·방향·coverage·구간보정 기준 통과, passed는 여기에 DM 5% 유의성까지 요구",
     "selection": "expanding_walk_forward_candidate_selection_with_material_skill_and_dm_gate",
     "benchmark": "persistence_no_change",
     "safety": "non-positive-skill models automatically fall back to persistence; tiny positive skill cannot pass strict gate",

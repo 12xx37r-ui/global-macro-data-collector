@@ -1,0 +1,35 @@
+test_all_assets_have_card12_mapping (test_asset_coverage_v159.AssetCoverageV159Tests.test_all_assets_have_card12_mapping) ... ok
+test_committed_output_has_all_assets_and_horizons (test_asset_coverage_v159.AssetCoverageV159Tests.test_committed_output_has_all_assets_and_horizons) ... ok
+test_insufficient_is_conservative (test_asset_oos_validation.AssetOosValidationTests.test_insufficient_is_conservative) ... ok
+test_negative_skill_never_receives_weight (test_asset_oos_validation.AssetOosValidationTests.test_negative_skill_never_receives_weight) ... ok
+test_output_multiplier_is_bounded (test_asset_oos_validation.AssetOosValidationTests.test_output_multiplier_is_bounded) ... ok
+test_current_report_discovery_uses_hub_then_one_report (test_collector.CollectorLowCallTest.test_current_report_discovery_uses_hub_then_one_report) ... ok
+test_parse_report (test_collector.CollectorTest.test_parse_report) ... ok
+test_collector_invokes_equity_fundamentals (test_equity_collector_integration.EquityCollectorIntegrationTest.test_collector_invokes_equity_fundamentals) ... ok
+test_equity_module_writes_required_output (test_equity_collector_integration.EquityCollectorIntegrationTest.test_equity_module_writes_required_output) ... ok
+test_aggregate_retains_previous_metric (test_equity_fundamentals.EquityFundamentalsTests.test_aggregate_retains_previous_metric) ... ok
+test_universes_cover_both_indices (test_equity_fundamentals.EquityFundamentalsTests.test_universes_cover_both_indices) ... ok
+test_finviz_label_parser (test_equity_fundamentals.FinvizFallbackTests.test_finviz_label_parser) ... ok
+test_candidates (test_macro_cards_9_12.TestCards.test_candidates) ... ok
+test_card11 (test_macro_cards_9_12.TestCards.test_card11) ... ok
+test_walk_forward (test_macro_cards_9_12.TestCards.test_walk_forward) ... ok
+test_gscpi_legacy_xls_dispatch (test_macro_cards_9_12.TestOfficialSourceParsers.test_gscpi_legacy_xls_dispatch) ... ok
+test_gscpi_xlsx_parser (test_macro_cards_9_12.TestOfficialSourceParsers.test_gscpi_xlsx_parser) ... ok
+test_oecd_cli_csv (test_macro_cards_9_12.TestOfficialSourceParsers.test_oecd_cli_csv) ... ok
+test_nasdaq_asset_and_futures_are_configured (test_nasdaq_asset_required.NasdaqAssetRequiredTest.test_nasdaq_asset_and_futures_are_configured) ... ok
+test_reit_asset_and_futures_are_configured (test_reit_asset_required.ReitAssetRequiredTest.test_reit_asset_and_futures_are_configured) ... ok
+test_candidate_set (test_treasury_card8.Card8Test.test_candidate_set) ... ok
+test_gate (test_treasury_card8.Card8Test.test_gate) ... ok
+test_investment_color (test_treasury_card8.Card8Test.test_investment_color) ... ok
+test_oos_no_negative_skill (test_treasury_card8.Card8Test.test_oos_no_negative_skill) ... ok
+test_tiny_skill_does_not_pass (test_treasury_card8.Card8Test.test_tiny_skill_does_not_pass) ... ok
+test_parse_date_header_variant (test_treasury_card8.FredFetchParserTest.test_parse_date_header_variant) ... ok
+test_parse_multi_series_csv (test_treasury_card8.FredFetchParserTest.test_parse_multi_series_csv) ... ok
+test_card11_quality_label_matches_passed_flag (test_v23_integrity.TestV23Integrity.test_card11_quality_label_matches_passed_flag) ... ok
+test_dollar_proxy_replaces_broken_future_symbol (test_v23_integrity.TestV23Integrity.test_dollar_proxy_replaces_broken_future_symbol) ... ok
+test_gscpi_rejects_html_before_openpyxl (test_v23_integrity.TestV23Integrity.test_gscpi_rejects_html_before_openpyxl) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 0.115s
+
+OK
