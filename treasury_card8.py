@@ -486,14 +486,15 @@ def horizon_gate(result: dict[str, Any], minimum: int, horizon: str | None = Non
     min_skill = {"5d": 0.25, "1m": 0.50, "3m": 1.50, "6m": 2.00, "12m": 3.00}.get(horizon or "", 1.0)
     min_active_coverage = {"5d": 0.25, "1m": 0.30, "3m": 0.35, "6m": 0.35, "12m": 0.30}.get(horizon or "", 0.30)
     dm_ok = bool(dm.get("significant_5pct"))
-    passed = (
+    performance_candidate = (
         samples >= minimum and
         skill >= min_skill and
         da is not None and da >= 0.52 and
         active_coverage >= min_active_coverage and
-        interval_ok and dm_ok and
+        interval_ok and
         not bool(result.get("fallback_used"))
     )
+    passed = performance_candidate and dm_ok
     reasons = []
     if samples < minimum: reasons.append(f"OOS 표본 {samples}개로 기준 {minimum}개 미달")
     if skill < min_skill: reasons.append(f"지속성 대비 RMSE 개선 {skill:.2f}%로 최소 {min_skill:.2f}% 미달")
@@ -505,7 +506,8 @@ def horizon_gate(result: dict[str, Any], minimum: int, horizon: str | None = Non
     if result.get("fallback_used"): reasons.append("지속성 안전모형으로 후퇴")
     return {
         "passed": passed,
-        "level": "독립검증 통과" if passed else "참고용/관망",
+        "performance_candidate": performance_candidate,
+        "level": "독립검증 통과" if passed else ("OOS 성능후보·통계유의성 미확인" if performance_candidate else "참고용/관망"),
         "reasons": reasons,
         "thresholds": {"min_skill_pct": min_skill, "min_direction_accuracy": 0.52,
                        "min_active_direction_coverage": min_active_coverage,
@@ -581,7 +583,7 @@ def main() -> None:
 
     payload = {
         "schema_version": "1.1.0",
-        "engine_version": "card8-1.2.0-strict-oos-significance-gate",
+        "engine_version": "card8-1.3.0-strict-gate-transparent-candidate",
         "status": "ok",
         "card": 8,
         "title": "미국채 금리·실질금리·수익률곡선",
@@ -621,6 +623,7 @@ def main() -> None:
             "targets": TARGETS,
             "horizons": HORIZONS,
             "candidate_models": ["persistence", "short_trend", "medium_trend", "long_trend", "mean_reversion_3m", "mean_reversion_6m", "mean_reversion_1y", "structural_blend"],
+            "gate_semantics": "performance_candidate는 표본·skill·방향·coverage·구간보정 기준 통과, passed는 여기에 DM 5% 유의성까지 요구",
             "selection": "expanding_walk_forward_candidate_selection_with_material_skill_and_dm_gate",
             "benchmark": "persistence_no_change",
             "safety": "non-positive-skill models automatically fall back to persistence; tiny positive skill cannot pass strict gate",

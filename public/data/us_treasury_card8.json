@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1.0",
-  "engine_version": "card8-1.2.0-strict-oos-significance-gate",
+  "engine_version": "card8-1.3.0-strict-gate-transparent-candidate",
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
@@ -247,7 +247,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -311,7 +312,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DFII10": {
@@ -376,7 +378,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -442,7 +445,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -512,7 +516,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -575,7 +580,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DFII10": {
@@ -638,7 +644,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -700,7 +707,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -765,7 +773,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "DGS10": {
@@ -813,7 +822,7 @@
           },
           "quality_gate": {
             "passed": false,
-            "level": "참고용/관망",
+            "level": "OOS 성능후보·통계유의성 미확인",
             "reasons": [
               "지속성 대비 예측력 개선의 통계적 유의성 미확인"
             ],
@@ -826,7 +835,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "DFII10": {
@@ -874,7 +884,7 @@
           },
           "quality_gate": {
             "passed": false,
-            "level": "참고용/관망",
+            "level": "OOS 성능후보·통계유의성 미확인",
             "reasons": [
               "지속성 대비 예측력 개선의 통계적 유의성 미확인"
             ],
@@ -887,7 +897,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "T10Y2Y": {
@@ -952,7 +963,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -1020,7 +1032,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -1068,7 +1081,7 @@
           },
           "quality_gate": {
             "passed": false,
-            "level": "참고용/관망",
+            "level": "OOS 성능후보·통계유의성 미확인",
             "reasons": [
               "지속성 대비 예측력 개선의 통계적 유의성 미확인"
             ],
@@ -1081,7 +1094,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": true
           }
         },
         "DFII10": {
@@ -1144,7 +1158,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -1207,7 +1222,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -1276,7 +1292,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DGS10": {
@@ -1340,7 +1357,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "DFII10": {
@@ -1403,7 +1421,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         },
         "T10Y2Y": {
@@ -1467,7 +1486,8 @@
                 0.75,
                 0.85
               ]
-            }
+            },
+            "performance_candidate": false
           }
         }
       }
@@ -1477,29 +1497,40 @@
     "5d": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     },
     "1m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     },
     "3m": {
       "passed": false,
       "level": "부분통과/참고용",
       "passed_targets": [
         "DGS2"
+      ],
+      "performance_candidates": [
+        "DGS2",
+        "DGS10",
+        "DFII10"
       ]
     },
     "6m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": [
+        "DGS10"
+      ]
     },
     "12m": {
       "passed": false,
       "level": "부분통과/참고용",
-      "passed_targets": []
+      "passed_targets": [],
+      "performance_candidates": []
     }
   },
   "production_level": "기간별 게이트 적용",

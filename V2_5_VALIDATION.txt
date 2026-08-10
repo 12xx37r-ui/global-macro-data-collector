@@ -1,0 +1,7 @@
+GLOBAL ENGINE V2.5 / CARD8 STRICT-GATE AUDIT
+- pytest: 28 passed
+- Python compile: passed
+- Strict gate thresholds are NOT relaxed.
+- Added performance_candidate diagnostic: sample/skill/direction/coverage/interval criteria can be distinguished from DM 5% significance.
+- Current stored 3m candidates: DGS2, DGS10, DFII10 meet performance-candidate criteria; strict passed remains dependent on DM 5% significance.
+- This avoids falsely promoting 'reference forecast' to validated output.
