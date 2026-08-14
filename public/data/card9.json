@@ -3,14 +3,14 @@
   "engine_version": "card9-2.6.0-oecd-cli-direct",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-08-13T18:14:17.366617+00:00",
-  "current": 43.539833330445084,
+  "generated_at_utc": "2026-08-14T18:10:48.946179+00:00",
+  "current": 43.9925529025267,
   "current_date": "2026-07-01",
-  "forecast_3m": 45.00319098102465,
-  "forecast_6m": 47.08123253150318,
+  "forecast_3m": 45.298874455769166,
+  "forecast_6m": 47.08390518237548,
   "forecast_range80_3m": [
-    40.654870366467165,
-    49.35151159558214
+    40.95055384121168,
+    49.64719507032665
   ],
   "future_direction": "up",
   "market_signal": "good",
@@ -19,17 +19,17 @@
   "investment_conclusion": "고용과 소비의 향후 방향을 경기민감주·내수·신용위험 판단에 반영합니다.",
   "forecasts": {
     "1m": {
-      "forecast": 44.027619213971604,
+      "forecast": 44.427993420274184,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 4.176498220660332,
-      "baseline_rmse": 4.227220042242876,
-      "skill_pct": 1.1998860025188463,
+      "rmse": 4.1735154932367955,
+      "baseline_rmse": 4.224209710347701,
+      "skill_pct": 1.2000876042381092,
       "direction_accuracy": 0.7222222222222222,
       "fallback_used": false,
       "range80": [
-        41.44602144177418,
-        46.60921698616903
+        41.84639564807676,
+        47.00959119247161
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -41,8 +41,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 0.7910343743233493,
-          "p_value": 0.4289239327586851,
+          "statistic": 0.790040873542569,
+          "p_value": 0.4295038982548407,
           "significant_5pct": false,
           "significant_10pct": false,
           "hac_lag": 0
@@ -56,17 +56,17 @@
       }
     },
     "3m": {
-      "forecast": 45.00319098102465,
+      "forecast": 45.298874455769166,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 7.421778894059247,
-      "baseline_rmse": 7.838736868803055,
-      "skill_pct": 5.319198510199207,
+      "rmse": 7.419918861870962,
+      "baseline_rmse": 7.836779057906693,
+      "skill_pct": 5.319279680535994,
       "direction_accuracy": 0.6923076923076923,
       "fallback_used": false,
       "range80": [
-        40.654870366467165,
-        49.35151159558214
+        40.95055384121168,
+        49.64719507032665
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -78,8 +78,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.6002019417766045,
-          "p_value": 0.1095537915352538,
+          "statistic": 1.5994137739461032,
+          "p_value": 0.10972869376781502,
           "significant_5pct": false,
           "significant_10pct": false,
           "hac_lag": 2
@@ -93,17 +93,17 @@
       }
     },
     "6m": {
-      "forecast": 47.08123253150318,
+      "forecast": 47.08390518237548,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.884699985862828,
-      "baseline_rmse": 7.989001979655649,
-      "skill_pct": 13.822777821372123,
+      "rmse": 6.883341233528837,
+      "baseline_rmse": 7.987608894925541,
+      "skill_pct": 13.824758772280843,
       "direction_accuracy": 0.725,
       "fallback_used": false,
       "range80": [
-        41.83723732089932,
-        52.325227742107046
+        41.83990997177162,
+        52.327900392979345
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -114,8 +114,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.7381140007872207,
-          "p_value": 0.08219072838042418,
+          "statistic": 1.7377104271095214,
+          "p_value": 0.0822618504931274,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 5
@@ -129,17 +129,17 @@
       }
     },
     "12m": {
-      "forecast": 47.44212039865726,
+      "forecast": 47.47607704450662,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 6.883863111633641,
-      "baseline_rmse": 8.123327859984355,
-      "skill_pct": 15.258090892235654,
-      "direction_accuracy": 0.72,
+      "rmse": 6.88188906108655,
+      "baseline_rmse": 8.121775157964404,
+      "skill_pct": 15.266195785560399,
+      "direction_accuracy": 0.7171717171717171,
       "fallback_used": false,
       "range80": [
-        42.704064651492565,
-        52.18017614582195
+        42.78029785498657,
+        52.17185623402666
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
@@ -151,8 +151,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.777004360064902,
-          "p_value": 0.07556752246767617,
+          "statistic": 1.7772037473089943,
+          "p_value": 0.0755347231364365,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 11
@@ -180,7 +180,7 @@
     "UNRATE": {
       "ok": true,
       "fresh": true,
-      "age_days": 43,
+      "age_days": 44,
       "max_age_days": 120,
       "label": "미국 실업률",
       "latest": {
@@ -193,7 +193,7 @@
     "PAYEMS": {
       "ok": true,
       "fresh": true,
-      "age_days": 43,
+      "age_days": 44,
       "max_age_days": 120,
       "label": "미국 비농업고용",
       "latest": {
@@ -206,7 +206,7 @@
     "ICSA": {
       "ok": true,
       "fresh": true,
-      "age_days": 5,
+      "age_days": 6,
       "max_age_days": 120,
       "label": "미국 신규실업수당",
       "latest": {
@@ -219,7 +219,7 @@
     "CCSA": {
       "ok": true,
       "fresh": true,
-      "age_days": 12,
+      "age_days": 13,
       "max_age_days": 120,
       "label": "미국 계속실업수당",
       "latest": {
@@ -232,7 +232,7 @@
     "JTSJOL": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 74,
       "max_age_days": 120,
       "label": "미국 구인건수",
       "latest": {
@@ -245,7 +245,7 @@
     "CES0500000003": {
       "ok": true,
       "fresh": true,
-      "age_days": 43,
+      "age_days": 44,
       "max_age_days": 120,
       "label": "미국 시간당임금",
       "latest": {
@@ -258,12 +258,12 @@
     "RSAFS": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 44,
       "max_age_days": 120,
       "label": "미국 소매판매",
       "latest": {
-        "date": "2026-06-01",
-        "value": 768553.0
+        "date": "2026-07-01",
+        "value": 763602.0
       },
       "url": "https://fred.stlouisfed.org/series/RSAFS",
       "collection_source": "FRED"
@@ -271,7 +271,7 @@
     "PCE": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 74,
       "max_age_days": 120,
       "label": "미국 개인소비지출",
       "latest": {
@@ -284,7 +284,7 @@
     "UMCSENT": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 74,
       "max_age_days": 120,
       "label": "미시간 소비심리",
       "latest": {
@@ -297,7 +297,7 @@
     "TOTALSL": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 74,
       "max_age_days": 120,
       "label": "미국 소비자신용",
       "latest": {
@@ -310,7 +310,7 @@
     "PSAVERT": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 74,
       "max_age_days": 120,
       "label": "미국 개인저축률",
       "latest": {
@@ -323,7 +323,7 @@
     "OECD_G20_CLI": {
       "ok": true,
       "fresh": true,
-      "age_days": 73,
+      "age_days": 74,
       "max_age_days": 180,
       "label": "OECD G20 경기선행지수(CLI)",
       "latest": {
