@@ -33,8 +33,8 @@ jobs:
           test -f public/data/asset_oos_validation.json
           python -m json.tool public/data/asset_oos_validation.json > /dev/null
 
-      - name: Build additive freshness status
-        run: python freshness_audit_v217.py
+      - name: Build V218 refetch freshness status
+        run: python freshness_audit_v218.py
 
       - name: Run tests
         run: python -m unittest discover -s tests -v
