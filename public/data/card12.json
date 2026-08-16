@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "card": 12,
   "title": "선물시장 현재신호·검증형 방향예측",
-  "generated_at_utc": "2026-08-15T15:55:27.427670+00:00",
+  "generated_at_utc": "2026-08-16T04:11:03.876431+00:00",
   "current": {
     "ES=F": {
       "value": 7805.0,
@@ -37,11 +37,11 @@
       "date": "2026-08-14"
     },
     "GC=F": {
-      "value": 4380.39990234375,
+      "value": 4437.2998046875,
       "date": "2026-08-14"
     },
     "HG=F": {
-      "value": 6.5995001792907715,
+      "value": 6.61299991607666,
       "date": "2026-08-14"
     },
     "DX-Y.NYB": {
@@ -50,13 +50,13 @@
     },
     "BTC=F": {
       "value": 63055.0,
-      "date": "2026-08-15"
+      "date": "2026-08-16"
     }
   },
   "group_scores": {
     "equity": 0.7928264585262651,
     "rates": -0.45409614273062465,
-    "commodities": 0.23631159367848983,
+    "commodities": 0.3249061659387769,
     "dollar": -0.16925691758573244,
     "crypto": -1.2150745205517621
   },
@@ -298,20 +298,20 @@
         }
       },
       "commodities": {
-        "current_index": 52.3631159367849,
+        "current_index": 53.24906165938777,
         "forecasts": {
           "5d": {
-            "forecast": 52.3631159367849,
+            "forecast": 53.24906165938777,
             "model": "persistence",
             "samples": 180,
-            "rmse": 4.531552528243209,
-            "baseline_rmse": 4.531552528243209,
+            "rmse": 4.531480836673451,
+            "baseline_rmse": 4.531480836673451,
             "skill_pct": 0,
             "direction_accuracy": 0.5981308411214953,
             "fallback_used": true,
             "range80": [
-              46.59804985365758,
-              58.128182019912224
+              47.48399557626045,
+              59.01412774251509
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -338,17 +338,17 @@
             }
           },
           "1m": {
-            "forecast": 52.44909758126397,
+            "forecast": 52.457957038489994,
             "model": "mean_reversion_12m",
             "samples": 180,
-            "rmse": 7.770484129372891,
-            "baseline_rmse": 8.0166003204046,
-            "skill_pct": 3.070081845109207,
+            "rmse": 7.7787455669089915,
+            "baseline_rmse": 8.023840141920953,
+            "skill_pct": 3.0545794865908693,
             "direction_accuracy": 0.6742424242424242,
             "fallback_used": false,
             "range80": [
-              42.251525431983,
-              62.64666973054494
+              42.26038488920902,
+              62.655529187770966
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -360,8 +360,8 @@
               "passed": false,
               "level": "참고용/관망",
               "dm_test": {
-                "statistic": 0.6282777871148572,
-                "p_value": 0.5298219804290623,
+                "statistic": 0.6262886779079132,
+                "p_value": 0.5311256112677896,
                 "significant_5pct": false,
                 "significant_10pct": false,
                 "hac_lag": 20
@@ -375,17 +375,17 @@
             }
           },
           "3m": {
-            "forecast": 52.3631159367849,
+            "forecast": 53.24906165938777,
             "model": "persistence",
             "samples": 180,
-            "rmse": 10.142437074873662,
-            "baseline_rmse": 10.142437074873662,
+            "rmse": 10.138769890721802,
+            "baseline_rmse": 10.138769890721802,
             "skill_pct": 0,
             "direction_accuracy": 0.5714285714285714,
             "fallback_used": true,
             "range80": [
-              39.82655548243038,
-              64.89967639113942
+              40.71250120503325,
+              65.78562211374229
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -623,7 +623,7 @@
       "ok": true,
       "label": "금선물",
       "latest": {
-        "value": 4380.39990234375,
+        "value": 4437.2998046875,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures"
@@ -632,7 +632,7 @@
       "ok": true,
       "label": "구리선물",
       "latest": {
-        "value": 6.5995001792907715,
+        "value": 6.61299991607666,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures"
@@ -651,7 +651,7 @@
       "label": "비트코인선물",
       "latest": {
         "value": 63055.0,
-        "date": "2026-08-15"
+        "date": "2026-08-16"
       },
       "source": "Yahoo Finance delayed futures"
     }
