@@ -11,6 +11,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from threading import Lock
 from typing import Any, Iterable
 
 import requests
@@ -22,6 +23,21 @@ OUT = ROOT / "public" / "data" / "us_treasury_card8.json"
 STATUS = ROOT / "public" / "data" / "us_treasury_card8_status.json"
 FRED_CSV_BASE = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 FRED_API = "https://api.stlouisfed.org/fred/series/observations"
+
+# Keep all concurrent FRED requests below the documented 2 req/s ceiling.
+_FRED_PACE_LOCK = Lock()
+_FRED_LAST_REQUEST = 0.0
+_FRED_MIN_INTERVAL_SECONDS = 0.60
+
+def _pace_fred() -> None:
+    global _FRED_LAST_REQUEST
+    with _FRED_PACE_LOCK:
+        now = time.monotonic()
+        wait = _FRED_MIN_INTERVAL_SECONDS - (now - _FRED_LAST_REQUEST)
+        if wait > 0:
+            time.sleep(wait)
+        _FRED_LAST_REQUEST = time.monotonic()
+
 FED_LATEST_URL = os.getenv(
     "FED_ENGINE_LATEST_URL",
     "https://raw.githubusercontent.com/12xx37r-ui/fed-futures-collector/main/public/data/latest.json",
@@ -125,6 +141,7 @@ def parse_fred_csv(text: str, requested: list[str]) -> dict[str, list[dict[str, 
 
 
 def fetch_fred_api(session: requests.Session, series_id: str, api_key: str) -> list[dict[str, Any]]:
+    _pace_fred()
     r = session.get(FRED_API, params={
         "series_id": series_id, "api_key": api_key, "file_type": "json",
         "observation_start": "1990-01-01", "sort_order": "asc",
@@ -142,6 +159,7 @@ def fetch_fred_api(session: requests.Session, series_id: str, api_key: str) -> l
 
 
 def fetch_fred_individual(session: requests.Session, series_id: str) -> list[dict[str, Any]]:
+    _pace_fred()
     r = session.get(FRED_CSV_BASE, params={"id": series_id, "cosd": "1990-01-01"}, timeout=(15, 60))
     r.raise_for_status()
     parsed = parse_fred_csv(r.text, [series_id])[series_id]
