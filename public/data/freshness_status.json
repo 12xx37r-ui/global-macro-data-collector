@@ -1,12 +1,14 @@
 {
   "schema_version": "1.0.0",
-  "patch_version": "V217-additive-freshness-contract",
-  "generated_at_utc": "2026-08-16T04:49:50.191652+00:00",
-  "bundle_generated_at_utc": "2026-08-16T04:48:35.953867+00:00",
+  "patch_version": "V218-live-refetch-contract",
+  "generated_at_utc": "2026-08-16T05:08:39.159524+00:00",
+  "bundle_generated_at_utc": "2026-08-16T05:07:24.922994+00:00",
   "compatibility": {
     "existing_keys_removed": false,
     "existing_field_semantics_changed": false,
     "new_network_calls": 0,
+    "network_refetch_each_workflow": true,
+    "http_cache_bypass": true,
     "model_formulas_changed": false
   },
   "sources": {
@@ -20,7 +22,7 @@
         "symbol": "ES=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:59+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 7805.0,
         "source": "Yahoo Finance chart metadata"
       },
@@ -28,7 +30,7 @@
         "symbol": "NQ=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:58+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 30141.75,
         "source": "Yahoo Finance chart metadata"
       },
@@ -36,7 +38,7 @@
         "symbol": "RTY=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:59+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 3074.9,
         "source": "Yahoo Finance chart metadata"
       },
@@ -44,7 +46,7 @@
         "symbol": "ZT=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:57+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.15,
         "price": 103.05469,
         "source": "Yahoo Finance chart metadata"
       },
@@ -52,7 +54,7 @@
         "symbol": "ZF=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:59+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 106.42969,
         "source": "Yahoo Finance chart metadata"
       },
@@ -60,7 +62,7 @@
         "symbol": "ZN=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:59+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 108.578125,
         "source": "Yahoo Finance chart metadata"
       },
@@ -68,7 +70,7 @@
         "symbol": "ZB=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:57+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.15,
         "price": 108.84375,
         "source": "Yahoo Finance chart metadata"
       },
@@ -76,7 +78,7 @@
         "symbol": "CL=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:59+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 82.4,
         "source": "Yahoo Finance chart metadata"
       },
@@ -84,7 +86,7 @@
         "symbol": "GC=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T21:00:00+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 4437.3,
         "source": "Yahoo Finance chart metadata"
       },
@@ -92,7 +94,7 @@
         "symbol": "HG=F",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:40+00:00",
-        "age_hours": 31.84,
+        "age_hours": 32.15,
         "price": 6.613,
         "source": "Yahoo Finance chart metadata"
       },
@@ -100,7 +102,7 @@
         "symbol": "DX-Y.NYB",
         "status": "CACHE",
         "market_time_utc": "2026-08-14T20:59:59+00:00",
-        "age_hours": 31.83,
+        "age_hours": 32.14,
         "price": 99.636,
         "source": "Yahoo Finance chart metadata"
       },
@@ -108,7 +110,7 @@
         "symbol": "BTC=F",
         "status": "LIVE",
         "market_time_utc": "2026-08-16T02:25:41+00:00",
-        "age_hours": 2.4,
+        "age_hours": 2.72,
         "price": 63055.0,
         "source": "Yahoo Finance chart metadata"
       }

@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "card": 12,
   "title": "선물시장 현재신호·검증형 방향예측",
-  "generated_at_utc": "2026-08-16T04:48:35.948714+00:00",
+  "generated_at_utc": "2026-08-16T05:07:24.917917+00:00",
   "current": {
     "ES=F": {
       "value": 7805.0,
@@ -13,15 +13,15 @@
       "date": "2026-08-14"
     },
     "RTY=F": {
-      "value": 3074.89990234375,
+      "value": 3074.9,
       "date": "2026-08-14"
     },
     "ZT=F": {
-      "value": 103.0546875,
+      "value": 103.05469,
       "date": "2026-08-14"
     },
     "ZF=F": {
-      "value": 106.4296875,
+      "value": 106.42969,
       "date": "2026-08-14"
     },
     "ZN=F": {
@@ -33,19 +33,19 @@
       "date": "2026-08-14"
     },
     "CL=F": {
-      "value": 82.4000015258789,
+      "value": 82.4,
       "date": "2026-08-14"
     },
     "GC=F": {
-      "value": 4437.2998046875,
+      "value": 4437.3,
       "date": "2026-08-14"
     },
     "HG=F": {
-      "value": 6.61299991607666,
+      "value": 6.613,
       "date": "2026-08-14"
     },
     "DX-Y.NYB": {
-      "value": 99.66999816894531,
+      "value": 99.636,
       "date": "2026-08-14"
     },
     "BTC=F": {
@@ -57,7 +57,7 @@
     "equity": 0.7928264585262651,
     "rates": -0.45409614273062465,
     "commodities": 0.3249061659387769,
-    "dollar": -0.16925691758573244,
+    "dollar": -0.13241029878125163,
     "crypto": -1.2150745205517621
   },
   "market_signal": "neutral",
@@ -562,7 +562,9 @@
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:20.758808+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "NQ=F": {
@@ -580,14 +582,16 @@
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:20.841157+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "RTY=F": {
       "ok": true,
       "label": "러셀2000 선물",
       "latest": {
-        "value": 3074.89990234375,
+        "value": 3074.9,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures",
@@ -598,14 +602,16 @@
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:20.971463+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "ZT=F": {
       "ok": true,
       "label": "미국 2년 국채선물",
       "latest": {
-        "value": 103.0546875,
+        "value": 103.05469,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures",
@@ -616,14 +622,16 @@
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.056829+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "ZF=F": {
       "ok": true,
       "label": "미국 5년 국채선물",
       "latest": {
-        "value": 106.4296875,
+        "value": 106.42969,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures",
@@ -634,7 +642,9 @@
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.137675+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "ZN=F": {
@@ -652,7 +662,9 @@
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.236831+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "ZB=F": {
@@ -670,14 +682,16 @@
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.332910+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "CL=F": {
       "ok": true,
       "label": "WTI 원유선물",
       "latest": {
-        "value": 82.4000015258789,
+        "value": 82.4,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures",
@@ -688,14 +702,16 @@
         "exchange": "NYM",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.475967+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "GC=F": {
       "ok": true,
       "label": "금선물",
       "latest": {
-        "value": 4437.2998046875,
+        "value": 4437.3,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures",
@@ -706,14 +722,16 @@
         "exchange": "CMX",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.581170+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "HG=F": {
       "ok": true,
       "label": "구리선물",
       "latest": {
-        "value": 6.61299991607666,
+        "value": 6.613,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed futures",
@@ -724,14 +742,16 @@
         "exchange": "CMX",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.663960+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "DX-Y.NYB": {
       "ok": true,
       "label": "미국 달러인덱스(현물 대체신호)",
       "latest": {
-        "value": 99.66999816894531,
+        "value": 99.636,
         "date": "2026-08-14"
       },
       "source": "Yahoo Finance delayed index proxy",
@@ -742,7 +762,9 @@
         "exchange": "NYB",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.762562+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     },
     "BTC=F": {
@@ -760,7 +782,9 @@
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
-        "source": "Yahoo Finance chart metadata"
+        "source": "Yahoo Finance chart metadata",
+        "retrieved_at_utc": "2026-08-16T05:07:21.845534+00:00",
+        "refetch_policy": "network_each_workflow_no_cache"
       }
     }
   },
@@ -772,7 +796,9 @@
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:20.758808+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "NQ=F": {
       "symbol": "NQ=F",
@@ -781,7 +807,9 @@
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:20.841157+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "RTY=F": {
       "symbol": "RTY=F",
@@ -790,7 +818,9 @@
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:20.971463+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZT=F": {
       "symbol": "ZT=F",
@@ -799,7 +829,9 @@
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.056829+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZF=F": {
       "symbol": "ZF=F",
@@ -808,7 +840,9 @@
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.137675+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZN=F": {
       "symbol": "ZN=F",
@@ -817,7 +851,9 @@
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.236831+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZB=F": {
       "symbol": "ZB=F",
@@ -826,7 +862,9 @@
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.332910+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "CL=F": {
       "symbol": "CL=F",
@@ -835,7 +873,9 @@
       "exchange": "NYM",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.475967+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "GC=F": {
       "symbol": "GC=F",
@@ -844,7 +884,9 @@
       "exchange": "CMX",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.581170+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "HG=F": {
       "symbol": "HG=F",
@@ -853,7 +895,9 @@
       "exchange": "CMX",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.663960+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "DX-Y.NYB": {
       "symbol": "DX-Y.NYB",
@@ -862,7 +906,9 @@
       "exchange": "NYB",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.762562+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     },
     "BTC=F": {
       "symbol": "BTC=F",
@@ -871,12 +917,16 @@
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
-      "source": "Yahoo Finance chart metadata"
+      "source": "Yahoo Finance chart metadata",
+      "retrieved_at_utc": "2026-08-16T05:07:21.845534+00:00",
+      "refetch_policy": "network_each_workflow_no_cache"
     }
   },
   "freshness_contract": {
-    "version": "V217",
+    "version": "V218",
     "new_network_calls": 0,
+    "network_refetch_each_workflow": true,
+    "http_cache_bypass": true,
     "existing_current_semantics_changed": false
   },
   "limitations": [
