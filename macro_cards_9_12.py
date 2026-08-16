@@ -767,7 +767,11 @@ def build_card10(session:requests.Session)->dict[str,Any]:
 
 def yahoo_history_with_snapshot(session:requests.Session,symbol:str)->tuple[list[dict[str,Any]],dict[str,Any]]:
     url='https://query1.finance.yahoo.com/v8/finance/chart/'+requests.utils.quote(symbol,safe='')
-    r=session.get(url,params={'interval':'1d','range':'10y','events':'history'},timeout=(15,60)); r.raise_for_status()
+    # V218: force a network revalidation on every workflow run while retaining
+    # 10y daily history for the existing forecasting/backtest model.
+    params={'interval':'1d','range':'10y','events':'history','_ts':str(int(datetime.now(timezone.utc).timestamp()))}
+    headers={'Cache-Control':'no-cache, no-store, max-age=0','Pragma':'no-cache'}
+    r=session.get(url,params=params,headers=headers,timeout=(15,60)); r.raise_for_status()
     j=r.json(); z=j.get('chart',{}).get('result',[None])[0]
     if not z: return [],{}
     ts=z.get('timestamp') or []; close=((z.get('indicators') or {}).get('quote') or [{}])[0].get('close') or []
@@ -786,7 +790,7 @@ def yahoo_history_with_snapshot(session:requests.Session,symbol:str)->tuple[list
     snapshot={
         'symbol':symbol,'price':price,'market_time_utc':market_time_utc,
         'exchange':meta.get('exchangeName'),'exchange_timezone':meta.get('exchangeTimezoneName'),
-        'market_state':meta.get('marketState'),'source':'Yahoo Finance chart metadata'
+        'market_state':meta.get('marketState'),'source':'Yahoo Finance chart metadata','retrieved_at_utc':now_iso(),'refetch_policy':'network_each_workflow_no_cache'
     }
     return out,snapshot
 
@@ -802,7 +806,25 @@ def build_card12(session:requests.Session)->dict[str,Any]:
             histories[sym],snapshots[sym]=yahoo_history_with_snapshot(session,sym)
         except Exception as e:
             histories[sym]=[]; snapshots[sym]={}; errors.append(f'{sym}: {e}')
-    current={sym:{'value':latest(rows)['value'],'date':latest(rows)['date']} for sym,rows in histories.items() if rows}
+    # Existing `current` schema is preserved, but its intended current-value
+    # semantics now prefer the freshly fetched Yahoo metadata price. Daily history
+    # remains unchanged and continues to drive all existing model calculations.
+    current={}
+    for sym,rows in histories.items():
+        if not rows:
+            continue
+        base=latest(rows)
+        snap=snapshots.get(sym) if isinstance(snapshots.get(sym),dict) else {}
+        price=snap.get('price')
+        try: price=float(price) if price is not None else None
+        except (TypeError,ValueError): price=None
+        market_date=base['date']
+        try:
+            if snap.get('market_time_utc'):
+                market_date=datetime.fromisoformat(str(snap.get('market_time_utc')).replace('Z','+00:00')).date().isoformat()
+        except Exception:
+            pass
+        current[sym]={'value':price if finite(price) else base['value'],'date':market_date}
     groups={'equity':['ES=F','NQ=F','RTY=F'],'rates':['ZT=F','ZF=F','ZN=F','ZB=F'],'commodities':['CL=F','GC=F','HG=F'],'dollar':['DX-Y.NYB'],'crypto':['BTC=F']}
     group_scores={}
     for g,syms in groups.items():
@@ -829,7 +851,7 @@ def build_card12(session:requests.Session)->dict[str,Any]:
             'source_status':{sym:{'ok':bool(histories[sym]),'label':YAHOO_SYMBOLS[sym],'latest':current.get(sym),'source':('Yahoo Finance delayed index proxy' if sym=='DX-Y.NYB' else 'Yahoo Finance delayed futures'),'market_snapshot':snapshots.get(sym) or {}} for sym in histories},
             # V217 additive overlay: same Yahoo request metadata, no new external call.
             'market_snapshots':snapshots,
-            'freshness_contract':{'version':'V217','new_network_calls':0,'existing_current_semantics_changed':False},
+            'freshness_contract':{'version':'V218','new_network_calls':0,'network_refetch_each_workflow':True,'http_cache_bypass':True,'existing_current_semantics_changed':False},
             'limitations':['무료 지연 선물자료와 달러인덱스 대체신호를 사용하며 거래소 실시간 유료 시세를 대체하지 않습니다.','선물가격은 미래 현물가격의 단순 예측값이 아닙니다.','검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다.']}
 
 def _age_days(date_text: str | None) -> int | None:
