@@ -69,7 +69,7 @@ STOOQ_TICKERS = {
 
 
 
-def get_with_retry(url: str, *, params: dict | None = None, attempts: int = 4) -> requests.Response:
+def get_with_retry(url: str, *, params: dict | None = None, attempts: int = 3) -> requests.Response:
     """HTTP GET with bounded exponential backoff for transient public-data outages."""
     last_exc: Exception | None = None
     for attempt in range(1, attempts + 1):
@@ -81,7 +81,13 @@ def get_with_retry(url: str, *, params: dict | None = None, attempts: int = 4) -
             last_exc = exc
             if attempt >= attempts:
                 break
-            time.sleep(min(2 ** (attempt - 1), 8))
+            retry_after = None
+            try:
+                if isinstance(exc, requests.HTTPError) and exc.response is not None:
+                    retry_after = float(exc.response.headers.get("Retry-After") or 0) or None
+            except Exception:
+                retry_after = None
+            time.sleep(retry_after if retry_after is not None else min(2 ** (attempt - 1), 8))
     raise RuntimeError(f"HTTP request failed after {attempts} attempts: {url}: {last_exc}")
 
 
@@ -217,7 +223,7 @@ def treasury_rate_bundle(years: int = 13) -> tuple[list[dict[str, float]], list[
 
     results: dict[tuple[str, int], dict[str, float]] = {}
     errors: list[str] = []
-    with ThreadPoolExecutor(max_workers=6) as pool:
+    with ThreadPoolExecutor(max_workers=3) as pool:
         futures = {}
         for kind, year, fields in jobs:
             feed = "daily_treasury_real_yield_curve" if kind == "real10" else "daily_treasury_yield_curve"

@@ -801,8 +801,10 @@ def yahoo_history(session:requests.Session,symbol:str)->list[dict[str,Any]]:
 
 def build_card12(session:requests.Session)->dict[str,Any]:
     histories={}; snapshots={}; errors=[]
-    for sym in YAHOO_SYMBOLS:
+    for idx,sym in enumerate(YAHOO_SYMBOLS):
         try:
+            if idx:
+                time.sleep(0.12)
             histories[sym],snapshots[sym]=yahoo_history_with_snapshot(session,sym)
         except Exception as e:
             histories[sym]=[]; snapshots[sym]={}; errors.append(f'{sym}: {e}')

@@ -174,7 +174,7 @@ def fetch_fred_all(session: requests.Session, series_ids: list[str]) -> tuple[di
                 local_errors.append(f"{sid} API retry: {exc}")
         return sid, [], local_errors
 
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=3) as pool:
         futures = {pool.submit(fetch_one, sid): sid for sid in series_ids}
         for fut in as_completed(futures):
             sid = futures[fut]
