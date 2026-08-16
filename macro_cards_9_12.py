@@ -765,22 +765,43 @@ def build_card10(session:requests.Session)->dict[str,Any]:
         'model_specification':{'selection':'expanding walk-forward','benchmark':'persistence','inputs':list(CARD10_SERIES)},
     }
 
-def yahoo_history(session:requests.Session,symbol:str)->list[dict[str,Any]]:
+def yahoo_history_with_snapshot(session:requests.Session,symbol:str)->tuple[list[dict[str,Any]],dict[str,Any]]:
     url='https://query1.finance.yahoo.com/v8/finance/chart/'+requests.utils.quote(symbol,safe='')
     r=session.get(url,params={'interval':'1d','range':'10y','events':'history'},timeout=(15,60)); r.raise_for_status()
     j=r.json(); z=j.get('chart',{}).get('result',[None])[0]
-    if not z: return []
+    if not z: return [],{}
     ts=z.get('timestamp') or []; close=((z.get('indicators') or {}).get('quote') or [{}])[0].get('close') or []
     out=[]
     for t,v in zip(ts,close):
         if finite(v): out.append({'date':datetime.fromtimestamp(t,timezone.utc).date().isoformat(),'value':float(v)})
-    return out
+    meta=z.get('meta') or {}
+    market_time_utc=None
+    try:
+        raw_time=meta.get('regularMarketTime')
+        if raw_time not in (None,''): market_time_utc=datetime.fromtimestamp(int(raw_time),timezone.utc).isoformat()
+    except (TypeError,ValueError,OSError): market_time_utc=None
+    price=meta.get('regularMarketPrice')
+    try: price=float(price) if price is not None else None
+    except (TypeError,ValueError): price=None
+    snapshot={
+        'symbol':symbol,'price':price,'market_time_utc':market_time_utc,
+        'exchange':meta.get('exchangeName'),'exchange_timezone':meta.get('exchangeTimezoneName'),
+        'market_state':meta.get('marketState'),'source':'Yahoo Finance chart metadata'
+    }
+    return out,snapshot
+
+def yahoo_history(session:requests.Session,symbol:str)->list[dict[str,Any]]:
+    # Backward-compatible helper retained for existing callers/tests.
+    rows,_=yahoo_history_with_snapshot(session,symbol)
+    return rows
 
 def build_card12(session:requests.Session)->dict[str,Any]:
-    histories={}; errors=[]
+    histories={}; snapshots={}; errors=[]
     for sym in YAHOO_SYMBOLS:
-        try: histories[sym]=yahoo_history(session,sym)
-        except Exception as e: histories[sym]=[]; errors.append(f'{sym}: {e}')
+        try:
+            histories[sym],snapshots[sym]=yahoo_history_with_snapshot(session,sym)
+        except Exception as e:
+            histories[sym]=[]; snapshots[sym]={}; errors.append(f'{sym}: {e}')
     current={sym:{'value':latest(rows)['value'],'date':latest(rows)['date']} for sym,rows in histories.items() if rows}
     groups={'equity':['ES=F','NQ=F','RTY=F'],'rates':['ZT=F','ZF=F','ZN=F','ZB=F'],'commodities':['CL=F','GC=F','HG=F'],'dollar':['DX-Y.NYB'],'crypto':['BTC=F']}
     group_scores={}
@@ -805,7 +826,10 @@ def build_card12(session:requests.Session)->dict[str,Any]:
             'predictive_validation':predictive,
             'investment_conclusion':'현재 선물시장 신호와 장기 순차 OOS를 통과한 기간별 방향예측을 분리해 사용합니다.',
             'data_quality':{'completeness':round(100*sum(bool(v) for v in histories.values())/len(histories),1),'warnings':errors},
-            'source_status':{sym:{'ok':bool(histories[sym]),'label':YAHOO_SYMBOLS[sym],'latest':current.get(sym),'source':('Yahoo Finance delayed index proxy' if sym=='DX-Y.NYB' else 'Yahoo Finance delayed futures')} for sym in histories},
+            'source_status':{sym:{'ok':bool(histories[sym]),'label':YAHOO_SYMBOLS[sym],'latest':current.get(sym),'source':('Yahoo Finance delayed index proxy' if sym=='DX-Y.NYB' else 'Yahoo Finance delayed futures'),'market_snapshot':snapshots.get(sym) or {}} for sym in histories},
+            # V217 additive overlay: same Yahoo request metadata, no new external call.
+            'market_snapshots':snapshots,
+            'freshness_contract':{'version':'V217','new_network_calls':0,'existing_current_semantics_changed':False},
             'limitations':['무료 지연 선물자료와 달러인덱스 대체신호를 사용하며 거래소 실시간 유료 시세를 대체하지 않습니다.','선물가격은 미래 현물가격의 단순 예측값이 아닙니다.','검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다.']}
 
 def _age_days(date_text: str | None) -> int | None:
