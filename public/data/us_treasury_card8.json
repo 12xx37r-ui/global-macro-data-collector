@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-17T09:01:32.069615+00:00",
+  "generated_at_utc": "2026-08-17T13:01:08.251288+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -73,7 +73,7 @@
     },
     "SOFR": {
       "value": 3.62,
-      "date": "2026-08-13"
+      "date": "2026-08-14"
     },
     "PCEPILFE": {
       "value": 130.266,
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 103.08203125,
+        "value": 103.03515625,
         "date": "2026-08-17",
-        "return21d_pct": 0.06825679723938549,
-        "return63d_pct": -0.11733535200605383,
-        "realized_vol": 0.08156123387277012,
-        "score": 0.002650910427437697
+        "return21d_pct": 0.02275226574646183,
+        "return63d_pct": -0.1627554882664639,
+        "realized_vol": 0.08150740605046942,
+        "score": -0.03388886718367218
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.4921875,
+        "value": 106.3671875,
         "date": "2026-08-17",
-        "return21d_pct": -0.20499304487883174,
-        "return63d_pct": -0.299882972498533,
-        "realized_vol": 0.18451585249324445,
-        "score": -0.15332940301625406
+        "return21d_pct": -0.3221319276667356,
+        "return63d_pct": -0.4169104739613849,
+        "realized_vol": 0.18445905273494984,
+        "score": -0.22873029707767054
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.671875,
+        "value": 108.46875,
         "date": "2026-08-17",
-        "return21d_pct": -0.5434005434005407,
-        "return63d_pct": -0.4579934163446375,
-        "realized_vol": 0.27390052205428783,
-        "score": -0.2818837390652306
+        "return21d_pct": -0.7293007293007303,
+        "return63d_pct": -0.6440532417346545,
+        "realized_vol": 0.2738872297999286,
+        "score": -0.38397036767187454
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 109.03125,
+        "value": 108.59375,
         "date": "2026-08-17",
-        "return21d_pct": -2.131837307152873,
-        "return63d_pct": -1.4406779661017,
-        "realized_vol": 0.4822415848638891,
-        "score": -0.7724332433544909
+        "return21d_pct": -2.524544179523147,
+        "return63d_pct": -1.836158192090398,
+        "realized_vol": 0.48229042481846923,
+        "score": -0.9332771640919038
       }
     },
-    "composite_score": -0.30124886875213447,
+    "composite_score": -0.39496667400628027,
     "yield_direction": "up",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -1742,7 +1742,7 @@
       "label": "SOFR",
       "latest": {
         "value": 3.62,
-        "date": "2026-08-13"
+        "date": "2026-08-14"
       },
       "url": "https://fred.stlouisfed.org/series/SOFR"
     },
