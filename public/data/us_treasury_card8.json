@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-18T17:11:20.847262+00:00",
+  "generated_at_utc": "2026-08-18T17:25:27.173030+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -157,12 +157,12 @@
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.53125,
+        "value": 108.515625,
         "date": "2026-08-18",
-        "return21d_pct": -0.30142098464188694,
-        "return63d_pct": -0.4443170417084752,
-        "realized_vol": 0.2736262643364511,
-        "score": -0.19300274458926472
+        "return21d_pct": -0.31577436486293076,
+        "return63d_pct": -0.45864984950552135,
+        "realized_vol": 0.27356541294776227,
+        "score": -0.20090159834691754
       },
       "ZB=F": {
         "label": "30년 국채선물",
@@ -174,7 +174,7 @@
         "score": -0.7272150117862552
       }
     },
-    "composite_score": -0.24593418244565043,
+    "composite_score": -0.24790889588506362,
     "yield_direction": "flat",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-18T17:09:19.364213+00:00",
+    "generated_at_utc": "2026-08-18T17:24:10.347151+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1242,24 +1242,24 @@
       "status": "LIVE",
       "symbol": "DX-Y.NYB",
       "source": "Yahoo Finance DXY delayed market data",
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787072952",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787073842",
       "observation_date": "2026-08-18",
-      "market_time_utc": "2026-08-18T16:59:11+00:00",
-      "current": 99.617,
-      "forecast_1m": 99.617,
-      "forecast_3m": 99.617,
+      "market_time_utc": "2026-08-18T17:14:01+00:00",
+      "current": 99.65,
+      "forecast_1m": 99.65,
+      "forecast_3m": 99.65,
       "forecast_change_3m_pct": 0.0,
       "forecast_range_80": [
-        95.449067,
-        103.784933
+        95.480675,
+        103.819325
       ],
       "direction_3m": "flat",
       "confidence": 35,
       "selected_model_1m": "price_ensemble",
       "selected_model_3m": "price_ensemble",
       "backtest_1m": {
-        "rmse_pct": 1.7780090511498468,
-        "baseline_rmse_pct": 1.7780090511498468,
+        "rmse_pct": 1.7779752249876688,
+        "baseline_rmse_pct": 1.7779752249876688,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 47.94721407624634,
@@ -1267,8 +1267,8 @@
         "fallback_used": true
       },
       "backtest_3m": {
-        "rmse_pct": 3.264636168957716,
-        "baseline_rmse_pct": 3.264636168957716,
+        "rmse_pct": 3.264644999568656,
+        "baseline_rmse_pct": 3.264644999568656,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 36.48255813953488,
@@ -1277,8 +1277,8 @@
       },
       "price_model_audit": {
         "1m": {
-          "rmse_pct": 1.7780090511498468,
-          "baseline_rmse_pct": 1.7780090511498468,
+          "rmse_pct": 1.7779752249876688,
+          "baseline_rmse_pct": 1.7779752249876688,
           "skill_pct": 0.0,
           "backtests": 760,
           "direction_accuracy": 47.94721407624634,
@@ -1286,8 +1286,8 @@
           "fallback_used": true
         },
         "3m": {
-          "rmse_pct": 3.264636168957716,
-          "baseline_rmse_pct": 3.264636168957716,
+          "rmse_pct": 3.264644999568656,
+          "baseline_rmse_pct": 3.264644999568656,
           "skill_pct": 0.0,
           "backtests": 760,
           "direction_accuracy": 36.48255813953488,
@@ -1298,7 +1298,7 @@
       "macro_model_audit": {
         "1m": {
           "available": true,
-          "forecast_return_pct": -1.6440061858325499,
+          "forecast_return_pct": -1.6436866531280852,
           "rmse_pct": 1.604634662597944,
           "baseline_rmse_pct": 1.4097792545506627,
           "skill_pct": 0.0,
@@ -1330,8 +1330,8 @@
           "candidate_audit": {
             "domestic_financial": {
               "available": true,
-              "forecast": 97.9926789118125,
-              "forecast_return_pct": -1.6440061858325499,
+              "forecast": 98.0254540478648,
+              "forecast_return_pct": -1.6436866531280852,
               "rmse_pct": 1.604634662597944,
               "baseline_rmse_pct": 1.4097792545506627,
               "skill_pct": 0.0,
@@ -1363,8 +1363,8 @@
             },
             "relative_policy_rates": {
               "available": true,
-              "forecast": 98.05967179330793,
-              "forecast_return_pct": -1.5756643538045654,
+              "forecast": 98.0956299957202,
+              "forecast_return_pct": -1.572122750457826,
               "rmse_pct": 2.0022122904605113,
               "baseline_rmse_pct": 1.4097792545506627,
               "skill_pct": 0.0,
@@ -1394,8 +1394,8 @@
             },
             "combined": {
               "available": true,
-              "forecast": 98.47533025057051,
-              "forecast_return_pct": -1.152677025664013,
+              "forecast": 98.50757123056441,
+              "forecast_return_pct": -1.1530636149827416,
               "rmse_pct": 1.9482569045092624,
               "baseline_rmse_pct": 1.4097792545506627,
               "skill_pct": 0.0,
@@ -1434,7 +1434,7 @@
         },
         "3m": {
           "available": true,
-          "forecast_return_pct": -6.136759327340877,
+          "forecast_return_pct": -6.142780365457615,
           "rmse_pct": 2.354337275961205,
           "baseline_rmse_pct": 1.4754285574270285,
           "skill_pct": 0.0,
@@ -1466,8 +1466,8 @@
           "candidate_audit": {
             "domestic_financial": {
               "available": true,
-              "forecast": 93.68754343546607,
-              "forecast_return_pct": -6.136759327340877,
+              "forecast": 93.71293653024583,
+              "forecast_return_pct": -6.142780365457615,
               "rmse_pct": 2.354337275961205,
               "baseline_rmse_pct": 1.4754285574270285,
               "skill_pct": 0.0,
@@ -1499,8 +1499,8 @@
             },
             "relative_policy_rates": {
               "available": true,
-              "forecast": 95.19544215498144,
-              "forecast_return_pct": -4.5400768628938275,
+              "forecast": 95.22885836214348,
+              "forecast_return_pct": -4.538101674120033,
               "rmse_pct": 5.002444641328493,
               "baseline_rmse_pct": 1.4754285574270285,
               "skill_pct": 0.0,
@@ -1530,8 +1530,8 @@
             },
             "combined": {
               "available": true,
-              "forecast": 94.24947427334115,
-              "forecast_return_pct": -5.538758444595867,
+              "forecast": 94.27612554767444,
+              "forecast_return_pct": -5.5436064602099275,
               "rmse_pct": 5.045667548903678,
               "baseline_rmse_pct": 1.4754285574270285,
               "skill_pct": 0.0,
@@ -1575,20 +1575,40 @@
     "real_rate": {
       "available": true,
       "status": "LIVE",
-      "source": "FRED DFII5/DFII10/DFII20; Federal Reserve H.15",
+      "source": "FRED DFII5/DFII10/DFII20 + T10YIE; Federal Reserve H.15",
       "as_of": "2026-08-14",
       "current_pct": 2.41,
+      "current_curve": {
+        "real_5y_pct": 2.12,
+        "real_10y_pct": 2.41,
+        "real_20y_pct": 2.78,
+        "10y_minus_5y_pctp": 0.29,
+        "20y_minus_10y_pctp": 0.37
+      },
+      "recent_change": {
+        "5d_pctp": 0.01,
+        "1m_pctp": 0.06,
+        "3m_pctp": 0.41
+      },
       "forecast_1m_pct": 2.41,
       "forecast_3m_pct": 2.41,
+      "forecast_change_1m_pctp": 0.0,
       "forecast_change_3m_pctp": 0.0,
+      "direction_1m": "flat",
+      "direction_3m": "flat",
+      "forecast_usable_1m": false,
+      "forecast_usable_3m": false,
       "forecast_3m_range_80_pct": [
-        1.945,
-        2.875
+        1.9681,
+        2.8519
       ],
-      "confidence": 35,
+      "confidence": 37,
       "selected_model_1m": "persistence",
       "selected_model_3m": "persistence",
-      "model": "walk-forward momentum + real-yield-curve anchor + mean reversion with persistence safety gate",
+      "candidate_forecast_1m_pct": 2.386,
+      "candidate_forecast_3m_pct": 2.4385,
+      "candidate_direction_3m": "flat",
+      "model": "validated selection among persistence, real-curve momentum/mean-reversion, and macro ridge using nominal yields + breakeven inflation + financial conditions",
       "components_1m": {
         "trend": 2.4357,
         "curve": 2.4107,
@@ -1637,9 +1657,335 @@
           }
         }
       },
-      "schema_version": "1.1.0"
+      "structural_model_audit": {
+        "1m": {
+          "mae": 0.1782,
+          "rmse": 0.2336,
+          "baseline_rmse": 0.233,
+          "skill_pct": 0.0,
+          "raw_skill_pct": -0.2684,
+          "direction_accuracy": 50.3,
+          "direction_cases": 811,
+          "samples": 979,
+          "fallback_used": true,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 60,
+              "skill_pct_min": 2.0,
+              "direction_accuracy_min": 52.0
+            }
+          }
+        },
+        "3m": {
+          "mae": 0.2911,
+          "rmse": 0.3628,
+          "baseline_rmse": 0.3448,
+          "skill_pct": 0.0,
+          "raw_skill_pct": -5.2179,
+          "direction_accuracy": 41.8,
+          "direction_cases": 823,
+          "samples": 937,
+          "fallback_used": true,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 60,
+              "skill_pct_min": 2.0,
+              "direction_accuracy_min": 52.0
+            }
+          }
+        }
+      },
+      "macro_model_audit": {
+        "1m": {
+          "available": true,
+          "variant": "financial_conditions",
+          "forecast": 2.3860151429691734,
+          "forecast_change_pctp": -0.023984857030826874,
+          "features": [
+            "10Y real yield 21d change",
+            "10Y real yield 63d change",
+            "10Y-2Y nominal curve",
+            "NFCI",
+            "HY OAS",
+            "VIX"
+          ],
+          "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+          "mae": 0.1051,
+          "rmse": 0.1261,
+          "baseline_rmse": 0.1186,
+          "skill_pct": 0.0,
+          "raw_skill_pct": -6.2964,
+          "direction_accuracy": 44.2,
+          "direction_cases": 43,
+          "samples": 61,
+          "fallback_used": true,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 36,
+              "skill_pct_min": 2.0,
+              "direction_accuracy_min": 52.0
+            }
+          },
+          "candidate_audit": {
+            "rates_inflation": {
+              "available": true,
+              "variant": "rates_inflation",
+              "forecast": 2.26086525050155,
+              "forecast_change_pctp": -0.14913474949845,
+              "features": [
+                "10Y real yield 21d change",
+                "10Y real yield 63d change",
+                "US 10Y nominal yield",
+                "US 10Y nominal 21d change",
+                "10Y breakeven inflation",
+                "10Y breakeven 21d change",
+                "10Y-2Y nominal curve",
+                "EFFR"
+              ],
+              "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+              "mae": 0.1066,
+              "rmse": 0.1301,
+              "baseline_rmse": 0.1186,
+              "skill_pct": 0.0,
+              "raw_skill_pct": -9.71,
+              "direction_accuracy": 53.5,
+              "direction_cases": 43,
+              "samples": 61,
+              "fallback_used": true,
+              "quality_gate": {
+                "passed": false,
+                "requirements": {
+                  "samples_min": 36,
+                  "skill_pct_min": 2.0,
+                  "direction_accuracy_min": 52.0
+                }
+              }
+            },
+            "financial_conditions": {
+              "available": true,
+              "variant": "financial_conditions",
+              "forecast": 2.3860151429691734,
+              "forecast_change_pctp": -0.023984857030826874,
+              "features": [
+                "10Y real yield 21d change",
+                "10Y real yield 63d change",
+                "10Y-2Y nominal curve",
+                "NFCI",
+                "HY OAS",
+                "VIX"
+              ],
+              "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+              "mae": 0.1051,
+              "rmse": 0.1261,
+              "baseline_rmse": 0.1186,
+              "skill_pct": 0.0,
+              "raw_skill_pct": -6.2964,
+              "direction_accuracy": 44.2,
+              "direction_cases": 43,
+              "samples": 61,
+              "fallback_used": true,
+              "quality_gate": {
+                "passed": false,
+                "requirements": {
+                  "samples_min": 36,
+                  "skill_pct_min": 2.0,
+                  "direction_accuracy_min": 52.0
+                }
+              }
+            },
+            "combined": {
+              "available": true,
+              "variant": "combined",
+              "forecast": 2.2633296332116464,
+              "forecast_change_pctp": -0.14667036678835396,
+              "features": [
+                "10Y real yield 21d change",
+                "10Y real yield 63d change",
+                "US 10Y nominal yield",
+                "US 10Y nominal 21d change",
+                "10Y breakeven inflation",
+                "10Y breakeven 21d change",
+                "10Y-2Y nominal curve",
+                "EFFR",
+                "NFCI",
+                "HY OAS",
+                "VIX"
+              ],
+              "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+              "mae": 0.1135,
+              "rmse": 0.1374,
+              "baseline_rmse": 0.1186,
+              "skill_pct": 0.0,
+              "raw_skill_pct": -15.8481,
+              "direction_accuracy": 46.5,
+              "direction_cases": 43,
+              "samples": 61,
+              "fallback_used": true,
+              "quality_gate": {
+                "passed": false,
+                "requirements": {
+                  "samples_min": 36,
+                  "skill_pct_min": 2.0,
+                  "direction_accuracy_min": 52.0
+                }
+              }
+            }
+          },
+          "selected_variant": "financial_conditions"
+        },
+        "3m": {
+          "available": true,
+          "variant": "rates_inflation",
+          "forecast": 2.0883776740654465,
+          "forecast_change_pctp": -0.32162232593455364,
+          "features": [
+            "10Y real yield 21d change",
+            "10Y real yield 63d change",
+            "US 10Y nominal yield",
+            "US 10Y nominal 21d change",
+            "10Y breakeven inflation",
+            "10Y breakeven 21d change",
+            "10Y-2Y nominal curve",
+            "EFFR"
+          ],
+          "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+          "mae": 0.1961,
+          "rmse": 0.2473,
+          "baseline_rmse": 0.2318,
+          "skill_pct": 0.0,
+          "raw_skill_pct": -6.6588,
+          "direction_accuracy": 51.2,
+          "direction_cases": 41,
+          "samples": 45,
+          "fallback_used": true,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 36,
+              "skill_pct_min": 2.0,
+              "direction_accuracy_min": 52.0
+            }
+          },
+          "candidate_audit": {
+            "rates_inflation": {
+              "available": true,
+              "variant": "rates_inflation",
+              "forecast": 2.0883776740654465,
+              "forecast_change_pctp": -0.32162232593455364,
+              "features": [
+                "10Y real yield 21d change",
+                "10Y real yield 63d change",
+                "US 10Y nominal yield",
+                "US 10Y nominal 21d change",
+                "10Y breakeven inflation",
+                "10Y breakeven 21d change",
+                "10Y-2Y nominal curve",
+                "EFFR"
+              ],
+              "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+              "mae": 0.1961,
+              "rmse": 0.2473,
+              "baseline_rmse": 0.2318,
+              "skill_pct": 0.0,
+              "raw_skill_pct": -6.6588,
+              "direction_accuracy": 51.2,
+              "direction_cases": 41,
+              "samples": 45,
+              "fallback_used": true,
+              "quality_gate": {
+                "passed": false,
+                "requirements": {
+                  "samples_min": 36,
+                  "skill_pct_min": 2.0,
+                  "direction_accuracy_min": 52.0
+                }
+              }
+            },
+            "financial_conditions": {
+              "available": true,
+              "variant": "financial_conditions",
+              "forecast": 2.2516896495430583,
+              "forecast_change_pctp": -0.15831035045694167,
+              "features": [
+                "10Y real yield 21d change",
+                "10Y real yield 63d change",
+                "10Y-2Y nominal curve",
+                "NFCI",
+                "HY OAS",
+                "VIX"
+              ],
+              "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+              "mae": 0.2334,
+              "rmse": 0.2816,
+              "baseline_rmse": 0.2318,
+              "skill_pct": 0.0,
+              "raw_skill_pct": -21.4661,
+              "direction_accuracy": 36.6,
+              "direction_cases": 41,
+              "samples": 45,
+              "fallback_used": true,
+              "quality_gate": {
+                "passed": false,
+                "requirements": {
+                  "samples_min": 36,
+                  "skill_pct_min": 2.0,
+                  "direction_accuracy_min": 52.0
+                }
+              }
+            },
+            "combined": {
+              "available": true,
+              "variant": "combined",
+              "forecast": 2.0349001252586056,
+              "forecast_change_pctp": -0.3750998747413946,
+              "features": [
+                "10Y real yield 21d change",
+                "10Y real yield 63d change",
+                "US 10Y nominal yield",
+                "US 10Y nominal 21d change",
+                "10Y breakeven inflation",
+                "10Y breakeven 21d change",
+                "10Y-2Y nominal curve",
+                "EFFR",
+                "NFCI",
+                "HY OAS",
+                "VIX"
+              ],
+              "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
+              "mae": 0.1953,
+              "rmse": 0.2483,
+              "baseline_rmse": 0.2318,
+              "skill_pct": 0.0,
+              "raw_skill_pct": -7.1049,
+              "direction_accuracy": 53.7,
+              "direction_cases": 41,
+              "samples": 45,
+              "fallback_used": true,
+              "quality_gate": {
+                "passed": false,
+                "requirements": {
+                  "samples_min": 36,
+                  "skill_pct_min": 2.0,
+                  "direction_accuracy_min": 52.0
+                }
+              }
+            }
+          },
+          "selected_variant": "rates_inflation"
+        }
+      },
+      "forecast_quality_gate": {
+        "passed": false,
+        "benchmark": "persistence",
+        "horizon": "3m"
+      },
+      "limitation": "Final forward movement is promoted only when walk-forward skill beats persistence. candidate_forecast_* remains audit-only when the gate fails.",
+      "schema_version": "1.2.0"
     },
-    "methodology": "US M2 and DXY are calculated once in the Fed engine and published for downstream reuse. Each forecast uses walk-forward error weighting with persistence safety fallback.",
+    "methodology": "US M2, DXY and 10Y real-rate context are calculated once in the Fed engine and published for downstream reuse. Forecasts are promoted only when walk-forward validation beats persistence; otherwise the current level is retained.",
     "downstream_contract": "Global engine should reuse these values first and only query independent official fallbacks if this context is unavailable or stale."
   },
   "investment_conclusion": "미국채 금리환경 변화가 작아 자산배분은 중립적으로 유지하는 구간입니다.",
@@ -2473,7 +2819,7 @@
             3.4779999999999993,
             4.862000000000001
           ],
-          "structural_overlay": 0.18651580714218302,
+          "structural_overlay": 0.19011580714218296,
           "current": 4.17,
           "direction": "flat",
           "investment_environment": {
@@ -2537,7 +2883,7 @@
             4.1233015873015875,
             5.082082539682539
           ],
-          "structural_overlay": 0.10242841349078985,
+          "structural_overlay": 0.10382841349078982,
           "current": 4.68,
           "direction": "down",
           "investment_environment": {
@@ -2600,7 +2946,7 @@
             1.9900000000000002,
             2.83
           ],
-          "structural_overlay": 0.06685850000000007,
+          "structural_overlay": 0.06805850000000005,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -2663,7 +3009,7 @@
             0.09000000000000002,
             0.97
           ],
-          "structural_overlay": -0.08198119285781734,
+          "structural_overlay": -0.08418119285781729,
           "current": 0.53,
           "direction": "flat",
           "investment_environment": {
@@ -2734,7 +3080,7 @@
             2.8400000000000003,
             5.5
           ],
-          "structural_overlay": 0.2909158071421827,
+          "structural_overlay": 0.2945158071421826,
           "current": 4.17,
           "direction": "flat",
           "investment_environment": {
@@ -2798,7 +3144,7 @@
             3.8499999999999996,
             5.51
           ],
-          "structural_overlay": 0.14302841349078974,
+          "structural_overlay": 0.1444284134907897,
           "current": 4.68,
           "direction": "flat",
           "investment_environment": {
@@ -2863,7 +3209,7 @@
             1.4600000000000002,
             3.3600000000000003
           ],
-          "structural_overlay": 0.10165849999999998,
+          "structural_overlay": 0.10285849999999994,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -2927,7 +3273,7 @@
             -0.25,
             1.31
           ],
-          "structural_overlay": -0.14578119285781715,
+          "structural_overlay": -0.1479811928578171,
           "current": 0.53,
           "direction": "flat",
           "investment_environment": {
