@@ -618,6 +618,7 @@ def main() -> None:
         "future_regime": future_regime,
         "market_signal": overall,
         "treasury_futures_context": treasury_futures,
+        "upstream_us_macro_context": (fed.get("payload") or {}).get("us_macro_context") if fed.get("available") else None,
         "investment_conclusion": (
             "장기금리와 실질금리의 예상 부담이 낮아져 장기채·금·고밸류 위험자산에 우호적입니다."
             if overall == "good" else

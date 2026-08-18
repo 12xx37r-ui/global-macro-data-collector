@@ -31,9 +31,11 @@ ECB_M2_CSV = f"https://data-api.ecb.europa.eu/service/data/BSI/{ECB_M2_KEY[4:]}?
 BOJ_M2_PAGE = "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
 PBC_REPORTS_EN = "https://www.pbc.gov.cn/en/3688247/3688978/3709137/index.html"
 PBC_SEARCH = "https://wzdig.pbc.gov.cn/search/pcRender?pNo={page}&pageId=c177a85bd02b4114bebebd210809f691&q={query}&sr=pubDate%20desc"
+FED_ENGINE_US_CONTEXT = "https://raw.githubusercontent.com/12xx37r-ui/fed-futures-collector/main/public/data/us_liquidity_dxy.json"
+_US_CONTEXT_MEMO: dict[str, Any] | None = None
 
 # Global-M2 network safety limits. These do not change model weights or calculations.
-PROVIDER_MIN_INTERVAL = {"PBC": 0.35, "FRED": 0.10, "FED": 0.10, "ECB": 0.15, "BOJ": 0.20}
+PROVIDER_MIN_INTERVAL = {"PBC": 0.35, "FRED": 0.10, "FED": 0.10, "ECB": 0.15, "BOJ": 0.20, "GITHUB": 0.15}
 _MAX_TOTAL_RETRY_WAIT = 12.0
 _REQUEST_MEMO: dict[str, requests.Response] = {}
 _PROVIDER_LAST_CALL: dict[str, float] = {}
@@ -108,6 +110,8 @@ def _provider_for_url(url: str) -> str:
         return "ECB"
     if "boj.or.jp" in u:
         return "BOJ"
+    if "raw.githubusercontent.com" in u or "api.github.com" in u:
+        return "GITHUB"
     return "OTHER"
 
 
@@ -200,13 +204,114 @@ def _get_retry(
     raise last or RuntimeError("request failed")
 
 
+def _read_json(path: Path) -> dict[str, Any]:
+    try:
+        x = json.loads(path.read_text(encoding="utf-8"))
+        return x if isinstance(x, dict) else {}
+    except Exception:
+        return {}
+
+
+def _get_us_engine_context(session: requests.Session) -> dict[str, Any]:
+    global _US_CONTEXT_MEMO
+    if isinstance(_US_CONTEXT_MEMO, dict):
+        return _US_CONTEXT_MEMO
+    # Normal workflow: treasury_card8 already fetched the Fed engine latest.json.
+    # Reuse that payload locally instead of making another GitHub request.
+    card8 = _read_json(OUT_DIR / "us_treasury_card8.json")
+    ctx = card8.get("upstream_us_macro_context") if isinstance(card8, dict) else None
+    if isinstance(ctx, dict) and ctx.get("available"):
+        _US_CONTEXT_MEMO = ctx
+        return ctx
+    # Standalone/global-M2 fallback: one small dedicated upstream JSON request.
+    try:
+        r = _get_retry(session, FED_ENGINE_US_CONTEXT, attempts=1, timeout=(4, 8))
+        x = r.json()
+        if isinstance(x, dict) and x.get("available"):
+            _US_CONTEXT_MEMO = x
+            return x
+    except Exception:
+        pass
+    _US_CONTEXT_MEMO = {}
+    return {}
+
+
+def _fetch_us_engine(session: requests.Session) -> dict[str, Any]:
+    ctx = _get_us_engine_context(session)
+    m2 = ctx.get("m2") if isinstance(ctx, dict) else None
+    if not isinstance(m2, dict) or not m2.get("available"):
+        raise ValueError("Fed engine US M2 context unavailable")
+    yoy = _num(m2.get("current_yoy_pct"))
+    p3 = _num(m2.get("prior_3m_yoy_pct"))
+    if yoy is None or p3 is None:
+        raise ValueError("Fed engine US M2 required values missing")
+    return {
+        "region": "US", "label": "United States M2",
+        "date": m2.get("observation_date"), "yoy_pct": yoy, "yoy_3m_ago_pct": p3,
+        "level": m2.get("level_billions_usd"), "forecast_yoy_3m_pct": _num(m2.get("forecast_3m_yoy_pct")),
+        "forecast_confidence": m2.get("confidence"), "status": m2.get("status") or "LIVE",
+        "source": "Fed policy engine · " + str(m2.get("source") or "US M2"),
+        "source_url": m2.get("source_url") or FED_ENGINE_US_CONTEXT,
+        "upstream_generated_at_utc": ctx.get("generated_at_utc"),
+    }
+
+
+def _load_forward_context(session: requests.Session) -> dict[str, Any]:
+    # No extra network call here: reuse context already obtained by _fetch_us_engine
+    # or the local Card 8 payload produced earlier in the same collector run.
+    card8 = _read_json(OUT_DIR / "us_treasury_card8.json")
+    ctx = _US_CONTEXT_MEMO if isinstance(_US_CONTEXT_MEMO, dict) else {}
+    if not ctx and isinstance(card8.get("upstream_us_macro_context"), dict):
+        ctx = card8.get("upstream_us_macro_context") or {}
+    return {"us_engine": ctx, "card8": card8}
+
+
+def _liquidity_grade(score: float) -> str:
+    if score >= 60: return "매우 유리"
+    if score >= 30: return "유리"
+    if score >= 10: return "약유리"
+    if score > -10: return "중립"
+    if score > -30: return "약불리"
+    if score > -60: return "불리"
+    return "매우 불리"
+
+
+def _forward_liquidity_outlook(current: float, forecast: float, context: dict[str, Any]) -> dict[str, Any]:
+    inputs: list[dict[str, Any]] = []
+    m2_change = forecast - current
+    m2_signal = max(-1.0, min(1.0, m2_change / 0.50))
+    inputs.append({"name":"Global M2 3개월 예상 변화","current":round(current,4),"forecast":round(forecast,4),"signal":round(m2_signal,4),"weight":0.60,"meaning":"광의통화 증가율 상승은 유동성에 우호적"})
+    usctx = context.get("us_engine") or {}
+    dxy = usctx.get("dxy") or {}
+    dxy_change = _num(dxy.get("forecast_change_3m_pct"))
+    if dxy.get("available") and dxy_change is not None:
+        sig = -max(-1.0, min(1.0, dxy_change / 3.0))
+        inputs.append({"name":"DXY 3개월 예상","current":dxy.get("current"),"forecast":dxy.get("forecast_3m"),"signal":round(sig,4),"weight":0.25,"meaning":"달러 약세는 글로벌 달러유동성에 상대적으로 우호적","source":dxy.get("source")})
+    card8 = context.get("card8") or {}
+    real_cur = _num((((card8.get("current") or {}).get("DFII10") or {}).get("value")))
+    real3 = _num((((((card8.get("forecasts") or {}).get("3m") or {}).get("targets") or {}).get("DFII10") or {}).get("forecast")))
+    gate = ((((((card8.get("forecasts") or {}).get("3m") or {}).get("targets") or {}).get("DFII10") or {}).get("quality_gate") or {}))
+    if real_cur is not None and real3 is not None:
+        sig = -max(-1.0, min(1.0, (real3 - real_cur) / 0.35))
+        weight = 0.15 if gate.get("passed") else 0.075
+        inputs.append({"name":"미국 10년 실질금리 3개월 예상","current":real_cur,"forecast":real3,"signal":round(sig,4),"weight":weight,"meaning":"실질금리 하락은 위험자산 유동성 환경에 우호적","validation":"통과" if gate.get("passed") else "미통과·절반가중"})
+    sw = sum(float(x["weight"]) for x in inputs) or 1.0
+    score = sum(float(x["signal"]) * float(x["weight"]) for x in inputs) / sw * 100.0
+    return {
+        "score": round(score, 2), "grade": _liquidity_grade(score),
+        "direction": "improving" if score >= 10 else "deteriorating" if score <= -10 else "neutral",
+        "inputs": inputs,
+        "validation_status": "UNVALIDATED_COMPOSITE",
+        "note": "M2 전망 자체와 분리된 보조 유동성 환경지표입니다. DXY·실질금리 보조신호는 Global M2 수치를 직접 바꾸지 않습니다.",
+    }
+
 # ---------- United States ----------
 # Primary: FRED CSV. Secondary: Federal Reserve Board H.6 release HTML.
 # The H.6 fallback is deliberately independent of fred.stlouisfed.org, so a
 # transient FRED timeout does not make the 40%-weight US component disappear.
 
 def _fetch_us_fred(session: requests.Session) -> dict[str, Any]:
-    r = _get_retry(session, FRED_US_M2, attempts=3)
+    r = _get_retry(session, FRED_US_M2, attempts=1, timeout=(4, 10))
     rows = []
     for row in csv.DictReader(io.StringIO(r.text)):
         v = _num(row.get("M2SL"))
@@ -224,7 +329,8 @@ def _fetch_us_fed_h6(session: requests.Session) -> dict[str, Any]:
         session,
         FED_H6_CURRENT,
         headers={"User-Agent": "Mozilla/5.0 GlobalMacroDataCollector/3.1"},
-        attempts=2,
+        attempts=1,
+        timeout=(4, 10),
     )
     soup = BeautifulSoup(r.text, "html.parser")
     rows: list[dict[str, Any]] = []
@@ -280,7 +386,7 @@ def _fetch_us_fed_h6(session: requests.Session) -> dict[str, Any]:
 
 def _fetch_us(session: requests.Session) -> dict[str, Any]:
     errors = []
-    for fn in (_fetch_us_fred, _fetch_us_fed_h6):
+    for fn in (_fetch_us_engine, _fetch_us_fred, _fetch_us_fed_h6):
         try:
             return fn(session)
         except Exception as exc:
@@ -675,9 +781,21 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
     current = sum(norm_weights[k] * float(usable[k]["yoy_pct"]) for k in usable)
     prior3 = sum(norm_weights[k] * float(usable[k].get("yoy_3m_ago_pct", usable[k]["yoy_pct"])) for k in usable)
     acceleration = current - prior3
-    forecast = current + max(-2.0, min(2.0, acceleration * 0.50))
-    direction_score = max(-70.0, min(70.0, current * 4.0 + acceleration * 10.0))
+    legacy_forecast = current + max(-2.0, min(2.0, acceleration * 0.50))
+    component_forecasts: dict[str, Any] = {}
+    has_direct_us = False
+    for k, c in usable.items():
+        cur = float(c["yoy_pct"]); p3 = float(c.get("yoy_3m_ago_pct", cur))
+        if k == "US" and _num(c.get("forecast_yoy_3m_pct")) is not None:
+            fc = float(c["forecast_yoy_3m_pct"]); method = "US Fed-engine history model"; has_direct_us = True
+        else:
+            fc = cur + max(-2.0, min(2.0, (cur - p3) * 0.50)); method = "half-persistence of 3m YoY acceleration"
+        component_forecasts[k] = {"current_yoy_pct": round(cur,6), "forecast_3m_yoy_pct": round(fc,6), "method": method}
+    forecast = sum(norm_weights[k] * float(component_forecasts[k]["forecast_3m_yoy_pct"]) for k in usable) if has_direct_us else legacy_forecast
+    direction_score = max(-70.0, min(70.0, current * 4.0 + (forecast-current) * 20.0))
     change_pct = ((forecast / current) - 1.0) * 100.0 if abs(current) > 0.25 else (forecast - current) * 10.0
+    forward_context = _load_forward_context(session)
+    forward_liquidity = _forward_liquidity_outlook(current, forecast, forward_context)
 
     latest_dates = [c.get("date") for c in usable.values() if c.get("date")]
     out = {
@@ -695,6 +813,11 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "current_yoy_pct": round(current, 6),
         "prior_3m_yoy_pct": round(prior3, 6),
         "acceleration_pp": round(acceleration, 6),
+        "legacy_forecast": round(legacy_forecast, 6),
+        "forecast_model": "region-specific forecast with direct US Fed-engine M2 model" if has_direct_us else "legacy composite acceleration fallback",
+        "forecast_components": component_forecasts,
+        "forward_liquidity_outlook": forward_liquidity,
+        "us_dxy": ((forward_context.get("us_engine") or {}).get("dxy") or {}),
         "coverage_weight": round(weight_sum, 4),
         "coverage_regions": sorted(usable),
         "full_coverage": weight_sum >= 0.999 and len(usable) == 4,
@@ -707,7 +830,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "runtime_ms": runtime_ms,
         "api_health": _API_HEALTH,
         "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
-        "methodology": "Weighted YoY broad-money growth composite. Full-quality output requires US/CN/EA/JP; temporary gaps are transparently re-normalized and flagged PARTIAL/DEGRADED instead of being presented as full global coverage. 3-month acceleration informs the conservative forecast and direction score.",
+        "methodology": "Weighted YoY broad-money growth composite. Current weights remain US/CN/EA/JP 40/30/20/10. The 3-month forecast uses the Fed-engine history-based US M2 forecast when available and conservative region acceleration for CN/EA/JP; the prior composite-acceleration forecast is retained as legacy_forecast for audit. DXY and real-yield signals are reported separately in forward_liquidity_outlook and do not alter the M2 level forecast.",
         "is_proxy": False,
     }
     _save_last_good(out)

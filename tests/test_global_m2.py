@@ -147,6 +147,31 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertEqual(g.call_count, 1)
         self.assertEqual(global_m2._API_HEALTH['PBC']['memory_cache_hits'], 1)
 
+    def test_us_engine_context_is_primary_and_direct_forecast_improves_global_forecast(self):
+        ctx={
+            'available':True,'generated_at_utc':'2026-08-18T00:00:00+00:00',
+            'm2':{'available':True,'status':'LIVE','observation_date':'2026-06-01','level_billions_usd':23000,'current_yoy_pct':5.0,'prior_3m_yoy_pct':4.0,'forecast_3m_yoy_pct':6.0,'confidence':80,'source':'FRED M2SL'},
+            'dxy':{'available':True,'current':100.0,'forecast_3m':98.0,'forecast_change_3m_pct':-2.0,'source':'Yahoo Finance'},
+        }
+        with patch.object(global_m2, '_US_CONTEXT_MEMO', ctx), \
+             patch.object(global_m2, '_load_last_good', return_value={}), patch.object(global_m2, '_save_last_good'), \
+             patch.object(global_m2, '_fetch_pbc', return_value={'region':'CN','date':'2026-06-01','yoy_pct':8,'yoy_3m_ago_pct':7}), \
+             patch.object(global_m2, '_fetch_ecb', return_value={'region':'EA','date':'2026-06-01','yoy_pct':3,'yoy_3m_ago_pct':2}), \
+             patch.object(global_m2, '_fetch_boj', return_value={'region':'JP','date':'2026-06-01','yoy_pct':1,'yoy_3m_ago_pct':1}):
+            out=global_m2.build_global_m2()
+        self.assertEqual(out['forecast_model'], 'region-specific forecast with direct US Fed-engine M2 model')
+        self.assertAlmostEqual(out['forecast_components']['US']['forecast_3m_yoy_pct'],6.0)
+        self.assertIn('forward_liquidity_outlook',out)
+        self.assertEqual(out['us_dxy']['forecast_3m'],98.0)
+
+    def test_fetch_us_engine_maps_contract_without_requerying_m2_sources(self):
+        ctx={'available':True,'generated_at_utc':'2026-08-18T00:00:00+00:00','m2':{'available':True,'status':'LIVE','observation_date':'2026-06-01','current_yoy_pct':5.2,'prior_3m_yoy_pct':4.7,'forecast_3m_yoy_pct':5.5,'level_billions_usd':23100,'source':'Federal Reserve H.6'}}
+        with patch.object(global_m2, '_get_us_engine_context', return_value=ctx):
+            out=global_m2._fetch_us_engine(global_m2.requests.Session())
+        self.assertEqual(out['region'],'US')
+        self.assertAlmostEqual(out['yoy_pct'],5.2)
+        self.assertAlmostEqual(out['forecast_yoy_3m_pct'],5.5)
+
 
 if __name__ == '__main__':
     unittest.main()
