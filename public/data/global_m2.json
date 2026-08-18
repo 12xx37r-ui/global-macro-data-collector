@@ -3,16 +3,114 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T15:52:37.543181+00:00",
+  "generated_at_utc": "2026-08-18T16:20:41.784181+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
-  "forecast": 5.43885,
-  "changePct": 0.996333,
-  "directionScore": 22.613873,
+  "forecast": 5.292022,
+  "changePct": -1.73019,
+  "directionScore": 19.677301,
   "current_yoy_pct": 5.385196,
   "prior_3m_yoy_pct": 5.277887,
   "acceleration_pp": 0.107309,
+  "legacy_forecast": 5.43885,
+  "forecast_model": "region-specific forecast with direct US Fed-engine M2 model",
+  "forecast_components": {
+    "US": {
+      "current_yoy_pct": 5.525756,
+      "forecast_3m_yoy_pct": 5.634172,
+      "method": "US Fed-engine history model"
+    },
+    "EA": {
+      "current_yoy_pct": 3.224468,
+      "forecast_3m_yoy_pct": 3.241765,
+      "method": "half-persistence of 3m YoY acceleration"
+    },
+    "JP": {
+      "current_yoy_pct": 2.2,
+      "forecast_3m_yoy_pct": 2.15,
+      "method": "half-persistence of 3m YoY acceleration"
+    },
+    "CN": {
+      "current_yoy_pct": 7.7,
+      "forecast_3m_yoy_pct": 7.25,
+      "method": "half-persistence of 3m YoY acceleration"
+    }
+  },
+  "forward_liquidity_outlook": {
+    "score": -10.69,
+    "grade": "약불리",
+    "direction": "deteriorating",
+    "inputs": [
+      {
+        "name": "Global M2 3개월 예상 변화",
+        "current": 5.3852,
+        "forecast": 5.292,
+        "signal": -0.1863,
+        "weight": 0.6,
+        "meaning": "광의통화 증가율 상승은 유동성에 우호적"
+      },
+      {
+        "name": "DXY 3개월 예상",
+        "current": 99.6,
+        "forecast": 99.6,
+        "signal": -0.0,
+        "weight": 0.25,
+        "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
+        "source": "Yahoo Finance DXY delayed market data"
+      },
+      {
+        "name": "미국 10년 실질금리 3개월 예상",
+        "current": 2.41,
+        "forecast": 2.35,
+        "signal": 0.1714,
+        "weight": 0.075,
+        "meaning": "실질금리 하락은 위험자산 유동성 환경에 우호적",
+        "validation": "미통과·절반가중"
+      }
+    ],
+    "validation_status": "UNVALIDATED_COMPOSITE",
+    "note": "M2 전망 자체와 분리된 보조 유동성 환경지표입니다. DXY·실질금리 보조신호는 Global M2 수치를 직접 바꾸지 않습니다."
+  },
+  "us_dxy": {
+    "available": true,
+    "status": "LIVE",
+    "symbol": "DX-Y.NYB",
+    "source": "Yahoo Finance DXY delayed market data",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787069779",
+    "observation_date": "2026-08-18",
+    "market_time_utc": "2026-08-18T16:06:16+00:00",
+    "current": 99.6,
+    "forecast_1m": 99.6,
+    "forecast_3m": 99.6,
+    "forecast_change_3m_pct": 0.0,
+    "forecast_range_80": [
+      95.432784,
+      103.767216
+    ],
+    "direction_3m": "flat",
+    "confidence": 35,
+    "backtest_1m": {
+      "rmse_pct": 1.778026810979969,
+      "baseline_rmse_pct": 1.778026810979969,
+      "skill_pct": 0.0,
+      "backtests": 760,
+      "direction_accuracy": 47.94721407624634,
+      "direction_cases": 682,
+      "fallback_used": true
+    },
+    "backtest_3m": {
+      "rmse_pct": 3.2646317879421916,
+      "baseline_rmse_pct": 3.2646317879421916,
+      "skill_pct": 0.0,
+      "backtests": 760,
+      "direction_accuracy": 36.48255813953488,
+      "direction_cases": 688,
+      "fallback_used": true
+    },
+    "model": "walk-forward inverse-RMSE ensemble of 20d/60d/120d damped trends and 1y mean reversion; persistence safety fallback",
+    "limitation": "DXY price is Yahoo Finance delayed data; forecast is a statistical direction estimate, not an ICE real-time quote or guaranteed target."
+  },
   "coverage_weight": 1.0,
   "coverage_regions": [
     "CN",
@@ -31,17 +129,20 @@
   },
   "components": {
     "US": {
-      "date": "2026-06-01",
-      "yoy_pct": 5.525755718302672,
-      "yoy_3m_ago_pct": 4.574780599609851,
-      "level": 23155.2,
       "region": "US",
       "label": "United States M2",
-      "source": "Federal Reserve Board H.6 Money Stock Measures",
-      "source_url": "https://www.federalreserve.gov/releases/h6/current/default.htm",
+      "date": "2026-06-01",
+      "yoy_pct": 5.525756,
+      "yoy_3m_ago_pct": 4.574781,
+      "level": 23155.2,
+      "forecast_yoy_3m_pct": 5.634172,
+      "forecast_confidence": 71,
       "status": "LIVE",
+      "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
+      "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
+      "upstream_generated_at_utc": "2026-08-18T16:16:22.527178+00:00",
       "age_days": 78,
-      "fetch_ms": 364427
+      "fetch_ms": 0
     },
     "EA": {
       "region": "EA",
@@ -53,7 +154,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 1029
+      "fetch_ms": 1034
     },
     "JP": {
       "date": "2026-07-01",
@@ -66,7 +167,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 768
+      "fetch_ms": 709
     },
     "CN": {
       "region": "CN",
@@ -80,7 +181,7 @@
       "history_points": 4,
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 6367
+      "fetch_ms": 3308
     }
   },
   "statuses": {
@@ -90,36 +191,8 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 372592,
+  "runtime_ms": 5053,
   "api_health": {
-    "FRED": {
-      "provider": "FRED",
-      "request_attempts": 1,
-      "network_calls": 3,
-      "memory_cache_hits": 0,
-      "http_429": 0,
-      "http_5xx": 0,
-      "timeouts": 0,
-      "retries": 2,
-      "last_success_utc": null,
-      "last_failure_utc": "2026-08-18T15:52:29.138052+00:00",
-      "cooldown": true,
-      "final_status": "UNAVAILABLE"
-    },
-    "FED": {
-      "provider": "FED",
-      "request_attempts": 1,
-      "network_calls": 1,
-      "memory_cache_hits": 0,
-      "http_429": 0,
-      "http_5xx": 0,
-      "timeouts": 0,
-      "retries": 0,
-      "last_success_utc": "2026-08-18T15:52:29.316777+00:00",
-      "last_failure_utc": null,
-      "cooldown": false,
-      "final_status": "LIVE"
-    },
     "ECB": {
       "provider": "ECB",
       "request_attempts": 1,
@@ -129,7 +202,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T15:52:30.406102+00:00",
+      "last_success_utc": "2026-08-18T16:20:37.763952+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -143,7 +216,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T15:52:30.928099+00:00",
+      "last_success_utc": "2026-08-18T16:20:38.170825+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -157,13 +230,13 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T15:52:37.485990+00:00",
+      "last_success_utc": "2026-08-18T16:20:41.716197+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     }
   },
   "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
-  "methodology": "Weighted YoY broad-money growth composite. Full-quality output requires US/CN/EA/JP; temporary gaps are transparently re-normalized and flagged PARTIAL/DEGRADED instead of being presented as full global coverage. 3-month acceleration informs the conservative forecast and direction score.",
+  "methodology": "Weighted YoY broad-money growth composite. Current weights remain US/CN/EA/JP 40/30/20/10. The 3-month forecast uses the Fed-engine history-based US M2 forecast when available and conservative region acceleration for CN/EA/JP; the prior composite-acceleration forecast is retained as legacy_forecast for audit. DXY and real-yield signals are reported separately in forward_liquidity_outlook and do not alter the M2 level forecast.",
   "is_proxy": false
 }
