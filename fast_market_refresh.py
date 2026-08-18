@@ -15,6 +15,8 @@ LABELS={"DX-Y.NYB":"DXY","^VIX":"VIX","ES=F":"S&P500 futures","NQ=F":"Nasdaq100 
         "CL=F":"WTI futures","GC=F":"Gold futures","HG=F":"Copper futures"}
 FRED={"DGS2":"US 2Y","DGS10":"US 10Y","BAMLH0A0HYM2":"HY OAS"}
 TIMEOUT=(3,8)
+FULL_GUARD_MINUTES=120
+YAHOO_MIN_INTERVAL_SECONDS=0.35
 
 def now_iso(): return datetime.now(timezone.utc).isoformat()
 def read(path):
@@ -37,7 +39,11 @@ def yahoo(session,symbol):
             r=session.get(url,params={"range":"1d","interval":"5m","includePrePost":"true","events":"history","_ts":int(time.time())},
                           timeout=TIMEOUT,headers={"Cache-Control":"no-cache","Pragma":"no-cache"})
             if r.status_code==429:
-                time.sleep(min(10,1.5*(2**a)+random.random())); continue
+                ra=r.headers.get("Retry-After")
+                try: wait=float(ra) if ra is not None else None
+                except Exception: wait=None
+                time.sleep(min(15.0, wait if wait is not None and wait>=0 else 1.5*(2**a)+random.random()))
+                continue
             r.raise_for_status()
             node=((((r.json() or {}).get("chart") or {}).get("result") or [None])[0] or {})
             m=node.get("meta") or {}; p=num(m.get("regularMarketPrice")); ts=m.get("regularMarketTime")
@@ -92,9 +98,23 @@ def parse_dt(v):
 def main():
     st=read(STATUS)
     card12=read(CARD12); bundle=read(BUNDLE)
+    full_dt=parse_dt(bundle.get("generated_at_utc"))
+    if full_dt is not None:
+        full_age=(datetime.now(timezone.utc)-full_dt).total_seconds()/60.0
+        if 0 <= full_age <= FULL_GUARD_MINUTES:
+            skipped={"schema_version":"1.0","generated_at_utc":now_iso(),"status":"SKIP_RECENT_FULL",
+                     "reason":"full output is recent","full_generated_at_utc":full_dt.isoformat(),
+                     "full_age_minutes":round(full_age,2),"guard_minutes":FULL_GUARD_MINUTES,
+                     "market_network_calls":0,"fred_network_calls_this_run":0}
+            write(STATUS,skipped)
+            print(json.dumps(skipped,ensure_ascii=False))
+            return
     prev_snaps=card12.get("market_snapshots") if isinstance(card12.get("market_snapshots"),dict) else {}
     s=requests.Session(); s.headers.update({"User-Agent":"global-macro-fast-refresh/1.0"})
-    attempted=[yahoo(s,x) for x in SYMBOLS]
+    attempted=[]
+    for i,x in enumerate(SYMBOLS):
+        if i: time.sleep(YAHOO_MIN_INTERVAL_SECONDS)
+        attempted.append(yahoo(s,x))
     newer={}
     for q in attempted:
         if "price" not in q: continue
