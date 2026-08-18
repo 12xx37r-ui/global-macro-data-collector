@@ -90,6 +90,63 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertEqual(out['coverage_quality'], 'FULL')
         self.assertEqual(out['missing_regions'], [])
 
+    def test_pbc_official_listing_selects_latest_and_three_month_prior_with_bounded_calls(self):
+        listing = """<html><body>
+        <a href=\"/en/r/h1.html\">Financial Statistics Report (H1 2026)</a>
+        <a href=\"/en/r/may.html\">Financial Statistics Report (May 2026)</a>
+        <a href=\"/en/r/apr.html\">Financial Statistics Report (April 2026)</a>
+        <a href=\"/en/r/q1.html\">Financial Statistics Report (Q1 2026)</a>
+        </body></html>"""
+        h1 = "June 2026 M2 reached RMB 340.0 trillion, rising 8.3 percent year on year."
+        q1 = "March 2026 M2 reached RMB 330.0 trillion, rising 7.0 percent year on year."
+        class R:
+            def __init__(self, text):
+                self.text=text; self.content=text.encode(); self.status_code=200; self.headers={}
+            def raise_for_status(self): return None
+        calls=[]
+        def fake_get(url, **kwargs):
+            calls.append(url)
+            if url == global_m2.PBC_REPORTS_EN: return R(listing)
+            if url.endswith('/h1.html'): return R(h1)
+            if url.endswith('/q1.html'): return R(q1)
+            return R('unneeded')
+        session=global_m2.requests.Session()
+        with patch.object(session, 'get', side_effect=fake_get):
+            global_m2._REQUEST_MEMO.clear(); global_m2._API_HEALTH.clear(); global_m2._PROVIDER_LAST_CALL.clear()
+            out=global_m2._fetch_pbc(session)
+        self.assertEqual(out['date'], '2026-06-01')
+        self.assertAlmostEqual(out['yoy_pct'], 8.3)
+        self.assertAlmostEqual(out['yoy_3m_ago_pct'], 7.0)
+        self.assertLessEqual(len(calls), 3)
+
+    def test_retry_after_429_is_bounded_and_recovers(self):
+        class R:
+            def __init__(self, code, text='ok', headers=None):
+                self.status_code=code; self.text=text; self.content=text.encode(); self.headers=headers or {}
+            def raise_for_status(self):
+                if self.status_code >= 400:
+                    raise global_m2.requests.HTTPError(f'HTTP {self.status_code}', response=self)
+        session=global_m2.requests.Session()
+        responses=[R(429, 'rate', {'Retry-After':'0'}), R(200, 'ok')]
+        with patch.object(session, 'get', side_effect=responses), patch.object(global_m2.time, 'sleep'):
+            global_m2._REQUEST_MEMO.clear(); global_m2._API_HEALTH.clear(); global_m2._PROVIDER_LAST_CALL.clear()
+            r=global_m2._get_retry(session, 'https://www.pbc.gov.cn/test', attempts=2)
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(global_m2._API_HEALTH['PBC']['http_429'], 1)
+        self.assertEqual(global_m2._API_HEALTH['PBC']['retries'], 1)
+
+    def test_same_run_identical_request_is_memory_deduplicated(self):
+        class R:
+            status_code=200; text='ok'; content=b'ok'; headers={}
+            def raise_for_status(self): return None
+        session=global_m2.requests.Session()
+        with patch.object(session, 'get', return_value=R()) as g:
+            global_m2._REQUEST_MEMO.clear(); global_m2._API_HEALTH.clear(); global_m2._PROVIDER_LAST_CALL.clear()
+            global_m2._get_retry(session, global_m2.PBC_REPORTS_EN, attempts=1)
+            global_m2._get_retry(session, global_m2.PBC_REPORTS_EN, attempts=1)
+        self.assertEqual(g.call_count, 1)
+        self.assertEqual(global_m2._API_HEALTH['PBC']['memory_cache_hits'], 1)
+
 
 if __name__ == '__main__':
     unittest.main()

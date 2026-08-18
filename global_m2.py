@@ -9,7 +9,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 import requests
 from bs4 import BeautifulSoup
@@ -20,7 +20,7 @@ CACHE_PATH = OUT_DIR / "cache" / "global_m2_last_good.json"
 
 # Connection/read timeout. Global M2 is a monthly series, so reliability is more
 # important than shaving a few seconds off a once-per-workflow collection.
-TIMEOUT = (8, 45)
+TIMEOUT = (5, 15)
 WEIGHTS = {"US": 0.40, "CN": 0.30, "EA": 0.20, "JP": 0.10}
 MAX_AGE_DAYS = {"US": 120, "CN": 120, "EA": 120, "JP": 120}
 
@@ -29,7 +29,15 @@ FED_H6_CURRENT = "https://www.federalreserve.gov/releases/h6/current/default.htm
 ECB_M2_KEY = "BSI.M.U2.Y.V.M20.X.I.U2.2300.Z01.A"
 ECB_M2_CSV = f"https://data-api.ecb.europa.eu/service/data/BSI/{ECB_M2_KEY[4:]}?format=csvdata&startPeriod=2018-01"
 BOJ_M2_PAGE = "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
+PBC_REPORTS_EN = "https://www.pbc.gov.cn/en/3688247/3688978/3709137/index.html"
 PBC_SEARCH = "https://wzdig.pbc.gov.cn/search/pcRender?pNo={page}&pageId=c177a85bd02b4114bebebd210809f691&q={query}&sr=pubDate%20desc"
+
+# Global-M2 network safety limits. These do not change model weights or calculations.
+PROVIDER_MIN_INTERVAL = {"PBC": 0.35, "FRED": 0.10, "FED": 0.10, "ECB": 0.15, "BOJ": 0.20}
+_MAX_TOTAL_RETRY_WAIT = 12.0
+_REQUEST_MEMO: dict[str, requests.Response] = {}
+_PROVIDER_LAST_CALL: dict[str, float] = {}
+_API_HEALTH: dict[str, dict[str, Any]] = {}
 
 
 def now_iso() -> str:
@@ -88,26 +96,107 @@ def _series_yoy_from_levels(rows: list[dict[str, Any]]) -> dict[str, Any] | None
     return {"date": latest_m + "-01", "yoy_pct": latest_yoy, "yoy_3m_ago_pct": prior3, "level": by_month[latest_m]}
 
 
+def _provider_for_url(url: str) -> str:
+    u = str(url).lower()
+    if "pbc.gov.cn" in u:
+        return "PBC"
+    if "fred.stlouisfed.org" in u:
+        return "FRED"
+    if "federalreserve.gov" in u:
+        return "FED"
+    if "ecb.europa.eu" in u:
+        return "ECB"
+    if "boj.or.jp" in u:
+        return "BOJ"
+    return "OTHER"
+
+
+def _health(provider: str) -> dict[str, Any]:
+    return _API_HEALTH.setdefault(provider, {
+        "provider": provider, "request_attempts": 0, "network_calls": 0,
+        "memory_cache_hits": 0, "http_429": 0, "http_5xx": 0,
+        "timeouts": 0, "retries": 0, "last_success_utc": None,
+        "last_failure_utc": None, "cooldown": False, "final_status": None,
+    })
+
+
+def _pace(provider: str) -> None:
+    gap = float(PROVIDER_MIN_INTERVAL.get(provider, 0.10))
+    last = _PROVIDER_LAST_CALL.get(provider)
+    if last is not None:
+        wait = gap - (time.monotonic() - last)
+        if wait > 0:
+            time.sleep(wait)
+    _PROVIDER_LAST_CALL[provider] = time.monotonic()
+
+
+def _retry_after_seconds(response: requests.Response | None) -> float | None:
+    if response is None:
+        return None
+    raw = response.headers.get("Retry-After")
+    if not raw:
+        return None
+    try:
+        return max(0.0, min(float(raw), _MAX_TOTAL_RETRY_WAIT))
+    except Exception:
+        return None
+
+
 def _get_retry(
     session: requests.Session,
     url: str,
     *,
     headers: dict[str, str] | None = None,
-    attempts: int = 3,
+    attempts: int = 2,
     timeout: tuple[int, int] = TIMEOUT,
+    memo: bool = True,
 ) -> requests.Response:
+    provider = _provider_for_url(url)
+    h = _health(provider)
+    memo_key = url + "|" + json.dumps(headers or {}, sort_keys=True, ensure_ascii=False)
+    h["request_attempts"] += 1
+    if memo and memo_key in _REQUEST_MEMO:
+        h["memory_cache_hits"] += 1
+        return _REQUEST_MEMO[memo_key]
+
     last: Exception | None = None
+    waited = 0.0
     for i in range(max(1, attempts)):
+        response = None
         try:
-            r = session.get(url, timeout=timeout, headers=headers or {}, allow_redirects=True)
-            r.raise_for_status()
-            if r.content:
-                return r
-            raise ValueError("empty response")
+            _pace(provider)
+            h["network_calls"] += 1
+            response = session.get(url, timeout=timeout, headers=headers or {}, allow_redirects=True)
+            if response.status_code == 429:
+                h["http_429"] += 1
+                raise requests.HTTPError("HTTP 429", response=response)
+            if 500 <= response.status_code < 600:
+                h["http_5xx"] += 1
+                raise requests.HTTPError(f"HTTP {response.status_code}", response=response)
+            response.raise_for_status()
+            if not response.content:
+                raise ValueError("empty response")
+            h["last_success_utc"] = now_iso()
+            h["cooldown"] = False
+            if memo:
+                _REQUEST_MEMO[memo_key] = response
+            return response
+        except requests.Timeout as exc:
+            h["timeouts"] += 1
+            last = exc
         except Exception as exc:
             last = exc
-            if i + 1 < attempts:
-                time.sleep(0.8 * (i + 1))
+        h["last_failure_utc"] = now_iso()
+        if i + 1 >= attempts:
+            break
+        h["retries"] += 1
+        retry_after = _retry_after_seconds(getattr(last, "response", None))
+        sleep_for = retry_after if retry_after is not None else min(0.7 * (2 ** i) + 0.15 * (i + 1), 3.0)
+        if waited + sleep_for > _MAX_TOTAL_RETRY_WAIT:
+            break
+        h["cooldown"] = True
+        time.sleep(sleep_for)
+        waited += sleep_for
     raise last or RuntimeError("request failed")
 
 
@@ -319,9 +408,9 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
     plain = re.sub(r"\s+", " ", plain)
 
     # English official wording.
-    yoy_m = re.search(r"M2[^.]{0,220}?(?:rising|rose|grew|increasing|increased)\s+(?:by\s+)?([0-9.]+)\s*percent", plain, re.I)
+    yoy_m = re.search(r"M2.{0,260}?(?:rising|rose|grew|increasing|increased)\s+(?:by\s+)?([0-9.]+)\s*percent", plain, re.I)
     if not yoy_m:
-        yoy_m = re.search(r"broad money[^.]{0,220}?([0-9.]+)\s*percent\s+(?:year on year|yoy)", plain, re.I)
+        yoy_m = re.search(r"broad money.{0,260}?([0-9.]+)\s*percent\s+(?:year on year|yoy)", plain, re.I)
 
     # Chinese official wording, e.g. "广义货币(M2)余额...万亿元，同比增长8.8%".
     if not yoy_m:
@@ -331,7 +420,7 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
         return None
 
     level = None
-    level_m = re.search(r"M2[^.]{0,160}?(?:RMB|CNY)?\s*([0-9,.]+)\s*trillion", plain, re.I)
+    level_m = re.search(r"M2.{0,180}?(?:RMB|CNY)?\s*([0-9,.]+)\s*trillion", plain, re.I)
     if not level_m:
         level_m = re.search(r"(?:广义货币(?:供应量)?|M2)[^。；;]{0,160}?余额(?:为)?\s*([0-9,.]+)\s*万亿元", plain, re.I)
     if level_m:
@@ -357,65 +446,125 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
     }
 
 
-def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
-    """Fetch China M2 from recent PBC Financial Statistics Reports.
+def _pbc_report_month(label: str) -> str | None:
+    text = re.sub(r"\s+", " ", str(label or "")).strip()
+    m = re.search(r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})", text, re.I)
+    if m:
+        return datetime.strptime(m.group(0).title(), "%B %Y").strftime("%Y-%m")
+    y = re.search(r"(20\d{2})", text)
+    if not y:
+        return None
+    year = int(y.group(1))
+    if re.search(r"\bH1\b|first half", text, re.I):
+        return f"{year:04d}-06"
+    if re.search(r"\bQ1-Q3\b|first three quarters", text, re.I):
+        return f"{year:04d}-09"
+    if re.search(r"\bQ1\b|first quarter", text, re.I):
+        return f"{year:04d}-03"
+    if re.search(r"\b202\d\b", text) and "Report (" in text:
+        return f"{year:04d}-12"
+    return None
 
-    Search specifically for the monthly report title instead of generic ``M2``;
-    then parse several recent reports so ``yoy_3m_ago_pct`` is a genuine
-    three-month comparison rather than a last-good substitution.
+
+def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
+    soup = BeautifulSoup(html, "html.parser")
+    out: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for a in soup.find_all("a", href=True):
+        label = " ".join(a.stripped_strings).strip()
+        if not re.search(r"Financial Statistics Report", label, re.I):
+            continue
+        month = _pbc_report_month(label)
+        if not month:
+            continue
+        href = urljoin(base_url, str(a.get("href") or ""))
+        if "pbc.gov.cn" not in href.lower() or href in seen:
+            continue
+        seen.add(href)
+        out.append({"month": month, "label": label, "url": href})
+    return sorted(out, key=lambda x: x["month"], reverse=True)
+
+
+def _month_number(month: str) -> int:
+    y, m = map(int, month.split("-"))
+    return y * 12 + m
+
+
+def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
+    """Fetch China M2 with bounded official-PBC requests.
+
+    Normal path: one official Financial Statistics Reports index request plus the
+    latest report and the report at/just before the three-month comparison point.
+    The former search-spider path could fan out to dozens of article requests; it
+    is now a one-page fallback only and is used solely if the official index fails.
     """
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) GlobalMacroDataCollector/3.2",
-        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.7",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) GlobalMacroDataCollector/3.3",
+        "Accept-Language": "en-US,en;q=0.9,zh-CN;q=0.7",
     }
-    queries = ["金融统计数据报告", "Financial Statistics Report"]
-    candidates: list[str] = []
-    for query in queries:
-        from urllib.parse import quote
-        for page in range(1, 4):
-            try:
-                url = PBC_SEARCH.format(page=page, query=quote(query))
-                r = _get_retry(session, url, headers=headers, attempts=2)
-                soup = BeautifulSoup(r.text, "html.parser")
-                for a in soup.find_all("a", href=True):
-                    label = " ".join(a.stripped_strings)
-                    href = urljoin(url, str(a.get("href") or ""))
-                    if not re.search(r"pbc\.gov\.cn", href, re.I):
-                        continue
-                    if ("金融统计数据报告" in label or "Financial Statistics Report" in label):
-                        if href not in candidates:
-                            candidates.append(href)
-                for href in re.findall(r'https?://[^"\']*pbc\.gov\.cn[^"\'\s<>]+', r.text, re.I):
-                    href = href.replace("\\/", "/")
-                    if href not in candidates:
-                        candidates.append(href)
-            except Exception:
-                continue
+    candidates: list[dict[str, str]] = []
+    listing_error = None
+    try:
+        r = _get_retry(session, PBC_REPORTS_EN, headers=headers, attempts=2, timeout=(5, 12))
+        candidates = _pbc_listing_candidates(r.text, PBC_REPORTS_EN)
+    except Exception as exc:
+        listing_error = f"{type(exc).__name__}: {str(exc)[:160]}"
 
-    observations: list[dict[str, Any]] = []
-    errors = []
-    for url in candidates[:30]:
+    # Existing PBC search endpoint retained only as a tightly bounded fallback.
+    if not candidates:
         try:
-            rr = _get_retry(session, url, headers=headers, attempts=2)
-            parsed = _extract_pbc_article(rr.text, url)
+            u = PBC_SEARCH.format(page=1, query=quote("Financial Statistics Report"))
+            r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
+            soup = BeautifulSoup(r.text, "html.parser")
+            for a in soup.find_all("a", href=True):
+                label = " ".join(a.stripped_strings).strip()
+                month = _pbc_report_month(label)
+                href = urljoin(u, str(a.get("href") or ""))
+                if month and re.search(r"Financial Statistics Report", label, re.I) and "pbc.gov.cn" in href.lower():
+                    candidates.append({"month": month, "label": label, "url": href})
+            candidates = sorted({x["url"]: x for x in candidates}.values(), key=lambda x: x["month"], reverse=True)
+        except Exception:
+            pass
+
+    if not candidates:
+        raise ValueError("PBC Financial Statistics Reports index unavailable" + (f" · {listing_error}" if listing_error else ""))
+
+    latest_month = candidates[0]["month"]
+    target_num = _month_number(latest_month) - 3
+    selected: list[dict[str, str]] = [candidates[0]]
+    prior = next((c for c in candidates[1:] if _month_number(c["month"]) <= target_num), None)
+    if prior:
+        selected.append(prior)
+
+    # At most four additional reports may be tried if a selected report changes HTML shape.
+    fallback_candidates = [c for c in candidates if c not in selected][:4]
+    observations: list[dict[str, Any]] = []
+    errors: list[str] = []
+    for c in selected + fallback_candidates:
+        if len(observations) >= 2:
+            obs_months = sorted(str(o["date"])[:7] for o in observations if o.get("date"))
+            if obs_months and _month_number(obs_months[-1]) - _month_number(obs_months[0]) >= 3:
+                break
+        try:
+            rr = _get_retry(session, c["url"], headers=headers, attempts=2, timeout=(5, 12))
+            parsed = _extract_pbc_article(rr.text, c["url"])
             if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                 observations.append(parsed)
         except Exception as exc:
-            errors.append(str(exc)[:160])
+            errors.append(f"{c['month']}: {type(exc).__name__}: {str(exc)[:120]}")
 
     if not observations:
-        raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (": " + errors[-1] if errors else ""))
+        raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (" · " + " | ".join(errors[-2:]) if errors else ""))
 
     dedup = {str(o["date"])[:7]: o for o in observations}
     rows = [dedup[k] for k in sorted(dedup)]
     latest = rows[-1]
     latest_m = str(latest["date"])[:7]
-    ly, lm = map(int, latest_m.split("-"))
-    target_num = ly * 12 + lm - 3
-    def month_num(o):
-        y, m = map(int, str(o["date"])[:7].split("-")); return y * 12 + m
-    prior_candidates = [o for o in rows[:-1] if month_num(o) <= target_num]
-    prior = prior_candidates[-1] if prior_candidates else (rows[-4] if len(rows) >= 4 else rows[0])
+    target_num = _month_number(latest_m) - 3
+    prior_candidates = [o for o in rows[:-1] if _month_number(str(o["date"])[:7]) <= target_num]
+    if not prior_candidates:
+        raise ValueError("PBC latest M2 obtained but genuine 3-month comparison observation unavailable")
+    prior = prior_candidates[-1]
 
     return {
         "region": "CN", "label": "China M2", "date": latest.get("date"),
@@ -452,8 +601,12 @@ def _with_prior_from_cache(component: dict[str, Any], old: dict[str, Any] | None
 
 
 def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
+    started = time.monotonic()
+    _REQUEST_MEMO.clear()
+    _PROVIDER_LAST_CALL.clear()
+    _API_HEALTH.clear()
     session = session or requests.Session()
-    session.headers.update({"User-Agent": "GlobalMacroDataCollector-GlobalM2/3.1"})
+    session.headers.update({"User-Agent": "GlobalMacroDataCollector-GlobalM2/3.3"})
     previous = _load_last_good()
     prev_components = previous.get("components") if isinstance(previous.get("components"), dict) else {}
 
@@ -463,6 +616,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
     statuses: dict[str, str] = {}
 
     for code, fn in fetchers.items():
+        region_started = time.monotonic()
         try:
             c = _with_prior_from_cache(fn(session), prev_components.get(code))
             age = _age_days(c.get("date"))
@@ -470,6 +624,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
                 raise ValueError(f"stale observation age={age}d")
             c["status"] = "LIVE"
             c["age_days"] = age
+            c["fetch_ms"] = int((time.monotonic() - region_started) * 1000)
             components[code] = c
             statuses[code] = "LIVE"
         except Exception as exc:
@@ -480,10 +635,15 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
                 c = dict(old)
                 c["status"] = "LAST-GOOD"
                 c["age_days"] = age
+                c["fetch_ms"] = int((time.monotonic() - region_started) * 1000)
                 components[code] = c
                 statuses[code] = "LAST-GOOD"
             else:
                 statuses[code] = "UNAVAILABLE"
+
+    for provider, h in _API_HEALTH.items():
+        h["final_status"] = "LIVE" if h.get("last_success_utc") else "UNAVAILABLE"
+    runtime_ms = int((time.monotonic() - started) * 1000)
 
     usable = {k: v for k, v in components.items() if _num(v.get("yoy_pct")) is not None}
     weight_sum = sum(WEIGHTS[k] for k in usable)
@@ -504,6 +664,8 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
             "components": components,
             "statuses": statuses,
             "errors": errors,
+            "runtime_ms": runtime_ms,
+            "api_health": _API_HEALTH,
             "source": "Global M2 composite unavailable; downstream fallback permitted",
             "methodology": "Requires at least two usable regions and 50% strategic coverage; otherwise the composite abstains instead of fabricating a global value.",
             "is_proxy": False,
@@ -542,6 +704,8 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "components": components,
         "statuses": statuses,
         "errors": errors,
+        "runtime_ms": runtime_ms,
+        "api_health": _API_HEALTH,
         "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
         "methodology": "Weighted YoY broad-money growth composite. Full-quality output requires US/CN/EA/JP; temporary gaps are transparently re-normalized and flagged PARTIAL/DEGRADED instead of being presented as full global coverage. 3-month acceleration informs the conservative forecast and direction score.",
         "is_proxy": False,
