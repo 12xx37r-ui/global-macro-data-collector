@@ -1,124 +1,251 @@
 {
-  "schema_version": "1.0.0",
-  "patch_version": "V218-live-refetch-contract",
-  "generated_at_utc": "2026-08-17T21:08:19.897547+00:00",
-  "bundle_generated_at_utc": "2026-08-17T21:05:53.659117+00:00",
+  "schema_version": "1.1.0",
+  "patch_version": "V228-zero-call-freshness-unification",
+  "generated_at_utc": "2026-08-18T01:04:15.936294+00:00",
+  "bundle_generated_at_utc": "2026-08-18T01:01:54.853004+00:00",
   "compatibility": {
     "existing_keys_removed": false,
     "existing_field_semantics_changed": false,
-    "new_network_calls": 0,
-    "network_refetch_each_workflow": true,
-    "http_cache_bypass": true,
-    "model_formulas_changed": false
+    "new_network_calls_added_by_patch": 0,
+    "collector_network_policy_changed": false,
+    "model_formulas_changed": false,
+    "output_values_changed": false
   },
-  "sources": {
-    "ism": {
-      "status": "LIVE",
-      "observation": "2026-07",
-      "network_skipped_fresh": true
+  "items": [
+    {
+      "source": "ism_manufacturing",
+      "status": "CACHE",
+      "cadence": "monthly-release",
+      "observation_at": "2026-07",
+      "network_skipped_fresh": true,
+      "last_good_reused": false
     },
-    "card12_market": [
-      {
-        "symbol": "ES=F",
-        "status": "LIVE",
-        "market_time_utc": "2026-08-17T20:55:47+00:00",
-        "age_hours": 0.21,
-        "price": 7766.0,
-        "source": "Yahoo Finance chart metadata"
-      },
-      {
-        "symbol": "NQ=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "RTY=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "ZT=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "ZF=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "ZN=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "ZB=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "CL=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "GC=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "HG=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "DX-Y.NYB",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      },
-      {
-        "symbol": "BTC=F",
-        "status": "UNAVAILABLE",
-        "market_time_utc": null,
-        "age_hours": null,
-        "price": null,
-        "source": null
-      }
-    ]
-  },
+    {
+      "source": "card12:ES=F",
+      "status": "LIVE",
+      "cadence": "intraday-market",
+      "observation_at": "2026-08-18T00:51:52+00:00",
+      "age_hours": 0.21,
+      "market_state": null,
+      "value": 7768.25,
+      "provider": "Yahoo Finance chart metadata"
+    },
+    {
+      "source": "card12:NQ=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:RTY=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:ZT=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:ZF=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:ZN=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:ZB=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:CL=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:GC=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:HG=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:DX-Y.NYB",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "card12:BTC=F",
+      "status": "UNAVAILABLE",
+      "cadence": "intraday-market",
+      "observation_at": null,
+      "age_hours": null,
+      "market_state": null,
+      "value": null,
+      "provider": null
+    },
+    {
+      "source": "file:asset_oos_validation.json",
+      "status": "LIVE",
+      "cadence": "market/trading-day",
+      "observation_at": "2026-08-18T01:04:15.751822+00:00",
+      "age_hours": 0.0,
+      "max_age_hours": 96.0,
+      "generated_at": "2026-08-18T01:04:15.751822+00:00"
+    },
+    {
+      "source": "file:card10.json",
+      "status": "LIVE",
+      "cadence": "monthly/mixed-release",
+      "observation_at": "2026-08-11",
+      "age_hours": 169.07,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:54.587421+00:00"
+    },
+    {
+      "source": "file:card11.json",
+      "status": "LIVE",
+      "cadence": "mixed",
+      "observation_at": "2026-08-18T01:01:54.851932+00:00",
+      "age_hours": 0.04,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:54.851932+00:00"
+    },
+    {
+      "source": "file:card12.json",
+      "status": "LIVE",
+      "cadence": "market/trading-day",
+      "observation_at": "2026-08-18T00:51:52+00:00",
+      "age_hours": 0.21,
+      "max_age_hours": 96.0,
+      "generated_at": "2026-08-18T01:01:54.851320+00:00"
+    },
+    {
+      "source": "file:card9.json",
+      "status": "LIVE",
+      "cadence": "monthly/mixed-release",
+      "observation_at": "2026-08-08",
+      "age_hours": 241.07,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:46.815565+00:00"
+    },
+    {
+      "source": "file:cards_8_12_bundle.json",
+      "status": "LIVE",
+      "cadence": "mixed",
+      "observation_at": "2026-08-18T00:51:52+00:00",
+      "age_hours": 0.21,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:54.853004+00:00"
+    },
+    {
+      "source": "file:equity_fundamentals.json",
+      "status": "LIVE",
+      "cadence": "market/trading-day",
+      "observation_at": "2026-08-18T01:01:57.157689+00:00",
+      "age_hours": 0.04,
+      "max_age_hours": 96.0,
+      "generated_at": "2026-08-18T01:01:57.157689+00:00"
+    },
+    {
+      "source": "file:ism_manufacturing.json",
+      "status": "CACHE",
+      "cadence": "monthly/mixed-release",
+      "observation_at": "2026-07",
+      "age_hours": 1153.07,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:12.689093+00:00"
+    },
+    {
+      "source": "file:source_status.json",
+      "status": "CACHE",
+      "cadence": "mixed",
+      "observation_at": "2026-07",
+      "age_hours": 1153.07,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:12.689093+00:00"
+    },
+    {
+      "source": "file:us_treasury_card8.json",
+      "status": "LIVE",
+      "cadence": "mixed",
+      "observation_at": "2026-08-18",
+      "age_hours": 1.07,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:36.190918+00:00"
+    },
+    {
+      "source": "file:us_treasury_card8_status.json",
+      "status": "LIVE",
+      "cadence": "mixed",
+      "observation_at": "2026-08-18T01:01:36.190918+00:00",
+      "age_hours": 0.04,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T01:01:36.190918+00:00"
+    }
+  ],
   "summary": {
-    "market_live": 1,
-    "market_cache": 0,
-    "market_unavailable": 11
-  }
+    "LIVE": 10,
+    "CACHE": 3,
+    "LKG": 0,
+    "FALLBACK": 0,
+    "UNAVAILABLE": 11
+  },
+  "note": "월간/주간 자료는 발표주기 기준, 시장자료는 시장 timestamp 기준으로 판정합니다. 모든 판정은 이미 수집된 JSON만 읽으며 외부 호출을 추가하지 않습니다."
 }
