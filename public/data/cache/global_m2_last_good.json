@@ -3,13 +3,13 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T16:58:01.519522+00:00",
+  "generated_at_utc": "2026-08-18T17:11:53.915067+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
-  "forecast": 5.428562,
-  "changePct": 0.80529,
-  "directionScore": 22.408113,
+  "forecast": 5.433719,
+  "changePct": 0.901044,
+  "directionScore": 22.511243,
   "current_yoy_pct": 5.385196,
   "prior_3m_yoy_pct": 5.277887,
   "acceleration_pp": 0.107309,
@@ -22,29 +22,37 @@
       "forecast_3m_yoy_pct": 5.634172,
       "method": "US Fed-engine history model",
       "validation": {
-        "skill_pct": null,
+        "skill_pct": 39.548910905835186,
+        "rmse_pct": 1.1357859991928514,
+        "baseline_rmse_pct": 1.8788511773934042,
+        "backtests": 72,
         "fallback_used": false,
         "quality_gate": {
-          "passed": true
+          "passed": true,
+          "benchmark": "persistence",
+          "horizon": "3m"
         },
         "source_confidence": 71
       }
     },
     "EA": {
       "current_yoy_pct": 3.224468,
-      "forecast_3m_yoy_pct": 3.224468,
-      "method": "persistence safety fallback",
+      "forecast_3m_yoy_pct": 3.227941,
+      "method": "validated regional YoY walk-forward model",
       "validation": {
-        "forecast": 3.224467660084618,
-        "model": "persistence",
+        "forecast": 3.2279411301451892,
+        "model": "inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion",
         "samples": 60,
-        "rmse": 2.2550971110358757,
-        "baseline_rmse": 2.2550971110358757,
-        "skill_pct": 0.0,
-        "direction_accuracy": 60.71428571428571,
-        "fallback_used": true,
+        "rmse": 0.9380011540855461,
+        "baseline_rmse": 1.1359848550411473,
+        "skill_pct": 17.428375041886447,
+        "direction_accuracy": 74.07407407407408,
+        "fallback_used": false,
+        "history_points_total": 102,
+        "history_points_contiguous": 102,
+        "history_gaps_dropped": 0,
         "quality_gate": {
-          "passed": false,
+          "passed": true,
           "requirements": {
             "samples_min": 18,
             "skill_pct_min": 3.0,
@@ -55,19 +63,22 @@
     },
     "JP": {
       "current_yoy_pct": 2.2,
-      "forecast_3m_yoy_pct": 2.2,
-      "method": "persistence safety fallback",
+      "forecast_3m_yoy_pct": 2.244619,
+      "method": "validated regional YoY walk-forward model",
       "validation": {
-        "forecast": 2.2,
-        "model": "persistence",
+        "forecast": 2.2446191765849153,
+        "model": "inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion",
         "samples": 60,
-        "rmse": 1.8384323031684722,
-        "baseline_rmse": 1.8384323031684722,
-        "skill_pct": 0.0,
-        "direction_accuracy": 57.14285714285714,
-        "fallback_used": true,
+        "rmse": 0.5533652494955444,
+        "baseline_rmse": 0.6394007611297732,
+        "skill_pct": 13.455647359914058,
+        "direction_accuracy": 78.04878048780488,
+        "fallback_used": false,
+        "history_points_total": 319,
+        "history_points_contiguous": 319,
+        "history_gaps_dropped": 0,
         "quality_gate": {
-          "passed": false,
+          "passed": true,
           "requirements": {
             "samples_min": 18,
             "skill_pct_min": 3.0,
@@ -87,30 +98,33 @@
         "skill_pct": 0.0,
         "direction_accuracy": null,
         "fallback_used": true,
+        "history_points_total": 10,
+        "history_points_contiguous": 7,
+        "history_gaps_dropped": 3,
         "quality_gate": {
           "passed": false,
-          "reason": "월별 YoY 이력 18개월 미만"
+          "reason": "연속 월별 YoY 이력 18개월 미만"
         }
       }
     }
   },
   "forward_liquidity_outlook": {
-    "score": 7.01,
+    "score": 7.68,
     "grade": "중립",
     "direction": "neutral",
     "inputs": [
       {
         "name": "Global M2 3개월 예상 변화",
         "current": 5.3852,
-        "forecast": 5.4286,
-        "signal": 0.0867,
+        "forecast": 5.4337,
+        "signal": 0.097,
         "weight": 0.6,
         "meaning": "광의통화 증가율 상승은 유동성에 우호적"
       },
       {
         "name": "DXY 3개월 예상",
-        "current": 99.622,
-        "forecast": 99.622,
+        "current": 99.617,
+        "forecast": 99.617,
         "signal": -0.0,
         "weight": 0.25,
         "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
@@ -134,24 +148,24 @@
     "status": "LIVE",
     "symbol": "DX-Y.NYB",
     "source": "Yahoo Finance DXY delayed market data",
-    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787071411",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787072952",
     "observation_date": "2026-08-18",
-    "market_time_utc": "2026-08-18T16:33:29+00:00",
-    "current": 99.622,
-    "forecast_1m": 99.622,
-    "forecast_3m": 99.622,
+    "market_time_utc": "2026-08-18T16:59:11+00:00",
+    "current": 99.617,
+    "forecast_1m": 99.617,
+    "forecast_3m": 99.617,
     "forecast_change_3m_pct": 0.0,
     "forecast_range_80": [
-      95.453856,
-      103.790144
+      95.449067,
+      103.784933
     ],
     "direction_3m": "flat",
     "confidence": 35,
     "selected_model_1m": "price_ensemble",
     "selected_model_3m": "price_ensemble",
     "backtest_1m": {
-      "rmse_pct": 1.7780038709471848,
-      "baseline_rmse_pct": 1.7780038709471848,
+      "rmse_pct": 1.7780090511498468,
+      "baseline_rmse_pct": 1.7780090511498468,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 47.94721407624634,
@@ -159,8 +173,8 @@
       "fallback_used": true
     },
     "backtest_3m": {
-      "rmse_pct": 3.2646374792564985,
-      "baseline_rmse_pct": 3.2646374792564985,
+      "rmse_pct": 3.264636168957716,
+      "baseline_rmse_pct": 3.264636168957716,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 36.48255813953488,
@@ -169,8 +183,8 @@
     },
     "price_model_audit": {
       "1m": {
-        "rmse_pct": 1.7780038709471848,
-        "baseline_rmse_pct": 1.7780038709471848,
+        "rmse_pct": 1.7780090511498468,
+        "baseline_rmse_pct": 1.7780090511498468,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 47.94721407624634,
@@ -178,8 +192,8 @@
         "fallback_used": true
       },
       "3m": {
-        "rmse_pct": 3.2646374792564985,
-        "baseline_rmse_pct": 3.2646374792564985,
+        "rmse_pct": 3.264636168957716,
+        "baseline_rmse_pct": 3.264636168957716,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 36.48255813953488,
@@ -190,13 +204,15 @@
     "macro_model_audit": {
       "1m": {
         "available": true,
-        "forecast_return_pct": -0.5770660175742383,
-        "rmse_pct": 1.5853113059429444,
+        "forecast_return_pct": -1.6440061858325499,
+        "rmse_pct": 1.604634662597944,
         "baseline_rmse_pct": 1.4097792545506627,
         "skill_pct": 0.0,
-        "direction_accuracy": 34.54545454545455,
+        "raw_skill_pct": -13.82169636971906,
+        "direction_accuracy": 43.63636363636363,
         "direction_cases": 55,
         "backtests": 62,
+        "variant": "domestic_financial",
         "quality_gate": {
           "passed": false,
           "requirements": {
@@ -213,19 +229,126 @@
           "10Y-2Y curve",
           "NFCI",
           "HY OAS",
-          "VIX"
+          "VIX",
+          "US 10Y real yield"
         ],
-        "model": "expanding walk-forward ridge regression on existing Fed-engine market/financial inputs"
+        "model": "validated selection across domestic, relative-rate and combined ridge candidates",
+        "candidate_audit": {
+          "domestic_financial": {
+            "available": true,
+            "forecast": 97.9926789118125,
+            "forecast_return_pct": -1.6440061858325499,
+            "rmse_pct": 1.604634662597944,
+            "baseline_rmse_pct": 1.4097792545506627,
+            "skill_pct": 0.0,
+            "raw_skill_pct": -13.82169636971906,
+            "direction_accuracy": 43.63636363636363,
+            "direction_cases": 55,
+            "backtests": 62,
+            "variant": "domestic_financial",
+            "quality_gate": {
+              "passed": false,
+              "requirements": {
+                "skill_pct_min": 2.0,
+                "direction_accuracy_min": 52.0,
+                "samples_min": 36
+              }
+            },
+            "features": [
+              "DXY 21d momentum",
+              "DXY 63d momentum",
+              "US 2Y yield",
+              "US 2Y 21d change",
+              "10Y-2Y curve",
+              "NFCI",
+              "HY OAS",
+              "VIX",
+              "US 10Y real yield"
+            ],
+            "model": "expanding walk-forward ridge regression with persistence benchmark"
+          },
+          "relative_policy_rates": {
+            "available": true,
+            "forecast": 98.05967179330793,
+            "forecast_return_pct": -1.5756643538045654,
+            "rmse_pct": 2.0022122904605113,
+            "baseline_rmse_pct": 1.4097792545506627,
+            "skill_pct": 0.0,
+            "raw_skill_pct": -42.02310638332341,
+            "direction_accuracy": 49.09090909090909,
+            "direction_cases": 55,
+            "backtests": 62,
+            "variant": "relative_policy_rates",
+            "quality_gate": {
+              "passed": false,
+              "requirements": {
+                "skill_pct_min": 2.0,
+                "direction_accuracy_min": 52.0,
+                "samples_min": 36
+              }
+            },
+            "features": [
+              "DXY 21d momentum",
+              "DXY 63d momentum",
+              "EFFR-ECB deposit spread",
+              "EFFR-Japan overnight spread",
+              "US2Y-ECB deposit spread",
+              "US2Y-Japan overnight spread",
+              "US 10Y real yield"
+            ],
+            "model": "expanding walk-forward ridge regression with persistence benchmark"
+          },
+          "combined": {
+            "available": true,
+            "forecast": 98.47533025057051,
+            "forecast_return_pct": -1.152677025664013,
+            "rmse_pct": 1.9482569045092624,
+            "baseline_rmse_pct": 1.4097792545506627,
+            "skill_pct": 0.0,
+            "raw_skill_pct": -38.19588408755725,
+            "direction_accuracy": 49.09090909090909,
+            "direction_cases": 55,
+            "backtests": 62,
+            "variant": "combined",
+            "quality_gate": {
+              "passed": false,
+              "requirements": {
+                "skill_pct_min": 2.0,
+                "direction_accuracy_min": 52.0,
+                "samples_min": 36
+              }
+            },
+            "features": [
+              "DXY 21d momentum",
+              "DXY 63d momentum",
+              "US 2Y yield",
+              "US 2Y 21d change",
+              "10Y-2Y curve",
+              "NFCI",
+              "HY OAS",
+              "VIX",
+              "EFFR-ECB deposit spread",
+              "EFFR-Japan overnight spread",
+              "US2Y-ECB deposit spread",
+              "US2Y-Japan overnight spread",
+              "US 10Y real yield"
+            ],
+            "model": "expanding walk-forward ridge regression with persistence benchmark"
+          }
+        },
+        "selected_variant": "domestic_financial"
       },
       "3m": {
         "available": true,
-        "forecast_return_pct": -3.0335843981637245,
-        "rmse_pct": 2.4624015130141608,
+        "forecast_return_pct": -6.136759327340877,
+        "rmse_pct": 2.354337275961205,
         "baseline_rmse_pct": 1.4754285574270285,
         "skill_pct": 0.0,
-        "direction_accuracy": 23.684210526315788,
+        "raw_skill_pct": -59.56972393613478,
+        "direction_accuracy": 21.052631578947366,
         "direction_cases": 38,
         "backtests": 45,
+        "variant": "domestic_financial",
         "quality_gate": {
           "passed": false,
           "requirements": {
@@ -242,13 +365,118 @@
           "10Y-2Y curve",
           "NFCI",
           "HY OAS",
-          "VIX"
+          "VIX",
+          "US 10Y real yield"
         ],
-        "model": "expanding walk-forward ridge regression on existing Fed-engine market/financial inputs"
+        "model": "validated selection across domestic, relative-rate and combined ridge candidates",
+        "candidate_audit": {
+          "domestic_financial": {
+            "available": true,
+            "forecast": 93.68754343546607,
+            "forecast_return_pct": -6.136759327340877,
+            "rmse_pct": 2.354337275961205,
+            "baseline_rmse_pct": 1.4754285574270285,
+            "skill_pct": 0.0,
+            "raw_skill_pct": -59.56972393613478,
+            "direction_accuracy": 21.052631578947366,
+            "direction_cases": 38,
+            "backtests": 45,
+            "variant": "domestic_financial",
+            "quality_gate": {
+              "passed": false,
+              "requirements": {
+                "skill_pct_min": 2.0,
+                "direction_accuracy_min": 52.0,
+                "samples_min": 36
+              }
+            },
+            "features": [
+              "DXY 21d momentum",
+              "DXY 63d momentum",
+              "US 2Y yield",
+              "US 2Y 21d change",
+              "10Y-2Y curve",
+              "NFCI",
+              "HY OAS",
+              "VIX",
+              "US 10Y real yield"
+            ],
+            "model": "expanding walk-forward ridge regression with persistence benchmark"
+          },
+          "relative_policy_rates": {
+            "available": true,
+            "forecast": 95.19544215498144,
+            "forecast_return_pct": -4.5400768628938275,
+            "rmse_pct": 5.002444641328493,
+            "baseline_rmse_pct": 1.4754285574270285,
+            "skill_pct": 0.0,
+            "raw_skill_pct": -239.05027906279378,
+            "direction_accuracy": 21.052631578947366,
+            "direction_cases": 38,
+            "backtests": 45,
+            "variant": "relative_policy_rates",
+            "quality_gate": {
+              "passed": false,
+              "requirements": {
+                "skill_pct_min": 2.0,
+                "direction_accuracy_min": 52.0,
+                "samples_min": 36
+              }
+            },
+            "features": [
+              "DXY 21d momentum",
+              "DXY 63d momentum",
+              "EFFR-ECB deposit spread",
+              "EFFR-Japan overnight spread",
+              "US2Y-ECB deposit spread",
+              "US2Y-Japan overnight spread",
+              "US 10Y real yield"
+            ],
+            "model": "expanding walk-forward ridge regression with persistence benchmark"
+          },
+          "combined": {
+            "available": true,
+            "forecast": 94.24947427334115,
+            "forecast_return_pct": -5.538758444595867,
+            "rmse_pct": 5.045667548903678,
+            "baseline_rmse_pct": 1.4754285574270285,
+            "skill_pct": 0.0,
+            "raw_skill_pct": -241.97979451493882,
+            "direction_accuracy": 21.052631578947366,
+            "direction_cases": 38,
+            "backtests": 45,
+            "variant": "combined",
+            "quality_gate": {
+              "passed": false,
+              "requirements": {
+                "skill_pct_min": 2.0,
+                "direction_accuracy_min": 52.0,
+                "samples_min": 36
+              }
+            },
+            "features": [
+              "DXY 21d momentum",
+              "DXY 63d momentum",
+              "US 2Y yield",
+              "US 2Y 21d change",
+              "10Y-2Y curve",
+              "NFCI",
+              "HY OAS",
+              "VIX",
+              "EFFR-ECB deposit spread",
+              "EFFR-Japan overnight spread",
+              "US2Y-ECB deposit spread",
+              "US2Y-Japan overnight spread",
+              "US 10Y real yield"
+            ],
+            "model": "expanding walk-forward ridge regression with persistence benchmark"
+          }
+        },
+        "selected_variant": "domestic_financial"
       }
     },
     "model": "validated selection between price-only ensemble and macro-aware ridge model; persistence remains the hard safety benchmark",
-    "limitation": "DXY price is Yahoo Finance delayed data. Macro candidate uses only already-collected US market/financial inputs; no additional API is called. Forecast is not a guaranteed target."
+    "limitation": "DXY price is Yahoo Finance delayed data. Macro candidates use the existing FRED/Yahoo collection path, including ECB/Japan rate differentials added to the same FRED batch; no new provider is introduced. Forecast is not a guaranteed target."
   },
   "coverage_weight": 1.0,
   "coverage_regions": [
@@ -276,10 +504,504 @@
       "level": 23155.2,
       "forecast_yoy_3m_pct": 5.634172,
       "forecast_confidence": 71,
+      "forecast_validation": {
+        "rmse_pct": 1.1357859991928514,
+        "baseline_rmse_pct": 1.8788511773934042,
+        "skill_pct": 39.548910905835186,
+        "backtests": 72,
+        "fallback_used": false
+      },
+      "forecast_quality_gate": {
+        "passed": true,
+        "benchmark": "persistence",
+        "horizon": "3m"
+      },
+      "yoy_history": [
+        {
+          "date": "2016-07-01",
+          "value": 6.994653
+        },
+        {
+          "date": "2016-08-01",
+          "value": 7.238586
+        },
+        {
+          "date": "2016-09-01",
+          "value": 7.229292
+        },
+        {
+          "date": "2016-10-01",
+          "value": 7.328023
+        },
+        {
+          "date": "2016-11-01",
+          "value": 7.234616
+        },
+        {
+          "date": "2016-12-01",
+          "value": 6.834172
+        },
+        {
+          "date": "2017-01-01",
+          "value": 6.362301
+        },
+        {
+          "date": "2017-02-01",
+          "value": 6.274
+        },
+        {
+          "date": "2017-03-01",
+          "value": 6.336971
+        },
+        {
+          "date": "2017-04-01",
+          "value": 6.108979
+        },
+        {
+          "date": "2017-05-01",
+          "value": 5.989516
+        },
+        {
+          "date": "2017-06-01",
+          "value": 5.663344
+        },
+        {
+          "date": "2017-07-01",
+          "value": 5.665011
+        },
+        {
+          "date": "2017-08-01",
+          "value": 5.454041
+        },
+        {
+          "date": "2017-09-01",
+          "value": 5.288561
+        },
+        {
+          "date": "2017-10-01",
+          "value": 5.158292
+        },
+        {
+          "date": "2017-11-01",
+          "value": 4.80468
+        },
+        {
+          "date": "2017-12-01",
+          "value": 4.88422
+        },
+        {
+          "date": "2018-01-01",
+          "value": 4.380992
+        },
+        {
+          "date": "2018-02-01",
+          "value": 4.140289
+        },
+        {
+          "date": "2018-03-01",
+          "value": 4.084043
+        },
+        {
+          "date": "2018-04-01",
+          "value": 3.805389
+        },
+        {
+          "date": "2018-05-01",
+          "value": 3.859251
+        },
+        {
+          "date": "2018-06-01",
+          "value": 4.096634
+        },
+        {
+          "date": "2018-07-01",
+          "value": 3.897056
+        },
+        {
+          "date": "2018-08-01",
+          "value": 3.843008
+        },
+        {
+          "date": "2018-09-01",
+          "value": 3.644765
+        },
+        {
+          "date": "2018-10-01",
+          "value": 3.304713
+        },
+        {
+          "date": "2018-11-01",
+          "value": 3.172047
+        },
+        {
+          "date": "2018-12-01",
+          "value": 3.634256
+        },
+        {
+          "date": "2019-01-01",
+          "value": 4.012257
+        },
+        {
+          "date": "2019-02-01",
+          "value": 3.991455
+        },
+        {
+          "date": "2019-03-01",
+          "value": 3.888829
+        },
+        {
+          "date": "2019-04-01",
+          "value": 3.984382
+        },
+        {
+          "date": "2019-05-01",
+          "value": 4.344617
+        },
+        {
+          "date": "2019-06-01",
+          "value": 4.709478
+        },
+        {
+          "date": "2019-07-01",
+          "value": 5.02964
+        },
+        {
+          "date": "2019-08-01",
+          "value": 5.295578
+        },
+        {
+          "date": "2019-09-01",
+          "value": 5.639607
+        },
+        {
+          "date": "2019-10-01",
+          "value": 6.508809
+        },
+        {
+          "date": "2019-11-01",
+          "value": 7.088967
+        },
+        {
+          "date": "2019-12-01",
+          "value": 6.666898
+        },
+        {
+          "date": "2020-01-01",
+          "value": 6.672107
+        },
+        {
+          "date": "2020-02-01",
+          "value": 6.798285
+        },
+        {
+          "date": "2020-03-01",
+          "value": 10.130156
+        },
+        {
+          "date": "2020-04-01",
+          "value": 16.924764
+        },
+        {
+          "date": "2020-05-01",
+          "value": 21.959165
+        },
+        {
+          "date": "2020-06-01",
+          "value": 22.847798
+        },
+        {
+          "date": "2020-07-01",
+          "value": 23.172543
+        },
+        {
+          "date": "2020-08-01",
+          "value": 22.965194
+        },
+        {
+          "date": "2020-09-01",
+          "value": 23.644266
+        },
+        {
+          "date": "2020-10-01",
+          "value": 23.53743
+        },
+        {
+          "date": "2020-11-01",
+          "value": 24.188141
+        },
+        {
+          "date": "2020-12-01",
+          "value": 24.544181
+        },
+        {
+          "date": "2021-01-01",
+          "value": 25.609724
+        },
+        {
+          "date": "2021-02-01",
+          "value": 26.7776
+        },
+        {
+          "date": "2021-03-01",
+          "value": 23.949134
+        },
+        {
+          "date": "2021-04-01",
+          "value": 18.22609
+        },
+        {
+          "date": "2021-05-01",
+          "value": 14.082724
+        },
+        {
+          "date": "2021-06-01",
+          "value": 12.607811
+        },
+        {
+          "date": "2021-07-01",
+          "value": 12.534231
+        },
+        {
+          "date": "2021-08-01",
+          "value": 13.19644
+        },
+        {
+          "date": "2021-09-01",
+          "value": 12.789573
+        },
+        {
+          "date": "2021-10-01",
+          "value": 12.811369
+        },
+        {
+          "date": "2021-11-01",
+          "value": 12.30213
+        },
+        {
+          "date": "2021-12-01",
+          "value": 12.461688
+        },
+        {
+          "date": "2022-01-01",
+          "value": 11.721625
+        },
+        {
+          "date": "2022-02-01",
+          "value": 10.606678
+        },
+        {
+          "date": "2022-03-01",
+          "value": 9.62389
+        },
+        {
+          "date": "2022-04-01",
+          "value": 7.898741
+        },
+        {
+          "date": "2022-05-01",
+          "value": 6.160178
+        },
+        {
+          "date": "2022-06-01",
+          "value": 5.737565
+        },
+        {
+          "date": "2022-07-01",
+          "value": 4.944956
+        },
+        {
+          "date": "2022-08-01",
+          "value": 3.831945
+        },
+        {
+          "date": "2022-09-01",
+          "value": 2.653387
+        },
+        {
+          "date": "2022-10-01",
+          "value": 1.421328
+        },
+        {
+          "date": "2022-11-01",
+          "value": 0.324741
+        },
+        {
+          "date": "2022-12-01",
+          "value": -0.971538
+        },
+        {
+          "date": "2023-01-01",
+          "value": -1.720378
+        },
+        {
+          "date": "2023-02-01",
+          "value": -2.23018
+        },
+        {
+          "date": "2023-03-01",
+          "value": -3.877965
+        },
+        {
+          "date": "2023-04-01",
+          "value": -4.636708
+        },
+        {
+          "date": "2023-05-01",
+          "value": -4.087966
+        },
+        {
+          "date": "2023-06-01",
+          "value": -3.916532
+        },
+        {
+          "date": "2023-07-01",
+          "value": -3.958576
+        },
+        {
+          "date": "2023-08-01",
+          "value": -3.973311
+        },
+        {
+          "date": "2023-09-01",
+          "value": -3.656697
+        },
+        {
+          "date": "2023-10-01",
+          "value": -3.385187
+        },
+        {
+          "date": "2023-11-01",
+          "value": -3.081357
+        },
+        {
+          "date": "2023-12-01",
+          "value": -2.41017
+        },
+        {
+          "date": "2024-01-01",
+          "value": -2.061201
+        },
+        {
+          "date": "2024-02-01",
+          "value": -1.499515
+        },
+        {
+          "date": "2024-03-01",
+          "value": 0.112691
+        },
+        {
+          "date": "2024-04-01",
+          "value": 0.949981
+        },
+        {
+          "date": "2024-05-01",
+          "value": 0.922245
+        },
+        {
+          "date": "2024-06-01",
+          "value": 1.3068
+        },
+        {
+          "date": "2024-07-01",
+          "value": 1.474591
+        },
+        {
+          "date": "2024-08-01",
+          "value": 1.97238
+        },
+        {
+          "date": "2024-09-01",
+          "value": 2.514744
+        },
+        {
+          "date": "2024-10-01",
+          "value": 2.889451
+        },
+        {
+          "date": "2024-11-01",
+          "value": 3.398121
+        },
+        {
+          "date": "2024-12-01",
+          "value": 3.405695
+        },
+        {
+          "date": "2025-01-01",
+          "value": 3.377409
+        },
+        {
+          "date": "2025-02-01",
+          "value": 3.276502
+        },
+        {
+          "date": "2025-03-01",
+          "value": 3.425562
+        },
+        {
+          "date": "2025-04-01",
+          "value": 3.891103
+        },
+        {
+          "date": "2025-05-01",
+          "value": 3.874568
+        },
+        {
+          "date": "2025-06-01",
+          "value": 4.138448
+        },
+        {
+          "date": "2025-07-01",
+          "value": 4.392193
+        },
+        {
+          "date": "2025-08-01",
+          "value": 4.249737
+        },
+        {
+          "date": "2025-09-01",
+          "value": 4.233038
+        },
+        {
+          "date": "2025-10-01",
+          "value": 4.279481
+        },
+        {
+          "date": "2025-11-01",
+          "value": 3.845293
+        },
+        {
+          "date": "2025-12-01",
+          "value": 4.038143
+        },
+        {
+          "date": "2026-01-01",
+          "value": 4.089753
+        },
+        {
+          "date": "2026-02-01",
+          "value": 4.688715
+        },
+        {
+          "date": "2026-03-01",
+          "value": 4.574781
+        },
+        {
+          "date": "2026-04-01",
+          "value": 4.726493
+        },
+        {
+          "date": "2026-05-01",
+          "value": 5.584305
+        },
+        {
+          "date": "2026-06-01",
+          "value": 5.525756
+        }
+      ],
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-18T16:43:36.389768+00:00",
+      "upstream_generated_at_utc": "2026-08-18T17:09:19.364213+00:00",
       "age_days": 78,
       "fetch_ms": 0
     },
@@ -292,7 +1014,7 @@
       "yoy_history": [
         {
           "date": "2018-01-01",
-          "value": 4.412419629747921
+          "value": 5.281853986380258
         },
         {
           "date": "2018-02-01",
@@ -327,8 +1049,20 @@
           "value": 4.232529845785948
         },
         {
+          "date": "2018-10-01",
+          "value": 4.393350327887591
+        },
+        {
+          "date": "2018-11-01",
+          "value": 4.3344958933112965
+        },
+        {
+          "date": "2018-12-01",
+          "value": 4.412419629747921
+        },
+        {
           "date": "2019-01-01",
-          "value": 5.575439848791786
+          "value": 4.095797113266797
         },
         {
           "date": "2019-02-01",
@@ -363,8 +1097,20 @@
           "value": 6.093960970841206
         },
         {
+          "date": "2019-10-01",
+          "value": 6.090063161341197
+        },
+        {
+          "date": "2019-11-01",
+          "value": 5.957801080178249
+        },
+        {
+          "date": "2019-12-01",
+          "value": 5.575439848791786
+        },
+        {
           "date": "2020-01-01",
-          "value": 11.800996712776213
+          "value": 5.52052020724092
         },
         {
           "date": "2020-02-01",
@@ -399,8 +1145,20 @@
           "value": 10.19065189404933
         },
         {
+          "date": "2020-10-01",
+          "value": 10.37149828534616
+        },
+        {
+          "date": "2020-11-01",
+          "value": 10.954730412410218
+        },
+        {
+          "date": "2020-12-01",
+          "value": 11.800996712776213
+        },
+        {
           "date": "2021-01-01",
-          "value": 6.9494053526553135
+          "value": 12.178636250837949
         },
         {
           "date": "2021-02-01",
@@ -435,8 +1193,20 @@
           "value": 7.80962949374695
         },
         {
+          "date": "2021-10-01",
+          "value": 7.624572041244848
+        },
+        {
+          "date": "2021-11-01",
+          "value": 7.148098214557597
+        },
+        {
+          "date": "2021-12-01",
+          "value": 6.9494053526553135
+        },
+        {
           "date": "2022-01-01",
-          "value": 3.383431250863711
+          "value": 7.130114170938584
         },
         {
           "date": "2022-02-01",
@@ -471,8 +1241,20 @@
           "value": 5.838625807488396
         },
         {
+          "date": "2022-10-01",
+          "value": 5.089160145078364
+        },
+        {
+          "date": "2022-11-01",
+          "value": 4.464298209835338
+        },
+        {
+          "date": "2022-12-01",
+          "value": 3.383431250863711
+        },
+        {
           "date": "2023-01-01",
-          "value": -0.9758554732561819
+          "value": 2.51317608871946
         },
         {
           "date": "2023-02-01",
@@ -507,8 +1289,20 @@
           "value": -2.2544575788018495
         },
         {
+          "date": "2023-10-01",
+          "value": -2.2294794728726863
+        },
+        {
+          "date": "2023-11-01",
+          "value": -1.9021949252786774
+        },
+        {
+          "date": "2023-12-01",
+          "value": -0.9758554732561819
+        },
+        {
           "date": "2024-01-01",
-          "value": 2.7191031393901444
+          "value": -1.1239555778081556
         },
         {
           "date": "2024-02-01",
@@ -543,8 +1337,20 @@
           "value": 2.110266206787581
         },
         {
+          "date": "2024-10-01",
+          "value": 2.3851039779779537
+        },
+        {
+          "date": "2024-11-01",
+          "value": 2.905307549767522
+        },
+        {
+          "date": "2024-12-01",
+          "value": 2.7191031393901444
+        },
+        {
           "date": "2025-01-01",
-          "value": 3.1239288441942126
+          "value": 2.842494631372028
         },
         {
           "date": "2025-02-01",
@@ -579,6 +1385,18 @@
           "value": 2.6757490717808086
         },
         {
+          "date": "2025-10-01",
+          "value": 2.9567960844605556
+        },
+        {
+          "date": "2025-11-01",
+          "value": 2.8927941562046033
+        },
+        {
+          "date": "2025-12-01",
+          "value": 3.1239288441942126
+        },
+        {
           "date": "2026-01-01",
           "value": 3.241712119089879
         },
@@ -607,7 +1425,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 695
+      "fetch_ms": 1204
     },
     "JP": {
       "date": "2026-07-01",
@@ -616,7 +1434,7 @@
       "yoy_history": [
         {
           "date": "2000-01-01",
-          "value": 2.0
+          "value": 2.6
         },
         {
           "date": "2000-02-01",
@@ -651,8 +1469,20 @@
           "value": 2.0
         },
         {
+          "date": "2000-10-01",
+          "value": 2.1
+        },
+        {
+          "date": "2000-11-01",
+          "value": 1.9
+        },
+        {
+          "date": "2000-12-01",
+          "value": 2.0
+        },
+        {
           "date": "2001-01-01",
-          "value": 3.3
+          "value": 2.2
         },
         {
           "date": "2001-02-01",
@@ -687,8 +1517,20 @@
           "value": 3.2
         },
         {
+          "date": "2001-10-01",
+          "value": 2.9
+        },
+        {
+          "date": "2001-11-01",
+          "value": 3.0
+        },
+        {
+          "date": "2001-12-01",
+          "value": 3.3
+        },
+        {
           "date": "2002-01-01",
-          "value": 2.2
+          "value": 3.5
         },
         {
           "date": "2002-02-01",
@@ -723,8 +1565,20 @@
           "value": 3.2
         },
         {
+          "date": "2002-10-01",
+          "value": 3.3
+        },
+        {
+          "date": "2002-11-01",
+          "value": 3.2
+        },
+        {
+          "date": "2002-12-01",
+          "value": 2.2
+        },
+        {
           "date": "2003-01-01",
-          "value": 1.5
+          "value": 1.9
         },
         {
           "date": "2003-02-01",
@@ -759,8 +1613,20 @@
           "value": 1.8
         },
         {
+          "date": "2003-10-01",
+          "value": 1.5
+        },
+        {
+          "date": "2003-11-01",
+          "value": 1.5
+        },
+        {
+          "date": "2003-12-01",
+          "value": 1.5
+        },
+        {
           "date": "2004-01-01",
-          "value": 2.0
+          "value": 1.6
         },
         {
           "date": "2004-02-01",
@@ -793,6 +1659,18 @@
         {
           "date": "2004-09-01",
           "value": 2.1
+        },
+        {
+          "date": "2004-10-01",
+          "value": 2.0
+        },
+        {
+          "date": "2004-11-01",
+          "value": 2.0
+        },
+        {
+          "date": "2004-12-01",
+          "value": 2.0
         },
         {
           "date": "2005-01-01",
@@ -831,8 +1709,20 @@
           "value": 2.0
         },
         {
+          "date": "2005-10-01",
+          "value": 1.9
+        },
+        {
+          "date": "2005-11-01",
+          "value": 2.0
+        },
+        {
+          "date": "2005-12-01",
+          "value": 1.9
+        },
+        {
           "date": "2006-01-01",
-          "value": 0.7
+          "value": 1.8
         },
         {
           "date": "2006-02-01",
@@ -867,8 +1757,20 @@
           "value": 0.5
         },
         {
+          "date": "2006-10-01",
+          "value": 0.5
+        },
+        {
+          "date": "2006-11-01",
+          "value": 0.6
+        },
+        {
+          "date": "2006-12-01",
+          "value": 0.7
+        },
+        {
           "date": "2007-01-01",
-          "value": 2.1
+          "value": 0.9
         },
         {
           "date": "2007-02-01",
@@ -903,8 +1805,20 @@
           "value": 1.7
         },
         {
+          "date": "2007-10-01",
+          "value": 1.9
+        },
+        {
+          "date": "2007-11-01",
+          "value": 2.0
+        },
+        {
+          "date": "2007-12-01",
+          "value": 2.1
+        },
+        {
           "date": "2008-01-01",
-          "value": 1.8
+          "value": 2.1
         },
         {
           "date": "2008-02-01",
@@ -939,8 +1853,20 @@
           "value": 2.2
         },
         {
+          "date": "2008-10-01",
+          "value": 1.8
+        },
+        {
+          "date": "2008-11-01",
+          "value": 1.8
+        },
+        {
+          "date": "2008-12-01",
+          "value": 1.8
+        },
+        {
           "date": "2009-01-01",
-          "value": 3.1
+          "value": 2.0
         },
         {
           "date": "2009-02-01",
@@ -975,8 +1901,20 @@
           "value": 3.0
         },
         {
+          "date": "2009-10-01",
+          "value": 3.4
+        },
+        {
+          "date": "2009-11-01",
+          "value": 3.3
+        },
+        {
+          "date": "2009-12-01",
+          "value": 3.1
+        },
+        {
           "date": "2010-01-01",
-          "value": 2.3
+          "value": 3.0
         },
         {
           "date": "2010-02-01",
@@ -1011,8 +1949,20 @@
           "value": 2.8
         },
         {
+          "date": "2010-10-01",
+          "value": 2.8
+        },
+        {
+          "date": "2010-11-01",
+          "value": 2.6
+        },
+        {
+          "date": "2010-12-01",
+          "value": 2.3
+        },
+        {
           "date": "2011-01-01",
-          "value": 3.1
+          "value": 2.3
         },
         {
           "date": "2011-02-01",
@@ -1047,8 +1997,20 @@
           "value": 2.7
         },
         {
+          "date": "2011-10-01",
+          "value": 2.8
+        },
+        {
+          "date": "2011-11-01",
+          "value": 3.0
+        },
+        {
+          "date": "2011-12-01",
+          "value": 3.1
+        },
+        {
           "date": "2012-01-01",
-          "value": 2.6
+          "value": 3.0
         },
         {
           "date": "2012-02-01",
@@ -1083,8 +2045,20 @@
           "value": 2.4
         },
         {
+          "date": "2012-10-01",
+          "value": 2.3
+        },
+        {
+          "date": "2012-11-01",
+          "value": 2.1
+        },
+        {
+          "date": "2012-12-01",
+          "value": 2.6
+        },
+        {
           "date": "2013-01-01",
-          "value": 4.2
+          "value": 2.7
         },
         {
           "date": "2013-02-01",
@@ -1119,8 +2093,20 @@
           "value": 3.8
         },
         {
+          "date": "2013-10-01",
+          "value": 4.1
+        },
+        {
+          "date": "2013-11-01",
+          "value": 4.3
+        },
+        {
+          "date": "2013-12-01",
+          "value": 4.2
+        },
+        {
           "date": "2014-01-01",
-          "value": 3.5
+          "value": 4.3
         },
         {
           "date": "2014-02-01",
@@ -1155,8 +2141,20 @@
           "value": 3.0
         },
         {
-          "date": "2015-01-01",
+          "date": "2014-10-01",
           "value": 3.1
+        },
+        {
+          "date": "2014-11-01",
+          "value": 3.6
+        },
+        {
+          "date": "2014-12-01",
+          "value": 3.5
+        },
+        {
+          "date": "2015-01-01",
+          "value": 3.3
         },
         {
           "date": "2015-02-01",
@@ -1191,8 +2189,20 @@
           "value": 3.8
         },
         {
+          "date": "2015-10-01",
+          "value": 3.6
+        },
+        {
+          "date": "2015-11-01",
+          "value": 3.3
+        },
+        {
+          "date": "2015-12-01",
+          "value": 3.1
+        },
+        {
           "date": "2016-01-01",
-          "value": 3.9
+          "value": 3.1
         },
         {
           "date": "2016-02-01",
@@ -1227,8 +2237,20 @@
           "value": 3.4
         },
         {
-          "date": "2017-01-01",
+          "date": "2016-10-01",
           "value": 3.6
+        },
+        {
+          "date": "2016-11-01",
+          "value": 3.8
+        },
+        {
+          "date": "2016-12-01",
+          "value": 3.9
+        },
+        {
+          "date": "2017-01-01",
+          "value": 3.9
         },
         {
           "date": "2017-02-01",
@@ -1263,8 +2285,20 @@
           "value": 4.0
         },
         {
+          "date": "2017-10-01",
+          "value": 4.1
+        },
+        {
+          "date": "2017-11-01",
+          "value": 4.0
+        },
+        {
+          "date": "2017-12-01",
+          "value": 3.6
+        },
+        {
           "date": "2018-01-01",
-          "value": 2.4
+          "value": 3.4
         },
         {
           "date": "2018-02-01",
@@ -1299,8 +2333,20 @@
           "value": 2.8
         },
         {
+          "date": "2018-10-01",
+          "value": 2.7
+        },
+        {
+          "date": "2018-11-01",
+          "value": 2.3
+        },
+        {
+          "date": "2018-12-01",
+          "value": 2.4
+        },
+        {
           "date": "2019-01-01",
-          "value": 2.6
+          "value": 2.3
         },
         {
           "date": "2019-02-01",
@@ -1335,8 +2381,20 @@
           "value": 2.3
         },
         {
+          "date": "2019-10-01",
+          "value": 2.3
+        },
+        {
+          "date": "2019-11-01",
+          "value": 2.6
+        },
+        {
+          "date": "2019-12-01",
+          "value": 2.6
+        },
+        {
           "date": "2020-01-01",
-          "value": 9.2
+          "value": 2.6
         },
         {
           "date": "2020-02-01",
@@ -1371,8 +2429,20 @@
           "value": 9.0
         },
         {
+          "date": "2020-10-01",
+          "value": 9.0
+        },
+        {
+          "date": "2020-11-01",
+          "value": 9.1
+        },
+        {
+          "date": "2020-12-01",
+          "value": 9.2
+        },
+        {
           "date": "2021-01-01",
-          "value": 3.7
+          "value": 9.4
         },
         {
           "date": "2021-02-01",
@@ -1407,8 +2477,20 @@
           "value": 4.2
         },
         {
+          "date": "2021-10-01",
+          "value": 4.2
+        },
+        {
+          "date": "2021-11-01",
+          "value": 4.0
+        },
+        {
+          "date": "2021-12-01",
+          "value": 3.7
+        },
+        {
           "date": "2022-01-01",
-          "value": 2.9
+          "value": 3.6
         },
         {
           "date": "2022-02-01",
@@ -1443,8 +2525,20 @@
           "value": 3.3
         },
         {
+          "date": "2022-10-01",
+          "value": 3.1
+        },
+        {
+          "date": "2022-11-01",
+          "value": 3.1
+        },
+        {
+          "date": "2022-12-01",
+          "value": 2.9
+        },
+        {
           "date": "2023-01-01",
-          "value": 2.3
+          "value": 2.7
         },
         {
           "date": "2023-02-01",
@@ -1479,8 +2573,20 @@
           "value": 2.4
         },
         {
+          "date": "2023-10-01",
+          "value": 2.4
+        },
+        {
+          "date": "2023-11-01",
+          "value": 2.3
+        },
+        {
+          "date": "2023-12-01",
+          "value": 2.3
+        },
+        {
           "date": "2024-01-01",
-          "value": 1.3
+          "value": 2.5
         },
         {
           "date": "2024-02-01",
@@ -1515,8 +2621,20 @@
           "value": 1.2
         },
         {
+          "date": "2024-10-01",
+          "value": 1.2
+        },
+        {
+          "date": "2024-11-01",
+          "value": 1.2
+        },
+        {
+          "date": "2024-12-01",
+          "value": 1.3
+        },
+        {
           "date": "2025-01-01",
-          "value": 1.7
+          "value": 1.3
         },
         {
           "date": "2025-02-01",
@@ -1549,6 +2667,18 @@
         {
           "date": "2025-09-01",
           "value": 1.5
+        },
+        {
+          "date": "2025-10-01",
+          "value": 1.6
+        },
+        {
+          "date": "2025-11-01",
+          "value": 1.7
+        },
+        {
+          "date": "2025-12-01",
+          "value": 1.7
         },
         {
           "date": "2026-01-01",
@@ -1586,7 +2716,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 548
+      "fetch_ms": 736
     },
     "CN": {
       "region": "CN",
@@ -1597,8 +2727,32 @@
       "level": 355.51,
       "source": "People's Bank of China Financial Statistics Reports",
       "source_url": "https://www.pbc.gov.cn/en/3688247/3688978/3709137/2026081815052522832/index.html",
-      "history_points": 4,
+      "history_points": 10,
       "yoy_history": [
+        {
+          "date": "2023-01-01",
+          "value": 8.5
+        },
+        {
+          "date": "2025-10-01",
+          "value": 8.2
+        },
+        {
+          "date": "2025-11-01",
+          "value": 8.0
+        },
+        {
+          "date": "2026-01-01",
+          "value": 9.0
+        },
+        {
+          "date": "2026-02-01",
+          "value": 9.0
+        },
+        {
+          "date": "2026-03-01",
+          "value": 8.5
+        },
         {
           "date": "2026-04-01",
           "value": 8.6
@@ -1616,9 +2770,16 @@
           "value": 7.7
         }
       ],
+      "history_bootstrap": {
+        "triggered": true,
+        "article_calls": 8,
+        "new_points": 6,
+        "target_points": 18,
+        "complete": false
+      },
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 7173
+      "fetch_ms": 9104
     }
   },
   "statuses": {
@@ -1628,7 +2789,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 8417,
+  "runtime_ms": 11047,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -1639,7 +2800,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T16:57:53.794048+00:00",
+      "last_success_utc": "2026-08-18T17:11:44.067843+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -1653,21 +2814,21 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T16:57:54.090258+00:00",
+      "last_success_utc": "2026-08-18T17:11:44.543684+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     },
     "PBC": {
       "provider": "PBC",
-      "request_attempts": 5,
-      "network_calls": 5,
-      "memory_cache_hits": 0,
+      "request_attempts": 15,
+      "network_calls": 13,
+      "memory_cache_hits": 2,
       "http_429": 0,
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T16:58:01.465216+00:00",
+      "last_success_utc": "2026-08-18T17:11:53.854562+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"

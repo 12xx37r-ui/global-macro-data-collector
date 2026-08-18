@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "generated_at_utc": "2026-08-18T16:58:01.525413+00:00",
+  "generated_at_utc": "2026-08-18T17:11:53.922326+00:00",
   "global_m2": {
     "current": 5.385196,
-    "forecast_3m": 5.428562,
+    "forecast_3m": 5.433719,
     "model": "region-specific forecast with direct US Fed-engine M2 model",
     "components": {
       "US": {
@@ -11,29 +11,37 @@
         "forecast_3m_yoy_pct": 5.634172,
         "method": "US Fed-engine history model",
         "validation": {
-          "skill_pct": null,
+          "skill_pct": 39.548910905835186,
+          "rmse_pct": 1.1357859991928514,
+          "baseline_rmse_pct": 1.8788511773934042,
+          "backtests": 72,
           "fallback_used": false,
           "quality_gate": {
-            "passed": true
+            "passed": true,
+            "benchmark": "persistence",
+            "horizon": "3m"
           },
           "source_confidence": 71
         }
       },
       "EA": {
         "current_yoy_pct": 3.224468,
-        "forecast_3m_yoy_pct": 3.224468,
-        "method": "persistence safety fallback",
+        "forecast_3m_yoy_pct": 3.227941,
+        "method": "validated regional YoY walk-forward model",
         "validation": {
-          "forecast": 3.224467660084618,
-          "model": "persistence",
+          "forecast": 3.2279411301451892,
+          "model": "inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion",
           "samples": 60,
-          "rmse": 2.2550971110358757,
-          "baseline_rmse": 2.2550971110358757,
-          "skill_pct": 0.0,
-          "direction_accuracy": 60.71428571428571,
-          "fallback_used": true,
+          "rmse": 0.9380011540855461,
+          "baseline_rmse": 1.1359848550411473,
+          "skill_pct": 17.428375041886447,
+          "direction_accuracy": 74.07407407407408,
+          "fallback_used": false,
+          "history_points_total": 102,
+          "history_points_contiguous": 102,
+          "history_gaps_dropped": 0,
           "quality_gate": {
-            "passed": false,
+            "passed": true,
             "requirements": {
               "samples_min": 18,
               "skill_pct_min": 3.0,
@@ -44,19 +52,22 @@
       },
       "JP": {
         "current_yoy_pct": 2.2,
-        "forecast_3m_yoy_pct": 2.2,
-        "method": "persistence safety fallback",
+        "forecast_3m_yoy_pct": 2.244619,
+        "method": "validated regional YoY walk-forward model",
         "validation": {
-          "forecast": 2.2,
-          "model": "persistence",
+          "forecast": 2.2446191765849153,
+          "model": "inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion",
           "samples": 60,
-          "rmse": 1.8384323031684722,
-          "baseline_rmse": 1.8384323031684722,
-          "skill_pct": 0.0,
-          "direction_accuracy": 57.14285714285714,
-          "fallback_used": true,
+          "rmse": 0.5533652494955444,
+          "baseline_rmse": 0.6394007611297732,
+          "skill_pct": 13.455647359914058,
+          "direction_accuracy": 78.04878048780488,
+          "fallback_used": false,
+          "history_points_total": 319,
+          "history_points_contiguous": 319,
+          "history_gaps_dropped": 0,
           "quality_gate": {
-            "passed": false,
+            "passed": true,
             "requirements": {
               "samples_min": 18,
               "skill_pct_min": 3.0,
@@ -76,9 +87,12 @@
           "skill_pct": 0.0,
           "direction_accuracy": null,
           "fallback_used": true,
+          "history_points_total": 10,
+          "history_points_contiguous": 7,
+          "history_gaps_dropped": 3,
           "quality_gate": {
             "passed": false,
-            "reason": "월별 YoY 이력 18개월 미만"
+            "reason": "연속 월별 YoY 이력 18개월 미만"
           }
         }
       }
