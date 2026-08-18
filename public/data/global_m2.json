@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "metric": "global_m2",
+  "label": "Global M2 broad-money growth composite",
+  "generated_at_utc": "2026-08-18T13:13:28.984106+00:00",
+  "available": false,
+  "value": null,
+  "current": null,
+  "forecast": null,
+  "changePct": null,
+  "directionScore": null,
+  "coverage_weight": 0.2,
+  "coverage_regions": [
+    "EA"
+  ],
+  "components": {
+    "EA": {
+      "region": "EA",
+      "label": "Euro area M2",
+      "date": "2026-06-01",
+      "yoy_pct": 3.224467660084618,
+      "yoy_3m_ago_pct": 3.189873154849776,
+      "source": "ECB Data Portal BSI.M.U2.Y.V.M20.X.I.U2.2300.Z01.A",
+      "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
+      "status": "LIVE",
+      "age_days": 78
+    }
+  },
+  "statuses": {
+    "US": "UNAVAILABLE",
+    "EA": "LIVE",
+    "JP": "UNAVAILABLE",
+    "CN": "UNAVAILABLE"
+  },
+  "errors": {
+    "US": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2018-01-01 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (",
+    "JP": "ValueError: BOJ M2 current page reachable but observation parse unavailable",
+    "CN": "ValueError: PBC current M2 report parse unavailable"
+  },
+  "source": "Global M2 composite unavailable; downstream fallback permitted",
+  "methodology": "Requires at least two usable regions and 50% strategic coverage; otherwise the composite abstains instead of fabricating a global value.",
+  "is_proxy": false
+}
