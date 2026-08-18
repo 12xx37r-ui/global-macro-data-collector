@@ -183,14 +183,27 @@ def _regional_yoy_forecast(history: list[dict[str, Any]], horizon: int = 3) -> d
 def _read_cn_history_cache() -> list[dict[str, Any]]:
     try:
         obj=json.loads(CN_HISTORY_CACHE_PATH.read_text(encoding="utf-8")); rows=obj.get("history") if isinstance(obj,dict) else []
-        return [r for r in rows if r.get("date") and _num(r.get("value")) is not None]
+        current_month = _current_utc_month()
+        return [
+            r for r in rows
+            if r.get("date")
+            and _num(r.get("value")) is not None
+            and str(r.get("date"))[:7] <= current_month
+        ]
     except Exception:
         return []
 
 
 def _write_cn_history_cache(rows: list[dict[str, Any]]) -> None:
     CN_HISTORY_CACHE_PATH.parent.mkdir(parents=True,exist_ok=True)
-    ded={str(r["date"])[:7]:{"date":str(r["date"])[:7]+"-01","value":float(r["value"])} for r in rows if r.get("date") and _num(r.get("value")) is not None}
+    current_month = _current_utc_month()
+    ded={
+        str(r["date"])[:7]:{"date":str(r["date"])[:7]+"-01","value":float(r["value"])}
+        for r in rows
+        if r.get("date")
+        and _num(r.get("value")) is not None
+        and str(r["date"])[:7] <= current_month
+    }
     clean=[ded[k] for k in sorted(ded)]
     contiguous,_=_recent_contiguous_month_history(clean)
     CN_HISTORY_CACHE_PATH.write_text(json.dumps({"saved_at_utc":now_iso(),"history":clean,"bootstrap_complete":len(contiguous)>=18,"contiguous_points":len(contiguous)},ensure_ascii=False,indent=2),encoding="utf-8")
@@ -695,42 +708,57 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
 
 def _pbc_report_month(label: str) -> str | None:
     text = re.sub(r"\s+", " ", str(label or "")).strip()
-    m = re.search(r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})", text, re.I)
+
+    # English monthly titles. PBC commonly uses forms such as:
+    # "Financial Statistics Report (July, 2026)" as well as "July 2026".
+    m = re.search(
+        r"(January|February|March|April|May|June|July|August|September|October|November|December)"
+        r"\s*,?\s*(20\d{2})",
+        text,
+        re.I,
+    )
     if m:
-        return datetime.strptime(m.group(0).title(), "%B %Y").strftime("%Y-%m")
+        month_no = {
+            "january": 1, "february": 2, "march": 3, "april": 4,
+            "may": 5, "june": 6, "july": 7, "august": 8,
+            "september": 9, "october": 10, "november": 11, "december": 12,
+        }[m.group(1).lower()]
+        return f"{int(m.group(2)):04d}-{month_no:02d}"
+
+    # Chinese explicit monthly titles.
     cm = re.search(r"(20\d{2})年\s*(1[0-2]|0?[1-9])月", text)
     if cm:
         return f"{int(cm.group(1)):04d}-{int(cm.group(2)):02d}"
+
     y = re.search(r"(20\d{2})", text)
     if not y:
         return None
     year = int(y.group(1))
 
-    # Chinese period reports. These are the missing bridge months in the live CN series:
-    # 上半年 -> June, 前三季度 -> September, 一季度 -> March.
-    if "上半年" in text:
+    # Chinese / English period reports.
+    if "上半年" in text or re.search(r"\bH1\b|first half", text, re.I):
         return f"{year:04d}-06"
-    if "前三季度" in text:
+    if "前三季度" in text or re.search(r"\bQ1\s*[-–]\s*Q3\b|first three quarters", text, re.I):
         return f"{year:04d}-09"
-    if "一季度" in text:
+    if "一季度" in text or re.search(r"\bQ1\b|first quarter", text, re.I):
         return f"{year:04d}-03"
 
-    # Annual report -> December. Be tolerant of archive prefixes/suffixes and of
-    # both 报告 / 解读 wording, while excluding monthly/quarterly/half-year titles.
-    if (
-        re.search(r"金融统计数据(?:报告|解读)", text)
-        and not re.search(r"(?:\d{1,2}月|上半年|前三季度|一季度)", text)
-    ):
-        return f"{year:04d}-12"
+    # Annual report -> December only when there is no explicit month or period token.
+    # This avoids misclassifying "Financial Statistics Report (July, 2026)" as 2026-12.
+    if re.search(r"金融统计数据(?:报告|解读)|Financial Statistics Report", text, re.I):
+        has_month_word = re.search(
+            r"January|February|March|April|May|June|July|August|September|October|November|December",
+            text,
+            re.I,
+        )
+        has_period = re.search(
+            r"\d{1,2}月|上半年|前三季度|一季度|\bH1\b|\bQ1\b|first half|first quarter|first three quarters",
+            text,
+            re.I,
+        )
+        if not has_month_word and not has_period:
+            return f"{year:04d}-12"
 
-    if re.search(r"\bH1\b|first half", text, re.I):
-        return f"{year:04d}-06"
-    if re.search(r"\bQ1-Q3\b|first three quarters", text, re.I):
-        return f"{year:04d}-09"
-    if re.search(r"\bQ1\b|first quarter", text, re.I):
-        return f"{year:04d}-03"
-    if re.search(r"\b202\d\b", text) and "Report (" in text:
-        return f"{year:04d}-12"
     return None
 
 
@@ -744,6 +772,11 @@ def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
             continue
         month = _pbc_report_month(label)
         if not month:
+            continue
+        # Financial-statistics observations cannot be in a future month.
+        # This blocks a malformed/ambiguous title from becoming e.g. 2026-12
+        # while the current calendar month is only 2026-08.
+        if month > _current_utc_month():
             continue
         href = urljoin(base_url, str(a.get("href") or ""))
         if "pbc.gov.cn" not in href.lower() or href in seen:
@@ -795,19 +828,60 @@ def _pbc_cn_archive_candidates(
     return [found[k] for k in sorted(found, reverse=True)], calls
 
 
-def _pbc_parse_candidate(rr_text: str, c: dict[str, str]) -> dict[str, Any] | None:
-    """Parse a PBC report and anchor it to the observation month derived from its archive title.
+def _pbc_observation_month_from_text(text: str, fallback_month: str | None = None) -> str | None:
+    """Infer the economic observation month from the report body, not its publication date."""
+    plain = BeautifulSoup(str(text or ""), "html.parser").get_text(" ", strip=True)
 
-    PBC period reports are typically published after the observation period:
-    - H1 / 上半年 is published in July but represents June.
-    - Annual reports are published in January but represent December.
-    The article parser can see the publication date first, so only filling the
-    candidate month when date is missing mislabels these reports and causes them
-    to collide with July/January observations already in history.
-    """
+    # Chinese body: "6月末，广义货币(M2)..."
+    cm = re.search(r"(20\d{2})年[^。]{0,120}?([1-9]|1[0-2])月末", plain)
+    if cm:
+        return f"{int(cm.group(1)):04d}-{int(cm.group(2)):02d}"
+
+    # If the year is only present elsewhere in the article, combine it with "6月末".
+    cmonth = re.search(r"(?:^|[^\d])([1-9]|1[0-2])月末", plain)
+    year_m = re.search(r"(20\d{2})年", plain)
+    if cmonth and year_m:
+        return f"{int(year_m.group(1)):04d}-{int(cmonth.group(1)):02d}"
+
+    # English body: "At end-June, broad money supply (M2)..."
+    em = re.search(
+        r"At\s+end[-\s]+(January|February|March|April|May|June|July|August|September|October|November|December)",
+        plain,
+        re.I,
+    )
+    if em:
+        months = {
+            "january": 1, "february": 2, "march": 3, "april": 4,
+            "may": 5, "june": 6, "july": 7, "august": 8,
+            "september": 9, "october": 10, "november": 11, "december": 12,
+        }
+        year_match = re.search(r"(20\d{2})", plain)
+        if year_match:
+            return f"{int(year_match.group(1)):04d}-{months[em.group(1).lower()]:02d}"
+
+    # Period-report fallback.
+    year_match = re.search(r"(20\d{2})", plain)
+    if year_match:
+        y = int(year_match.group(1))
+        if "上半年" in plain or re.search(r"\bH1\b|first half", plain, re.I):
+            return f"{y:04d}-06"
+
+    return fallback_month
+
+
+def _pbc_parse_candidate(rr_text: str, c: dict[str, str]) -> dict[str, Any] | None:
+    """Parse PBC M2 and anchor date to the report's economic observation month."""
     parsed = _extract_pbc_article(rr_text, c["url"])
-    if parsed and c.get("month"):
+    if not parsed:
+        return None
+
+    obs_month = _pbc_observation_month_from_text(rr_text, c.get("month"))
+    if obs_month and obs_month <= _current_utc_month():
+        parsed["date"] = obs_month + "-01"
+    elif c.get("month") and str(c["month"]) <= _current_utc_month():
         parsed["date"] = str(c["month"]) + "-01"
+    else:
+        return None
     return parsed
 
 
@@ -820,6 +894,10 @@ def _pbc_response_html(response: requests.Response) -> str:
         except Exception:
             pass
     return str(getattr(response, "text", "") or "")
+
+
+def _current_utc_month() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m")
 
 
 def _month_number(month: str) -> int:
