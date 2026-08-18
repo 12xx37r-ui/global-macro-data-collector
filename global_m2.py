@@ -705,14 +705,24 @@ def _pbc_report_month(label: str) -> str | None:
     if not y:
         return None
     year = int(y.group(1))
+
+    # Chinese period reports. These are the missing bridge months in the live CN series:
+    # 上半年 -> June, 前三季度 -> September, 一季度 -> March.
     if "上半年" in text:
         return f"{year:04d}-06"
     if "前三季度" in text:
         return f"{year:04d}-09"
     if "一季度" in text:
         return f"{year:04d}-03"
-    if re.search(rf"^{year}年金融统计数据报告$", text):
+
+    # Annual report -> December. Be tolerant of archive prefixes/suffixes and of
+    # both 报告 / 解读 wording, while excluding monthly/quarterly/half-year titles.
+    if (
+        re.search(r"金融统计数据(?:报告|解读)", text)
+        and not re.search(r"(?:\d{1,2}月|上半年|前三季度|一季度)", text)
+    ):
         return f"{year:04d}-12"
+
     if re.search(r"\bH1\b|first half", text, re.I):
         return f"{year:04d}-06"
     if re.search(r"\bQ1-Q3\b|first three quarters", text, re.I):
@@ -730,7 +740,7 @@ def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
     seen: set[str] = set()
     for a in soup.find_all("a", href=True):
         label = " ".join(a.stripped_strings).strip()
-        if not re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I):
+        if not re.search(r"Financial Statistics Report|金融统计数据(?:报告|解读)", label, re.I):
             continue
         month = _pbc_report_month(label)
         if not month:
