@@ -31,6 +31,8 @@ ECB_M2_KEY = "BSI.M.U2.Y.V.M20.X.I.U2.2300.Z01.A"
 ECB_M2_CSV = f"https://data-api.ecb.europa.eu/service/data/BSI/{ECB_M2_KEY[4:]}?format=csvdata&startPeriod=2018-01"
 BOJ_M2_PAGE = "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
 PBC_REPORTS_EN = "https://www.pbc.gov.cn/en/3688247/3688978/3709137/index.html"
+PBC_REPORTS_CN = "https://www.pbc.gov.cn/diaochatongjisi/116219/116225/index.html"
+PBC_REPORTS_CN_PAGE = "https://www.pbc.gov.cn/diaochatongjisi/116219/116225/11871-{page}.html"
 PBC_SEARCH = "https://wzdig.pbc.gov.cn/search/pcRender?pNo={page}&pageId=c177a85bd02b4114bebebd210809f691&q={query}&sr=pubDate%20desc"
 FED_ENGINE_US_CONTEXT = "https://raw.githubusercontent.com/12xx37r-ui/fed-futures-collector/main/public/data/us_liquidity_dxy.json"
 _US_CONTEXT_MEMO: dict[str, Any] | None = None
@@ -686,6 +688,14 @@ def _pbc_report_month(label: str) -> str | None:
     if not y:
         return None
     year = int(y.group(1))
+    if "上半年" in text:
+        return f"{year:04d}-06"
+    if "前三季度" in text:
+        return f"{year:04d}-09"
+    if "一季度" in text:
+        return f"{year:04d}-03"
+    if re.search(rf"^{year}年金融统计数据报告$", text):
+        return f"{year:04d}-12"
     if re.search(r"\bH1\b|first half", text, re.I):
         return f"{year:04d}-06"
     if re.search(r"\bQ1-Q3\b|first three quarters", text, re.I):
@@ -714,6 +724,53 @@ def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
         seen.add(href)
         out.append({"month": month, "label": label, "url": href})
     return sorted(out, key=lambda x: x["month"], reverse=True)
+
+
+def _pbc_cn_archive_candidates(
+    session: requests.Session,
+    headers: dict[str, str],
+    target_months: set[str] | None = None,
+) -> tuple[list[dict[str, str]], int]:
+    """Discover exact missing Financial Statistics Reports from PBC's official Chinese archive.
+
+    The Chinese 数据解读 archive is paginated and exposes the historical monthly,
+    quarterly and annual report links that the compact English index omits.
+    The recent 18-month bootstrap only needs archive pages 1-2 for the current
+    window; page 3 is a bounded safety fallback.
+    """
+    wanted = set(target_months or [])
+    found: dict[str, dict[str, str]] = {}
+    calls = 0
+    urls = [
+        PBC_REPORTS_CN,
+        PBC_REPORTS_CN_PAGE.format(page=2),
+        PBC_REPORTS_CN_PAGE.format(page=3),
+    ]
+    for u in urls:
+        if wanted and wanted.issubset(found):
+            break
+        try:
+            r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
+            calls += 1
+            for c in _pbc_listing_candidates(r.text, u):
+                mk = c.get("month")
+                if not mk:
+                    continue
+                if wanted and mk not in wanted:
+                    continue
+                found.setdefault(mk, c)
+        except Exception:
+            calls += 1
+            continue
+    return [found[k] for k in sorted(found, reverse=True)], calls
+
+
+def _pbc_parse_candidate(rr_text: str, c: dict[str, str]) -> dict[str, Any] | None:
+    """Parse a PBC report and use its archive month when period titles omit an explicit date."""
+    parsed = _extract_pbc_article(rr_text, c["url"])
+    if parsed and not parsed.get("date") and c.get("month"):
+        parsed["date"] = str(c["month"]) + "-01"
+    return parsed
 
 
 def _month_number(month: str) -> int:
@@ -933,7 +990,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
                 break
         try:
             rr = _get_retry(session, c["url"], headers=headers, attempts=2, timeout=(5, 12))
-            parsed = _extract_pbc_article(rr.text, c["url"])
+            parsed = _pbc_parse_candidate(rr.text, c)
             if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                 live_observations.append(parsed)
         except Exception as exc:
@@ -965,12 +1022,37 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
                 targeted_listing_calls += 1
-                parsed = _extract_pbc_article(rr.text, c["url"])
+                parsed = _pbc_parse_candidate(rr.text, c)
                 if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                     bootstrap_observations.append(parsed)
                     provisional.append({"date": parsed["date"], "value": parsed["yoy_pct"]})
             except Exception:
                 targeted_listing_calls += 1
+                continue
+        contiguous_before, _ = _recent_contiguous_month_history(provisional)
+
+    archive_listing_calls = 0
+    archive_article_calls = 0
+    if len(contiguous_before) < 18 and not _cn_bootstrap_complete():
+        latest_bootstrap_month = max(str(o.get("date"))[:7] for o in live_observations if o.get("date"))
+        missing_archive = set(_missing_recent_months(provisional, latest_bootstrap_month, 18))
+        archive_candidates, archive_listing_calls = _pbc_cn_archive_candidates(session, headers, missing_archive)
+        used = {str(r.get("date"))[:7] for r in provisional if r.get("date")}
+        for c in sorted(archive_candidates, key=lambda x: x.get("month") or ""):
+            if c.get("month") in used:
+                continue
+            try:
+                rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
+                archive_article_calls += 1
+                parsed = _pbc_parse_candidate(rr.text, c)
+                if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
+                    mk = str(parsed["date"])[:7]
+                    if mk not in used:
+                        bootstrap_observations.append(parsed)
+                        provisional.append({"date": parsed["date"], "value": parsed["yoy_pct"]})
+                        used.add(mk)
+            except Exception:
+                archive_article_calls += 1
                 continue
         contiguous_before, _ = _recent_contiguous_month_history(provisional)
 
@@ -1016,7 +1098,10 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         provisional_for_gaps = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
         missing_targets = set(_missing_recent_months(provisional_for_gaps, latest_bootstrap_month, 18))
         older = [c for c in candidates[1:] if c.get("month") in missing_targets]
-        older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls, missing_targets))
+        discovered = {c.get("month") for c in older if c.get("month")}
+        unresolved = {mk for mk in missing_targets if mk not in discovered}
+        if unresolved:
+            older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls, unresolved))
         older = sorted({c["url"]: c for c in older}.values(), key=lambda x: (x.get("month") not in missing_targets, x.get("month") or ""), reverse=False)
         cached_months = {str(r.get("date"))[:7] for r in cached_history if r.get("date")}
         live_months = {str(r.get("date"))[:7] for r in live_observations if r.get("date")}
@@ -1037,7 +1122,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
                 bootstrap_calls += 1
-                parsed = _extract_pbc_article(rr.text, c["url"])
+                parsed = _pbc_parse_candidate(rr.text, c)
                 if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                     mk = str(parsed["date"])[:7]
                     if mk not in used_months:
@@ -1088,6 +1173,8 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         "history_bootstrap": {
             "triggered": (table_calls + bootstrap_calls) > 0,
             "targeted_listing_calls": targeted_listing_calls,
+            "archive_listing_calls": archive_listing_calls,
+            "archive_article_calls": archive_article_calls,
             "table_calls": table_calls,
             "table_new_points": table_new_points,
             "article_calls": bootstrap_calls,
@@ -1095,7 +1182,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             "target_contiguous_points": 18,
             "contiguous_points": len(_recent_contiguous_month_history(hist)[0]),
             "complete": len(_recent_contiguous_month_history(hist)[0]) >= 18,
-            "strategy": "exact missing months from official report index first; annual Money Supply tables second; target-aware bounded search/article fallback last",
+            "strategy": "exact missing months from official English index first; official PBC Chinese data-interpretation archive second; annual Money Supply/search fallback only for unresolved gaps",
         },
     }
 
