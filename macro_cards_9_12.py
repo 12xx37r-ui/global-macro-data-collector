@@ -1211,7 +1211,13 @@ def _engine_health(global_m2:dict[str,Any], registry:dict[str,Any], composite_oo
         if bool((v.get('validation') or {}).get('fallback_used')): fallbacks.append(f'global_m2:{k}')
     degraded=[e.get('id') for e in entries if e.get('degradation_status')=='DEGRADED']
     api_errors=sum(int((v or {}).get('http_429') or 0)+int((v or {}).get('http_5xx') or 0)+int((v or {}).get('timeouts') or 0) for v in api.values())
-    return {'schema_version':'1.0','generated_at_utc':now_iso(),'status':'HEALTHY' if not stale and api_errors==0 else 'DEGRADED','data_coverage':{'weight':global_m2.get('coverage_weight'),'regions':global_m2.get('coverage_regions'),'quality':global_m2.get('coverage_quality')},'stale_inputs':stale,'fallbacks':fallbacks,'forecast_counts':registry.get('summary'),'api':{'errors':api_errors,'providers':api},'runtime_ms':global_m2.get('runtime_ms'),'model_degradation':degraded,'composite_oos':{'status':composite_oos.get('status'),'snapshot_count':composite_oos.get('snapshot_count')}}
+    pipeline_health='HEALTHY' if not stale and api_errors==0 else 'DEGRADED'
+    global_entry=next((e for e in entries if e.get('id')=='global_m2_3m'),{})
+    composite_validation=global_entry.get('composite_validation') or {}
+    forecast_partial=bool(fallbacks) or not bool(global_entry.get('usable')) or composite_validation.get('status')=='INSUFFICIENT_HISTORY'
+    forecast_health='DEGRADED' if degraded else 'PARTIAL' if forecast_partial else 'HEALTHY'
+    status='DEGRADED' if pipeline_health=='DEGRADED' or forecast_health=='DEGRADED' else 'HEALTHY_WITH_FALLBACKS' if forecast_health=='PARTIAL' else 'HEALTHY'
+    return {'schema_version':'1.1','generated_at_utc':now_iso(),'status':status,'pipeline_health':pipeline_health,'forecast_health':forecast_health,'data_coverage':{'weight':global_m2.get('coverage_weight'),'regions':global_m2.get('coverage_regions'),'quality':global_m2.get('coverage_quality')},'stale_inputs':stale,'fallbacks':fallbacks,'forecast_counts':registry.get('summary'),'api':{'errors':api_errors,'providers':api},'runtime_ms':global_m2.get('runtime_ms'),'model_degradation':degraded,'global_m2_composite_validation':composite_validation,'composite_oos':{'status':composite_oos.get('status'),'snapshot_count':composite_oos.get('snapshot_count')}}
 
 def main():
     session=build_http_session(); OUT_DIR.mkdir(parents=True,exist_ok=True)

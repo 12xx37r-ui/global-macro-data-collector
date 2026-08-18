@@ -721,7 +721,20 @@ def _month_number(month: str) -> int:
     return y * 12 + m
 
 
-def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[str, str], seen_urls: set[str]) -> list[dict[str, str]]:
+def _month_key_from_number(value: int) -> str:
+    y, m0 = divmod(value - 1, 12)
+    return f"{y:04d}-{m0 + 1:02d}"
+
+
+def _missing_recent_months(history: list[dict[str, Any]], latest_month: str, target: int = 18) -> list[str]:
+    """Return exact missing month keys needed for a recent contiguous window."""
+    latest_num = _month_number(latest_month)
+    required = [_month_key_from_number(latest_num - i) for i in range(target - 1, -1, -1)]
+    have = {str(r.get("date") or "")[:7] for r in history if r.get("date") and _num(r.get("value")) is not None}
+    return [mk for mk in required if mk not in have]
+
+
+def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[str, str], seen_urls: set[str], target_months: set[str] | None = None) -> list[dict[str, str]]:
     """Discover older official PBC reports with a hard bounded search budget.
 
     English and Chinese report titles are both queried because older PBC search
@@ -729,8 +742,11 @@ def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[s
     contiguous modelling window exists, normal runs make none of these calls.
     """
     out: list[dict[str, str]] = []
+    wanted = set(target_months or [])
     for query in ("Financial Statistics Report", "金融统计数据报告"):
         for page in (1, 2):
+            if wanted and wanted.issubset({x.get("month") for x in out}):
+                break
             try:
                 u = PBC_SEARCH.format(page=page, query=quote(query))
                 r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
@@ -747,6 +763,8 @@ def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[s
                     out.append({"month": month, "label": label, "url": href})
             except Exception:
                 continue
+        if wanted and wanted.issubset({x.get("month") for x in out}):
+            break
     return sorted(out, key=lambda x: x["month"], reverse=True)
 
 
@@ -930,6 +948,32 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     # individual Financial Statistics Report articles.
     provisional = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in live_observations]
     contiguous_before, _ = _recent_contiguous_month_history(provisional)
+    # First fill exact recent gaps from the already-fetched official report index.
+    # This avoids four extra PBC search calls when the index itself already
+    # contains the months required to reach the modelling window.
+    targeted_listing_calls = 0
+    if len(contiguous_before) < 18 and len(candidates) >= 6 and not _cn_bootstrap_complete():
+        latest_bootstrap_month = max(str(o.get("date"))[:7] for o in live_observations if o.get("date"))
+        missing = _missing_recent_months(provisional, latest_bootstrap_month, 18)
+        by_month = {c.get("month"): c for c in candidates if c.get("month")}
+        # Fetch only exact missing months and never more than the 17 historical
+        # observations mathematically required for an 18-month window.
+        for mk in missing:
+            c = by_month.get(mk)
+            if c is None:
+                continue
+            try:
+                rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
+                targeted_listing_calls += 1
+                parsed = _extract_pbc_article(rr.text, c["url"])
+                if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
+                    bootstrap_observations.append(parsed)
+                    provisional.append({"date": parsed["date"], "value": parsed["yoy_pct"]})
+            except Exception:
+                targeted_listing_calls += 1
+                continue
+        contiguous_before, _ = _recent_contiguous_month_history(provisional)
+
     table_calls = 0
     table_new_points = 0
     table_level_rows: list[dict[str, Any]] = []
@@ -968,23 +1012,27 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     contiguous_after_tables, _ = _recent_contiguous_month_history(provisional_after_tables)
     if len(contiguous_after_tables) < 18 and len(candidates) >= 6 and not _cn_bootstrap_complete():
         seen_urls = {c["url"] for c in candidates}
-        older = list(candidates[1:])
-        older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls))
-        older = sorted({c["url"]: c for c in older}.values(), key=lambda x: x["month"], reverse=True)
+        latest_bootstrap_month = max(str(o.get("date"))[:7] for o in live_observations if o.get("date"))
+        provisional_for_gaps = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
+        missing_targets = set(_missing_recent_months(provisional_for_gaps, latest_bootstrap_month, 18))
+        older = [c for c in candidates[1:] if c.get("month") in missing_targets]
+        older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls, missing_targets))
+        older = sorted({c["url"]: c for c in older}.values(), key=lambda x: (x.get("month") not in missing_targets, x.get("month") or ""), reverse=False)
         cached_months = {str(r.get("date"))[:7] for r in cached_history if r.get("date")}
         live_months = {str(r.get("date"))[:7] for r in live_observations if r.get("date")}
         bootstrap_months = {str(r.get("date"))[:7] for r in bootstrap_observations if r.get("date")}
         used_months = set(cached_months) | set(live_months) | set(bootstrap_months)
         # Article fallback is intentionally smaller now that annual tables are
         # attempted first. This avoids the former search/article fan-out.
+        max_article_backfill = min(17, max(0, len(missing_targets)))
         for c in older:
-            if bootstrap_calls >= 8:
+            if bootstrap_calls >= max_article_backfill:
                 break
             provisional_now = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
             contiguous_now, _ = _recent_contiguous_month_history(provisional_now)
             if len(contiguous_now) >= 18:
                 break
-            if c.get("month") in used_months:
+            if c.get("month") in used_months or (missing_targets and c.get("month") not in missing_targets):
                 continue
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
@@ -1039,6 +1087,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         "history_points": len(hist), "yoy_history": hist,
         "history_bootstrap": {
             "triggered": (table_calls + bootstrap_calls) > 0,
+            "targeted_listing_calls": targeted_listing_calls,
             "table_calls": table_calls,
             "table_new_points": table_new_points,
             "article_calls": bootstrap_calls,
@@ -1046,7 +1095,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             "target_contiguous_points": 18,
             "contiguous_points": len(_recent_contiguous_month_history(hist)[0]),
             "complete": len(_recent_contiguous_month_history(hist)[0]) >= 18,
-            "strategy": "annual Money Supply tables first; bounded article fallback second",
+            "strategy": "exact missing months from official report index first; annual Money Supply tables second; target-aware bounded search/article fallback last",
         },
     }
 

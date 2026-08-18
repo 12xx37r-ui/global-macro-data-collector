@@ -261,3 +261,12 @@ class FinalGlobalM2ImprovementTests(unittest.TestCase):
         out=global_m2._global_m2_composite_validation({'US':{'yoy_history':[{'date':'2025-01-01','value':5}]}})
         self.assertFalse(out['available'])
         self.assertEqual(out['status'],'INSUFFICIENT_HISTORY')
+
+class FinalCnGapTargetTests(unittest.TestCase):
+    def test_missing_recent_months_targets_only_required_window(self):
+        hist=[{'date':f'2026-{m:02d}-01','value':7.0} for m in range(1,8)]
+        missing=global_m2._missing_recent_months(hist,'2026-07',18)
+        self.assertEqual(len(missing),11)
+        self.assertEqual(missing[0],'2025-02')
+        self.assertEqual(missing[-1],'2025-12')
+        self.assertNotIn('2025-01',missing)

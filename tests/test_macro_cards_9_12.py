@@ -252,3 +252,13 @@ class FinalHealthTests(unittest.TestCase):
         out=_engine_health(gm,reg,{'status':'ACTIVE_ACCUMULATION','snapshot_count':1})
         self.assertIn('global_m2:CN',out['fallbacks'])
         self.assertEqual(out['runtime_ms'],123)
+
+class FinalHealthSplitTests(unittest.TestCase):
+    def test_pipeline_healthy_but_forecast_partial_is_explicit(self):
+        from macro_cards_9_12 import _engine_health
+        gm={'coverage_weight':1.0,'coverage_regions':['US','CN','EA','JP'],'coverage_quality':'FULL','components':{'US':{'status':'LIVE'},'CN':{'status':'LIVE'}},'forecast_components':{'CN':{'validation':{'fallback_used':True}}},'api_health':{},'runtime_ms':123}
+        reg={'entries':[{'id':'global_m2_3m','usable':False,'composite_validation':{'status':'INSUFFICIENT_HISTORY'},'degradation_status':'NOT_APPLICABLE'}],'summary':{'validated':0,'reference_only':1,'degraded':0}}
+        out=_engine_health(gm,reg,{'status':'ACTIVE_ACCUMULATION','snapshot_count':1})
+        self.assertEqual(out['pipeline_health'],'HEALTHY')
+        self.assertEqual(out['forecast_health'],'PARTIAL')
+        self.assertEqual(out['status'],'HEALTHY_WITH_FALLBACKS')
