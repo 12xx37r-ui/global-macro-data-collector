@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T19:47:07.395006+00:00",
+  "generated_at_utc": "2026-08-18T21:06:03.857858+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -1915,7 +1915,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 1073
+      "fetch_ms": 625
     },
     "JP": {
       "date": "2026-07-01",
@@ -3206,7 +3206,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 727
+      "fetch_ms": 574
     },
     "CN": {
       "region": "CN",
@@ -3299,12 +3299,12 @@
       "history_bootstrap": {
         "triggered": false,
         "targeted_listing_calls": 0,
-        "archive_listing_calls": 2,
-        "archive_article_calls": 1,
+        "archive_listing_calls": 0,
+        "archive_article_calls": 0,
         "table_calls": 0,
         "table_new_points": 0,
         "article_calls": 0,
-        "new_points": 1,
+        "new_points": 0,
         "target_contiguous_points": 18,
         "contiguous_points": 18,
         "complete": true,
@@ -3312,7 +3312,7 @@
       },
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 3479
+      "fetch_ms": 3271
     }
   },
   "statuses": {
@@ -3322,7 +3322,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 5281,
+  "runtime_ms": 4472,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3333,7 +3333,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:47:03.182373+00:00",
+      "last_success_utc": "2026-08-18T21:06:00.006194+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3347,21 +3347,21 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:47:03.654905+00:00",
+      "last_success_utc": "2026-08-18T21:06:00.329719+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     },
     "PBC": {
       "provider": "PBC",
-      "request_attempts": 6,
-      "network_calls": 6,
+      "request_attempts": 3,
+      "network_calls": 3,
       "memory_cache_hits": 0,
       "http_429": 0,
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:47:07.343632+00:00",
+      "last_success_utc": "2026-08-18T21:06:03.685582+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
