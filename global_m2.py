@@ -17,6 +17,7 @@ from bs4 import BeautifulSoup
 ROOT = Path(__file__).resolve().parent
 OUT_DIR = ROOT / "public" / "data"
 CACHE_PATH = OUT_DIR / "cache" / "global_m2_last_good.json"
+CN_HISTORY_CACHE_PATH = OUT_DIR / "cache" / "pbc_m2_yoy_history.json"
 
 # Connection/read timeout. Global M2 is a monthly series, so reliability is more
 # important than shaving a few seconds off a once-per-workflow collection.
@@ -96,6 +97,75 @@ def _series_yoy_from_levels(rows: list[dict[str, Any]]) -> dict[str, Any] | None
     latest_m, latest_yoy = yoy[-1]
     prior3 = yoy[-4][1] if len(yoy) >= 4 else yoy[0][1]
     return {"date": latest_m + "-01", "yoy_pct": latest_yoy, "yoy_3m_ago_pct": prior3, "level": by_month[latest_m]}
+
+
+def _history_from_yoy_pairs(vals: list[tuple[str, float]]) -> list[dict[str, Any]]:
+    return [{"date": m + "-01", "value": float(v)} for m, v in sorted({m: float(v) for m, v in vals}.items())]
+
+
+def _regional_candidates(values: list[float], horizon: int = 3) -> list[float]:
+    cur = values[-1]
+    def slope(months: int, damp: float) -> float:
+        if len(values) <= months:
+            return cur
+        return cur + (cur - values[-1-months]) / months * horizon * damp
+    short = slope(3, 0.50)
+    medium = slope(6, 0.50)
+    if len(values) >= 12:
+        ys = values[-12:]; n=len(ys); xb=(n-1)/2; yb=sum(ys)/n
+        den=sum((i-xb)**2 for i in range(n)) or 1.0
+        b=sum((i-xb)*(y-yb) for i,y in enumerate(ys))/den
+        linear = cur + b*horizon*0.65
+    else:
+        linear = cur
+    mean36 = sum(values[-36:])/min(36,len(values))
+    meanrev = cur + (mean36-cur)*min(0.25, horizon/12*0.25)
+    return [cur, short, medium, linear, meanrev]
+
+
+def _regional_yoy_forecast(history: list[dict[str, Any]], horizon: int = 3) -> dict[str, Any]:
+    vals=[float(x["value"]) for x in history if _num(x.get("value")) is not None]
+    if len(vals) < 18:
+        return {"forecast": vals[-1] if vals else None, "model":"persistence_insufficient_history", "samples":0, "skill_pct":0.0, "direction_accuracy":None, "fallback_used":True, "quality_gate":{"passed":False,"reason":"월별 YoY 이력 18개월 미만"}}
+    start=max(12,len(vals)-60-horizon)
+    errs=[[] for _ in range(5)]; base=[]
+    origins=list(range(start,len(vals)-horizon))
+    for o in origins:
+        tr=vals[:o+1]; actual=vals[o+horizon]; preds=_regional_candidates(tr,horizon)
+        for i,pred in enumerate(preds): errs[i].append(pred-actual)
+        base.append(tr[-1]-actual)
+    rmses=[math.sqrt(sum(e*e for e in es)/len(es)) if es else 999.0 for es in errs]
+    inv=[1/(r*r+0.04) for r in rmses]; sw=sum(inv) or 1.0; weights=[x/sw for x in inv]
+    preds=_regional_candidates(vals,horizon); fc=sum(w*p for w,p in zip(weights,preds))
+    n=min((len(e) for e in errs),default=0); ens=[]
+    for k in range(n): ens.append(sum(weights[i]*errs[i][k] for i in range(5)))
+    rmse=math.sqrt(sum(e*e for e in ens)/len(ens)) if ens else 999.0
+    br=math.sqrt(sum(e*e for e in base)/len(base)) if base else 999.0
+    skill=(1-rmse/br)*100 if br>0 and br<900 else 0.0
+    hits=cases=0
+    for k,o in enumerate(origins[:n]):
+        actual=vals[o+horizon]-vals[o]; pred=(vals[o+horizon]+ens[k])-vals[o]
+        if abs(actual)>=0.15:
+            cases+=1; hits += int((actual>=0)==(pred>=0))
+    da=hits/cases*100 if cases else None
+    fallback=skill<=0 or n<12
+    if fallback: fc=vals[-1]; skill=max(0.0,skill); rmse=br
+    passed=(not fallback) and n>=18 and skill>=3.0 and (da is None or da>=55.0)
+    return {"forecast":fc,"model":"inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion" if not fallback else "persistence", "samples":n,"rmse":rmse,"baseline_rmse":br,"skill_pct":skill,"direction_accuracy":da,"fallback_used":fallback,"quality_gate":{"passed":passed,"requirements":{"samples_min":18,"skill_pct_min":3.0,"direction_accuracy_min":55.0}}}
+
+
+def _read_cn_history_cache() -> list[dict[str, Any]]:
+    try:
+        obj=json.loads(CN_HISTORY_CACHE_PATH.read_text(encoding="utf-8")); rows=obj.get("history") if isinstance(obj,dict) else []
+        return [r for r in rows if r.get("date") and _num(r.get("value")) is not None]
+    except Exception:
+        return []
+
+
+def _write_cn_history_cache(rows: list[dict[str, Any]]) -> None:
+    CN_HISTORY_CACHE_PATH.parent.mkdir(parents=True,exist_ok=True)
+    ded={str(r["date"])[:7]:{"date":str(r["date"])[:7]+"-01","value":float(r["value"])} for r in rows if r.get("date") and _num(r.get("value")) is not None}
+    CN_HISTORY_CACHE_PATH.write_text(json.dumps({"saved_at_utc":now_iso(),"history":[ded[k] for k in sorted(ded)]},ensure_ascii=False,indent=2),encoding="utf-8")
 
 
 def _provider_for_url(url: str) -> str:
@@ -413,7 +483,7 @@ def _fetch_ecb(session: requests.Session) -> dict[str, Any]:
     prior3 = vals[-4][1] if len(vals) >= 4 else vals[0][1]
     return {
         "region": "EA", "label": "Euro area M2", "date": latest_m + "-01",
-        "yoy_pct": latest, "yoy_3m_ago_pct": prior3,
+        "yoy_pct": latest, "yoy_3m_ago_pct": prior3, "yoy_history": _history_from_yoy_pairs(vals),
         "source": f"ECB Data Portal {ECB_M2_KEY}", "source_url": ECB_M2_CSV,
     }
 
@@ -483,7 +553,7 @@ def _fetch_boj(session: requests.Session) -> dict[str, Any]:
     if len(vals) >= 4:
         latest_m, latest_yoy = vals[-1]
         prior3 = vals[-4][1]
-        out = {"date": latest_m + "-01", "yoy_pct": latest_yoy, "yoy_3m_ago_pct": prior3}
+        out = {"date": latest_m + "-01", "yoy_pct": latest_yoy, "yoy_3m_ago_pct": prior3, "yoy_history": _history_from_yoy_pairs(vals)}
         if levels:
             bym = {str(x["date"])[:7]: x["value"] for x in levels}
             out["level"] = bym.get(latest_m)
@@ -644,8 +714,10 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
 
     # At most four additional reports may be tried if a selected report changes HTML shape.
     fallback_candidates = [c for c in candidates if c not in selected][:4]
-    observations: list[dict[str, Any]] = []
+    cached_history = _read_cn_history_cache()
+    observations: list[dict[str, Any]] = [{"date":r["date"],"yoy_pct":float(r["value"]),"level":None,"source_url":None} for r in cached_history]
     errors: list[str] = []
+    backfill: list[dict[str, str]] = []
     for c in selected + fallback_candidates:
         if len(observations) >= 2:
             obs_months = sorted(str(o["date"])[:7] for o in observations if o.get("date"))
@@ -672,6 +744,8 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         raise ValueError("PBC latest M2 obtained but genuine 3-month comparison observation unavailable")
     prior = prior_candidates[-1]
 
+    hist=[{"date":str(o["date"])[:7]+"-01","value":float(o["yoy_pct"])} for o in rows if o.get("date") and _num(o.get("yoy_pct")) is not None]
+    _write_cn_history_cache(hist)
     return {
         "region": "CN", "label": "China M2", "date": latest.get("date"),
         "yoy_pct": float(latest["yoy_pct"]),
@@ -679,7 +753,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         "level": latest.get("level"),
         "source": "People's Bank of China Financial Statistics Reports",
         "source_url": latest.get("source_url"),
-        "history_points": len(rows),
+        "history_points": len(hist), "yoy_history": hist,
     }
 
 
@@ -785,12 +859,19 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
     component_forecasts: dict[str, Any] = {}
     has_direct_us = False
     for k, c in usable.items():
-        cur = float(c["yoy_pct"]); p3 = float(c.get("yoy_3m_ago_pct", cur))
+        cur = float(c["yoy_pct"])
+        audit: dict[str, Any]
         if k == "US" and _num(c.get("forecast_yoy_3m_pct")) is not None:
-            fc = float(c["forecast_yoy_3m_pct"]); method = "US Fed-engine history model"; has_direct_us = True
+            fc = float(c["forecast_yoy_3m_pct"])
+            method = "US Fed-engine history model"
+            has_direct_us = True
+            audit = {"skill_pct": None, "fallback_used": False, "quality_gate": {"passed": True}, "source_confidence": c.get("forecast_confidence")}
         else:
-            fc = cur + max(-2.0, min(2.0, (cur - p3) * 0.50)); method = "half-persistence of 3m YoY acceleration"
-        component_forecasts[k] = {"current_yoy_pct": round(cur,6), "forecast_3m_yoy_pct": round(fc,6), "method": method}
+            hist = c.get("yoy_history") if isinstance(c.get("yoy_history"), list) else []
+            audit = _regional_yoy_forecast(hist, 3) if hist else {"forecast":cur,"model":"persistence_no_history","samples":0,"skill_pct":0.0,"fallback_used":True,"quality_gate":{"passed":False,"reason":"장기 월별 YoY 이력 미확보"}}
+            fc = float(audit.get("forecast")) if _num(audit.get("forecast")) is not None else cur
+            method = "validated regional YoY walk-forward model" if not audit.get("fallback_used") else "persistence safety fallback"
+        component_forecasts[k] = {"current_yoy_pct": round(cur,6), "forecast_3m_yoy_pct": round(fc,6), "method": method, "validation": audit}
     forecast = sum(norm_weights[k] * float(component_forecasts[k]["forecast_3m_yoy_pct"]) for k in usable) if has_direct_us else legacy_forecast
     direction_score = max(-70.0, min(70.0, current * 4.0 + (forecast-current) * 20.0))
     change_pct = ((forecast / current) - 1.0) * 100.0 if abs(current) > 0.25 else (forecast - current) * 10.0
@@ -815,6 +896,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "acceleration_pp": round(acceleration, 6),
         "legacy_forecast": round(legacy_forecast, 6),
         "forecast_model": "region-specific forecast with direct US Fed-engine M2 model" if has_direct_us else "legacy composite acceleration fallback",
+        "forecast_model_detail": "US uses the Fed-engine history model; CN/EA/JP use benchmark-safe regional YoY forecasts and automatically fall back to persistence when skill is not positive.",
         "forecast_components": component_forecasts,
         "forward_liquidity_outlook": forward_liquidity,
         "us_dxy": ((forward_context.get("us_engine") or {}).get("dxy") or {}),
@@ -830,7 +912,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "runtime_ms": runtime_ms,
         "api_health": _API_HEALTH,
         "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
-        "methodology": "Weighted YoY broad-money growth composite. Current weights remain US/CN/EA/JP 40/30/20/10. The 3-month forecast uses the Fed-engine history-based US M2 forecast when available and conservative region acceleration for CN/EA/JP; the prior composite-acceleration forecast is retained as legacy_forecast for audit. DXY and real-yield signals are reported separately in forward_liquidity_outlook and do not alter the M2 level forecast.",
+        "methodology": "Weighted YoY broad-money growth composite. Current weights remain US/CN/EA/JP 40/30/20/10. US reuses the Fed-engine history model. CN/EA/JP use monthly YoY walk-forward models only when they beat persistence; otherwise they automatically remain at persistence. The prior composite-acceleration forecast is retained as legacy_forecast for audit. DXY and real-yield signals are reported separately and never alter the M2 level forecast.",
         "is_proxy": False,
     }
     _save_last_good(out)

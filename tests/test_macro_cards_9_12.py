@@ -16,7 +16,18 @@ class TestCards(unittest.TestCase):
         self.assertEqual(r['card'],11)
         self.assertEqual(r['market_signal'],'good')
 
+    def test_card11_has_separate_validated_future_gate(self):
+        c8={'market_signal':'neutral','quality_gates':{},'data_quality':{'core_completeness':100},'forecasts':{}}
+        fc={'forecast':55,'quality_gate':{'passed':True}}
+        c9={'market_signal':'good','current':50,'forecasts':{'3m':fc},'data_quality':{'core_completeness':100}}
+        c10={'market_signal':'neutral','current':50,'forecasts':{'3m':{'forecast':48,'quality_gate':{'passed':True}}},'data_quality':{'core_completeness':100}}
+        c12={'market_signal':'neutral','predictive_validation':{'groups':{},'passed_horizons':[]},'data_quality':{'completeness':100}}
+        out=build_card11(c8,c9,c10,c12)
+        self.assertIn('future_score',out)
+        self.assertTrue(out['future_quality_gate']['passed'])
+
 if __name__=='__main__': unittest.main()
+
 
 class TestOfficialSourceParsers(unittest.TestCase):
     def test_oecd_cli_csv(self):

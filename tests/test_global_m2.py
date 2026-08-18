@@ -173,5 +173,13 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertAlmostEqual(out['forecast_yoy_3m_pct'],5.5)
 
 
+
+    def test_regional_forecast_never_uses_negative_skill_model(self):
+        hist=[{'date':f'2024-{(i%12)+1:02d}-01','value':5.0} for i in range(24)]
+        out=global_m2._regional_yoy_forecast(hist,3)
+        self.assertGreaterEqual(out.get('skill_pct',0),0)
+        if out.get('skill_pct',0) <= 0:
+            self.assertTrue(out.get('fallback_used'))
+
 if __name__ == '__main__':
     unittest.main()

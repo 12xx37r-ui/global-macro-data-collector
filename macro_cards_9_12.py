@@ -742,6 +742,7 @@ def build_card9(session:requests.Session)->dict[str,Any]:
         'forecasts':forecasts,'data_quality':quality(data,CARD9_SERIES,errors),
         'source_status':source_status(data,CARD9_SERIES,source_overrides),
         'model_specification':{'selection':'expanding walk-forward','benchmark':'persistence','inputs':list(CARD9_SERIES)},
+        'forecast_use':{'horizon':'3m','usable':bool((forecasts['3m'].get('quality_gate') or {}).get('passed')),'status':'검증통과' if (forecasts['3m'].get('quality_gate') or {}).get('passed') else '참고용','reason':'3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용'},
     }
 
 def build_card10(session:requests.Session)->dict[str,Any]:
@@ -765,6 +766,7 @@ def build_card10(session:requests.Session)->dict[str,Any]:
         'investment_conclusion':'원가압력과 산업수요를 함께 봐 인플레이션·마진·원자재 자산 환경을 판단합니다.',
         'forecasts':forecasts,'data_quality':quality(data,CARD10_SERIES,errors),'source_status':source_status(data,CARD10_SERIES,source_overrides),
         'model_specification':{'selection':'expanding walk-forward','benchmark':'persistence','inputs':list(CARD10_SERIES)},
+        'forecast_use':{'horizon':'3m','usable':bool((forecasts['3m'].get('quality_gate') or {}).get('passed')),'status':'검증통과' if (forecasts['3m'].get('quality_gate') or {}).get('passed') else '참고용','reason':'3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용'},
     }
 
 def yahoo_history_with_snapshot(session:requests.Session,symbol:str)->tuple[list[dict[str,Any]],dict[str,Any]]:
@@ -939,6 +941,35 @@ def _card12_validation(card12: dict[str, Any]) -> dict[str, Any]:
     return {'passed': bool(passed), 'passed_horizons': passed}
 
 
+def _future_signal_card8(card8: dict[str, Any]) -> dict[str, Any]:
+    targets=((((card8.get('forecasts') or {}).get('3m') or {}).get('targets')) or {})
+    vals=[]; details=[]
+    for sid, adverse_up in [('DGS2',True),('DGS10',True),('DFII10',True),('T10Y2Y',False)]:
+        r=targets.get(sid) or {}; gate=r.get('quality_gate') or {}
+        if not gate.get('passed') or not finite(r.get('forecast')) or not finite(r.get('current')): continue
+        delta=float(r['forecast'])-float(r['current'])
+        sig=(-1 if delta>0.025 else 1 if delta<-0.025 else 0) if adverse_up else (1 if delta>0.025 else -1 if delta<-0.025 else 0)
+        vals.append(sig); details.append({'series':sid,'current':r['current'],'forecast':r['forecast'],'signal':sig})
+    return {'available':bool(vals),'signal':mean(vals) if vals else None,'details':details,'validation':'3m target-level gates'}
+
+def _future_signal_composite(card: dict[str, Any], adverse_up: bool=False) -> dict[str, Any]:
+    fc=((card.get('forecasts') or {}).get('3m') or {}); gate=fc.get('quality_gate') or {}
+    if not gate.get('passed') or not finite(card.get('current')) or not finite(fc.get('forecast')):
+        return {'available':False,'signal':None,'validation':'3m gate not passed'}
+    delta=float(fc['forecast'])-float(card['current'])
+    sig=(-1 if delta>.4 else 1 if delta<-.4 else 0) if adverse_up else (1 if delta>.4 else -1 if delta<-.4 else 0)
+    return {'available':True,'signal':sig,'current':card['current'],'forecast':fc['forecast'],'validation':'3m gate passed'}
+
+def _future_signal_card12(card12: dict[str, Any]) -> dict[str, Any]:
+    groups=((card12.get('predictive_validation') or {}).get('groups') or {}); vals=[]; details=[]
+    for g,obj in groups.items():
+        fc=((obj.get('forecasts') or {}).get('3m') or {}); gate=fc.get('quality_gate') or {}
+        cur=obj.get('current_index')
+        if not gate.get('passed') or not finite(cur) or not finite(fc.get('forecast')): continue
+        delta=float(fc['forecast'])-float(cur); sig=1 if delta>.4 else -1 if delta<-.4 else 0
+        vals.append(sig); details.append({'group':g,'current':cur,'forecast':fc['forecast'],'signal':sig})
+    return {'available':bool(vals),'signal':mean(vals) if vals else None,'details':details,'validation':'validated 3m groups only'}
+
 def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
     validations = {
         'card8': _card8_validation(card8),
@@ -958,6 +989,20 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
     denom = sum(w for _, w in signals) or 1.0
     score = sum(s * w for s, w in signals) / denom * 100
     signal = 'good' if score >= 20 else 'bad' if score <= -20 else 'neutral'
+
+    future_inputs={
+        'card8':_future_signal_card8(card8),
+        'card9':_future_signal_composite(card9,False),
+        'card10':_future_signal_composite(card10,True),
+        'card12':_future_signal_card12(card12),
+    }
+    future_parts=[]
+    for key,obj in future_inputs.items():
+        if obj.get('available') and finite(obj.get('signal')):
+            future_parts.append((float(obj['signal']),weights[key]))
+    future_denom=sum(w for _,w in future_parts) or 1.0
+    future_score=(sum(v*w for v,w in future_parts)/future_denom*100) if future_parts else None
+    future_signal=('good' if future_score is not None and future_score>=20 else 'bad' if future_score is not None and future_score<=-20 else 'neutral') if future_score is not None else 'unavailable'
 
     quality_checks = {
         'card8_validation': validations['card8']['passed'],
@@ -982,7 +1027,9 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
         'schema_version': '1.1', 'card': 11, 'title': '글로벌 경기국면 최종판정·투자환경', 'generated_at_utc': now_iso(),
         'score': round(score, 1), 'market_signal': signal,
         'current_regime': '확장·위험선호' if signal == 'good' else '수축·위험회피' if signal == 'bad' else '혼합·중립',
-        'future_regime': '우호적 투자환경' if signal == 'good' else '불리한 투자환경' if signal == 'bad' else '중립적 투자환경',
+        'future_regime': ('우호적 투자환경' if future_signal == 'good' else '불리한 투자환경' if future_signal == 'bad' else '중립적 투자환경' if future_signal == 'neutral' else '검증된 향후신호 부족'),
+        'future_score': round(future_score,1) if future_score is not None else None, 'future_market_signal': future_signal, 'future_inputs': future_inputs,
+        'future_quality_gate': {'passed': len(future_parts)>=2, 'validated_input_count':len(future_parts), 'rule':'검증된 3개월 하위신호 2개 이상일 때만 향후 종합판정 사용'},
         'asset_environment': {
             'global_equities': '우호' if signal == 'good' else '불리' if signal == 'bad' else '중립',
             'long_treasuries': '우호' if card8.get('market_signal') == 'good' else '중립',
@@ -1005,6 +1052,17 @@ def main():
     for n,obj in [(9,card9),(10,card10),(11,card11),(12,card12)]:
         (OUT_DIR/f'card{n}.json').write_text(json.dumps(obj,ensure_ascii=False,indent=2),encoding='utf-8')
     (OUT_DIR/'global_m2.json').write_text(json.dumps(global_m2,ensure_ascii=False,indent=2),encoding='utf-8')
+    forecast_audit={
+        'schema_version':'1.0','generated_at_utc':now_iso(),
+        'global_m2':{'current':global_m2.get('current'),'forecast_3m':global_m2.get('forecast'),'model':global_m2.get('forecast_model'),'components':global_m2.get('forecast_components')},
+        'card8':{'quality_gates':card8.get('quality_gates'),'forecast_horizons':list((card8.get('forecasts') or {}).keys())},
+        'card9':{'current':card9.get('current'),'forecast_3m':card9.get('forecast_3m'),'forecast_use':card9.get('forecast_use'),'validation':_generic_forecast_validation(card9)},
+        'card10':{'current':card10.get('current'),'forecast_3m':card10.get('forecast_3m'),'forecast_use':card10.get('forecast_use'),'validation':_generic_forecast_validation(card10)},
+        'card11':{'current_score':card11.get('score'),'future_score':card11.get('future_score'),'future_market_signal':card11.get('future_market_signal'),'future_quality_gate':card11.get('future_quality_gate')},
+        'card12':{'validation':_card12_validation(card12),'passed_horizons':((card12.get('predictive_validation') or {}).get('passed_horizons') or [])},
+        'policy':'Forecasts that fail their persistence/quality gate remain reference-only and are not promoted into the validated future composite.'
+    }
+    (OUT_DIR/'macro_forecast_audit.json').write_text(json.dumps(forecast_audit,ensure_ascii=False,indent=2),encoding='utf-8')
     bundle={
         'generated_at_utc':now_iso(),
         'global_m2':global_m2,
