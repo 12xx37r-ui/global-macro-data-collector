@@ -752,7 +752,12 @@ def _pbc_cn_archive_candidates(
         try:
             r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
             calls += 1
-            for c in _pbc_listing_candidates(r.text, u):
+            # PBC's Chinese archive is sometimes served without a reliable charset
+            # header. requests.Response.text can then mojibake "金融统计数据报告",
+            # leaving the listing parser with zero candidates. BeautifulSoup on
+            # raw bytes performs encoding detection and preserves the Chinese titles.
+            archive_html = str(BeautifulSoup(r.content, "html.parser"))
+            for c in _pbc_listing_candidates(archive_html, u):
                 mk = c.get("month")
                 if not mk:
                     continue
