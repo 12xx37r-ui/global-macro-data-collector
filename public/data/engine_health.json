@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-08-18T18:08:19.033126+00:00",
+  "status": "HEALTHY",
+  "data_coverage": {
+    "weight": 1.0,
+    "regions": [
+      "CN",
+      "EA",
+      "JP",
+      "US"
+    ],
+    "quality": "FULL"
+  },
+  "stale_inputs": [],
+  "fallbacks": [
+    "global_m2:CN"
+  ],
+  "forecast_counts": {
+    "validated": 5,
+    "reference_only": 7,
+    "degraded": 0
+  },
+  "api": {
+    "errors": 0,
+    "providers": {
+      "ECB": {
+        "provider": "ECB",
+        "request_attempts": 1,
+        "network_calls": 1,
+        "memory_cache_hits": 0,
+        "http_429": 0,
+        "http_5xx": 0,
+        "timeouts": 0,
+        "retries": 0,
+        "last_success_utc": "2026-08-18T18:08:07.433315+00:00",
+        "last_failure_utc": null,
+        "cooldown": false,
+        "final_status": "LIVE"
+      },
+      "BOJ": {
+        "provider": "BOJ",
+        "request_attempts": 1,
+        "network_calls": 1,
+        "memory_cache_hits": 0,
+        "http_429": 0,
+        "http_5xx": 0,
+        "timeouts": 0,
+        "retries": 0,
+        "last_success_utc": "2026-08-18T18:08:08.072893+00:00",
+        "last_failure_utc": null,
+        "cooldown": false,
+        "final_status": "LIVE"
+      },
+      "PBC": {
+        "provider": "PBC",
+        "request_attempts": 18,
+        "network_calls": 16,
+        "memory_cache_hits": 2,
+        "http_429": 0,
+        "http_5xx": 0,
+        "timeouts": 0,
+        "retries": 0,
+        "last_success_utc": "2026-08-18T18:08:18.964503+00:00",
+        "last_failure_utc": null,
+        "cooldown": false,
+        "final_status": "LIVE"
+      }
+    }
+  },
+  "runtime_ms": 12301,
+  "model_degradation": [],
+  "composite_oos": {
+    "status": "ACTIVE_ACCUMULATION",
+    "snapshot_count": 1
+  }
+}

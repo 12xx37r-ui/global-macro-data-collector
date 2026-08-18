@@ -2,18 +2,18 @@
   "schema_version": "1.1",
   "card": 12,
   "title": "선물시장 현재신호·검증형 방향예측",
-  "generated_at_utc": "2026-08-18T17:43:48.730985+00:00",
+  "generated_at_utc": "2026-08-18T18:08:06.714788+00:00",
   "current": {
     "ES=F": {
-      "value": 7722.0,
+      "value": 7717.75,
       "date": "2026-08-18"
     },
     "NQ=F": {
-      "value": 29615.0,
+      "value": 29572.0,
       "date": "2026-08-18"
     },
     "RTY=F": {
-      "value": 3030.5,
+      "value": 3028.1,
       "date": "2026-08-18"
     },
     "ZT=F": {
@@ -21,11 +21,11 @@
       "date": "2026-08-18"
     },
     "ZF=F": {
-      "value": 106.41406,
+      "value": 106.42969,
       "date": "2026-08-18"
     },
     "ZN=F": {
-      "value": 108.53125,
+      "value": 108.546875,
       "date": "2026-08-18"
     },
     "ZB=F": {
@@ -33,15 +33,15 @@
       "date": "2026-08-18"
     },
     "CL=F": {
-      "value": 84.18,
+      "value": 84.13,
       "date": "2026-08-18"
     },
     "GC=F": {
-      "value": 4420.9,
+      "value": 4413.7,
       "date": "2026-08-18"
     },
     "HG=F": {
-      "value": 6.486,
+      "value": 6.477,
       "date": "2026-08-18"
     },
     "DX-Y.NYB": {
@@ -49,16 +49,16 @@
       "date": "2026-08-18"
     },
     "BTC=F": {
-      "value": 64935.0,
+      "value": 64780.0,
       "date": "2026-08-18"
     }
   },
   "group_scores": {
-    "equity": 0.8641144488506421,
-    "rates": -0.24534015240619025,
-    "commodities": 0.2426517731136099,
+    "equity": 0.8429776779206278,
+    "rates": -0.24100222990791392,
+    "commodities": 0.22253494700848522,
     "dollar": -0.2846144302065027,
-    "crypto": -0.842749593340602
+    "crypto": -0.8724813114827044
   },
   "market_signal": "good",
   "current_regime": "위험선호 우세",
@@ -67,26 +67,33 @@
   "predictive_validation": {
     "groups": {
       "equity": {
-        "current_index": 58.64114448850642,
+        "current_index": 58.42977677920628,
         "forecasts": {
           "5d": {
-            "forecast": 58.64114448850642,
+            "forecast": 58.42977677920628,
             "model": "persistence",
             "samples": 180,
-            "rmse": 5.962569751717466,
-            "baseline_rmse": 5.962569751717466,
+            "rmse": 5.962044025407329,
+            "baseline_rmse": 5.962044025407329,
             "skill_pct": 0,
             "direction_accuracy": 0.5441176470588235,
             "fallback_used": true,
             "range80": [
-              51.07474788902691,
-              66.20754108798593
+              50.86338017972677,
+              65.99617337868578
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
               "persistence": 97,
               "mean_reversion_24m": 83
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 6.308655705576071,
+              "baseline_rmse": 6.308655705576071,
+              "skill_pct": 0.0
+            },
+            "degradation_status": "DEGRADED",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
@@ -97,26 +104,28 @@
                 "significant_10pct": false,
                 "hac_lag": 4
               },
+              "degradation_blocked": true,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 4
+                "hac_lag": 4,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "1m": {
-            "forecast": 55.048822508852034,
+            "forecast": 55.03191309210802,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 12.037721181210802,
-            "baseline_rmse": 12.361104997525551,
-            "skill_pct": 2.6161400326223605,
+            "rmse": 12.038180171467749,
+            "baseline_rmse": 12.360792010351624,
+            "skill_pct": 2.6099609039105354,
             "direction_accuracy": 0.6715328467153284,
             "fallback_used": false,
             "range80": [
-              41.49528019101745,
-              68.60236482668661
+              41.478370774273436,
+              68.5854554099426
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -124,36 +133,45 @@
               "mean_reversion_12m": 88,
               "mean_reversion_24m": 80
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 12.716609310328325,
+              "baseline_rmse": 13.094756253774914,
+              "skill_pct": 2.887773824255635
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
               "dm_test": {
-                "statistic": 0.4974242427984227,
-                "p_value": 0.6188899134409067,
+                "statistic": 0.49621485327540765,
+                "p_value": 0.6197428325864365,
                 "significant_5pct": false,
                 "significant_10pct": false,
                 "hac_lag": 20
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 20
+                "hac_lag": 20,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "3m": {
-            "forecast": 55.048822508852034,
+            "forecast": 55.03191309210802,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 13.941765577371175,
-            "baseline_rmse": 15.951510235624333,
-            "skill_pct": 12.599087036692092,
+            "rmse": 13.94267761199174,
+            "baseline_rmse": 15.951999141784427,
+            "skill_pct": 12.596048381983039,
             "direction_accuracy": 0.6578947368421053,
             "fallback_used": false,
             "range80": [
-              38.19624243082579,
-              71.90140258687828
+              38.17933301408178,
+              71.88449317013426
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -161,41 +179,50 @@
               "mean_reversion_24m": 132,
               "mean_reversion_12m": 36
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 9.65540174344402,
+              "baseline_rmse": 15.568705875687757,
+              "skill_pct": 37.9819888657413
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": true,
               "level": "독립검증 통과",
               "dm_test": {
-                "statistic": 2.109993496438835,
-                "p_value": 0.034858916062330714,
+                "statistic": 2.1099336348213322,
+                "p_value": 0.03486407262932678,
                 "significant_5pct": true,
                 "significant_10pct": true,
                 "hac_lag": 60
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 62
+                "hac_lag": 62,
+                "recent_oos_nonnegative_skill": true
               }
             }
           }
         }
       },
       "rates": {
-        "current_index": 47.5465984759381,
+        "current_index": 47.58997770092086,
         "forecasts": {
           "5d": {
-            "forecast": 47.5465984759381,
+            "forecast": 47.58997770092086,
             "model": "persistence",
             "samples": 180,
-            "rmse": 3.335698606812845,
-            "baseline_rmse": 3.335698606812845,
+            "rmse": 3.3358353797169094,
+            "baseline_rmse": 3.3358353797169094,
             "skill_pct": 0,
             "direction_accuracy": 0.6666666666666666,
             "fallback_used": true,
             "range80": [
-              43.23461633389882,
-              51.858580617977374
+              43.277995558881585,
+              51.90195984296014
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -203,6 +230,13 @@
               "mean_reversion_24m": 11,
               "mean_reversion_12m": 35
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 2.1255637477018015,
+              "baseline_rmse": 2.1255637477018015,
+              "skill_pct": 0.0
+            },
+            "degradation_status": "DEGRADED",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
@@ -213,26 +247,28 @@
                 "significant_10pct": false,
                 "hac_lag": 4
               },
+              "degradation_blocked": true,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 4
+                "hac_lag": 4,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "1m": {
-            "forecast": 43.79857182838481,
+            "forecast": 43.80204216638344,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 4.826903633315587,
-            "baseline_rmse": 6.9067915910984015,
-            "skill_pct": 30.113663201643604,
+            "rmse": 4.826929285572514,
+            "baseline_rmse": 6.906973101858668,
+            "skill_pct": 30.115128372606716,
             "direction_accuracy": 0.8118811881188119,
             "fallback_used": false,
             "range80": [
-              37.56616128666345,
-              50.030982370106166
+              37.56963162466208,
+              50.034452708104794
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -240,36 +276,45 @@
               "mean_reversion_12m": 22,
               "mean_reversion_24m": 102
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 2.987894742245985,
+              "baseline_rmse": 5.924861719311549,
+              "skill_pct": 49.57021979927036
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": true,
               "level": "독립검증 통과",
               "dm_test": {
-                "statistic": 3.7571616800996663,
-                "p_value": 0.00017185147162490644,
+                "statistic": 3.7576942585335766,
+                "p_value": 0.00017148622902518618,
                 "significant_5pct": true,
                 "significant_10pct": true,
                 "hac_lag": 20
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 20
+                "hac_lag": 20,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "3m": {
-            "forecast": 43.79857182838481,
+            "forecast": 43.80204216638344,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 5.862652731564887,
-            "baseline_rmse": 7.303059489690564,
-            "skill_pct": 19.723333216154703,
+            "rmse": 5.862777202584754,
+            "baseline_rmse": 7.303423397098873,
+            "skill_pct": 19.725628875444702,
             "direction_accuracy": 0.7164179104477612,
             "fallback_used": false,
             "range80": [
-              35.413325679259685,
-              52.18381797750993
+              35.416796017258314,
+              52.18728831550856
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -277,41 +322,50 @@
               "mean_reversion_24m": 160,
               "mean_reversion_12m": 8
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 2.706479391142732,
+              "baseline_rmse": 6.131830530431899,
+              "skill_pct": 55.86180378419397
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
               "dm_test": {
-                "statistic": 1.9440510478711177,
-                "p_value": 0.0518892955448611,
+                "statistic": 1.9442937465282535,
+                "p_value": 0.05186003833369579,
                 "significant_5pct": false,
                 "significant_10pct": true,
                 "hac_lag": 60
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 62
+                "hac_lag": 62,
+                "recent_oos_nonnegative_skill": true
               }
             }
           }
         }
       },
       "commodities": {
-        "current_index": 52.4265177311361,
+        "current_index": 52.22534947008485,
         "forecasts": {
           "5d": {
-            "forecast": 52.4265177311361,
+            "forecast": 52.22534947008485,
             "model": "persistence",
             "samples": 180,
-            "rmse": 4.529872974670855,
-            "baseline_rmse": 4.529872974670855,
+            "rmse": 4.530243835651857,
+            "baseline_rmse": 4.530243835651857,
             "skill_pct": 0,
             "direction_accuracy": 0.5904761904761905,
             "fallback_used": true,
             "range80": [
-              46.66145164800878,
-              58.191583814263424
+              46.46028338695753,
+              57.99041555321217
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -319,6 +373,13 @@
               "mean_reversion_12m": 66,
               "mean_reversion_24m": 76
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 4.6975972445151175,
+              "baseline_rmse": 4.332761811579164,
+              "skill_pct": -8.420389783738912
+            },
+            "degradation_status": "DEGRADED",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
@@ -329,26 +390,28 @@
                 "significant_10pct": false,
                 "hac_lag": 4
               },
+              "degradation_blocked": true,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 4
+                "hac_lag": 4,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "1m": {
-            "forecast": 52.65150873460519,
+            "forecast": 52.649497051994686,
             "model": "mean_reversion_12m",
             "samples": 180,
-            "rmse": 7.893095151587265,
-            "baseline_rmse": 8.080566898232878,
-            "skill_pct": 2.320032109215142,
+            "rmse": 7.891408262169884,
+            "baseline_rmse": 8.079406359956703,
+            "skill_pct": 2.3268800876086404,
             "direction_accuracy": 0.6590909090909091,
             "fallback_used": false,
             "range80": [
-              42.21071292790926,
-              63.09230454130111
+              42.20870124529876,
+              63.09029285869061
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -356,36 +419,45 @@
               "mean_reversion_24m": 6,
               "mean_reversion_12m": 162
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 10.528985659108546,
+              "baseline_rmse": 10.94273918526123,
+              "skill_pct": 3.781078203069743
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
               "dm_test": {
-                "statistic": 0.4794382326597637,
-                "p_value": 0.6316268999980172,
+                "statistic": 0.4807900988836182,
+                "p_value": 0.6306656879025225,
                 "significant_5pct": false,
                 "significant_10pct": false,
                 "hac_lag": 20
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 20
+                "hac_lag": 20,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "3m": {
-            "forecast": 52.4265177311361,
+            "forecast": 52.22534947008485,
             "model": "persistence",
             "samples": 180,
-            "rmse": 10.122153159595841,
-            "baseline_rmse": 10.122153159595841,
+            "rmse": 10.122953715656347,
+            "baseline_rmse": 10.122953715656347,
             "skill_pct": 0,
             "direction_accuracy": 0.5476190476190477,
             "fallback_used": true,
             "range80": [
-              39.88995727678157,
-              64.96307818549063
+              39.68878901573032,
+              64.76190992443938
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -393,6 +465,13 @@
               "mean_reversion_12m": 18,
               "mean_reversion_24m": 30
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 7.542211493099662,
+              "baseline_rmse": 7.542211493099662,
+              "skill_pct": 0.0
+            },
+            "degradation_status": "DEGRADED",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
@@ -403,31 +482,33 @@
                 "significant_10pct": false,
                 "hac_lag": 60
               },
+              "degradation_blocked": true,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 62
+                "hac_lag": 62,
+                "recent_oos_nonnegative_skill": true
               }
             }
           }
         }
       },
       "crypto": {
-        "current_index": 41.57250406659398,
+        "current_index": 41.27518688517296,
         "forecasts": {
           "5d": {
-            "forecast": 41.57250406659398,
+            "forecast": 41.27518688517296,
             "model": "persistence",
             "samples": 180,
-            "rmse": 7.2896596503391775,
-            "baseline_rmse": 7.2896596503391775,
+            "rmse": 7.289330701485343,
+            "baseline_rmse": 7.289330701485343,
             "skill_pct": 0,
             "direction_accuracy": 0.4642857142857143,
             "fallback_used": true,
             "range80": [
-              33.04798883356093,
-              50.09701929962703
+              32.75067165213991,
+              49.79970211820601
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -435,6 +516,13 @@
               "mean_reversion_24m": 24,
               "mean_reversion_12m": 14
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 4.139165537760981,
+              "baseline_rmse": 4.139165537760981,
+              "skill_pct": 0.0
+            },
+            "degradation_status": "DEGRADED",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
@@ -445,26 +533,28 @@
                 "significant_10pct": false,
                 "hac_lag": 4
               },
+              "degradation_blocked": true,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 4
+                "hac_lag": 4,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "1m": {
-            "forecast": 42.73771872348236,
+            "forecast": 42.71393334896868,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 14.30702562310635,
-            "baseline_rmse": 16.034294206968234,
-            "skill_pct": 10.77233934694326,
+            "rmse": 14.306569647239666,
+            "baseline_rmse": 16.03447327063853,
+            "skill_pct": 10.776179511695638,
             "direction_accuracy": 0.6268656716417911,
             "fallback_used": false,
             "range80": [
-              24.33526638959734,
-              61.14017105736738
+              24.31148101508366,
+              61.1163856828537
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -472,36 +562,45 @@
               "mean_reversion_12m": 21,
               "mean_reversion_24m": 123
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 7.7583926844284745,
+              "baseline_rmse": 11.480791494003553,
+              "skill_pct": 32.42284133040215
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": true,
               "level": "독립검증 통과",
               "dm_test": {
-                "statistic": 2.0357406573448293,
-                "p_value": 0.04177640415200168,
+                "statistic": 2.0365566163171938,
+                "p_value": 0.041694494062703535,
                 "significant_5pct": true,
                 "significant_10pct": true,
                 "hac_lag": 20
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 20
+                "hac_lag": 20,
+                "recent_oos_nonnegative_skill": true
               }
             }
           },
           "3m": {
-            "forecast": 42.73771872348236,
+            "forecast": 42.71393334896868,
             "model": "mean_reversion_24m",
             "samples": 180,
-            "rmse": 14.494447517425577,
-            "baseline_rmse": 16.438264057490063,
-            "skill_pct": 11.82495020925759,
+            "rmse": 14.496114225779259,
+            "baseline_rmse": 16.439672263565125,
+            "skill_pct": 11.822364866076619,
             "direction_accuracy": 0.6602564102564102,
             "fallback_used": false,
             "range80": [
-              25.48384656315669,
-              59.99159088380803
+              25.46006118864301,
+              59.96780550929435
             ],
             "selection_method": "online_prequential_candidate_selection",
             "selected_model_counts": {
@@ -509,21 +608,30 @@
               "mean_reversion_12m": 111,
               "mean_reversion_24m": 57
             },
+            "recent_oos": {
+              "samples": 24,
+              "rmse": 11.375939110978434,
+              "baseline_rmse": 16.569711072387346,
+              "skill_pct": 31.34497601508629
+            },
+            "degradation_status": "STABLE",
             "quality_gate": {
               "passed": false,
               "level": "참고용/관망",
               "dm_test": {
-                "statistic": 1.8823311399575857,
-                "p_value": 0.059791068990296736,
+                "statistic": 1.8823166207154252,
+                "p_value": 0.05979303914460221,
                 "significant_5pct": false,
                 "significant_10pct": true,
                 "hac_lag": 60
               },
+              "degradation_blocked": false,
               "requirements": {
                 "skill_pct_min": 3.0,
                 "direction_accuracy_min": 0.55,
                 "dm_p_value_max": 0.05,
-                "hac_lag": 62
+                "hac_lag": 62,
+                "recent_oos_nonnegative_skill": true
               }
             }
           }
@@ -550,19 +658,19 @@
       "ok": true,
       "label": "S&P500 선물",
       "latest": {
-        "value": 7722.0,
+        "value": 7717.75,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "ES=F",
-        "price": 7722.0,
-        "market_time_utc": "2026-08-18T17:33:40+00:00",
+        "price": 7717.75,
+        "market_time_utc": "2026-08-18T17:57:59+00:00",
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:42.958473+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:01.185220+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -570,19 +678,19 @@
       "ok": true,
       "label": "나스닥100 선물",
       "latest": {
-        "value": 29615.0,
+        "value": 29572.0,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "NQ=F",
-        "price": 29615.0,
-        "market_time_utc": "2026-08-18T17:33:41+00:00",
+        "price": 29572.0,
+        "market_time_utc": "2026-08-18T17:58:01+00:00",
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:43.193851+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:01.442659+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -590,19 +698,19 @@
       "ok": true,
       "label": "러셀2000 선물",
       "latest": {
-        "value": 3030.5,
+        "value": 3028.1,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "RTY=F",
-        "price": 3030.5,
-        "market_time_utc": "2026-08-18T17:33:42+00:00",
+        "price": 3028.1,
+        "market_time_utc": "2026-08-18T17:58:01+00:00",
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:43.500476+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:01.711462+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -617,12 +725,12 @@
       "market_snapshot": {
         "symbol": "ZT=F",
         "price": 103.05078,
-        "market_time_utc": "2026-08-18T17:33:41+00:00",
+        "market_time_utc": "2026-08-18T17:56:34+00:00",
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:43.775152+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:01.920186+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -630,19 +738,19 @@
       "ok": true,
       "label": "미국 5년 국채선물",
       "latest": {
-        "value": 106.41406,
+        "value": 106.42969,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "ZF=F",
-        "price": 106.41406,
-        "market_time_utc": "2026-08-18T17:33:34+00:00",
+        "price": 106.42969,
+        "market_time_utc": "2026-08-18T17:57:49+00:00",
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:44.008408+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:02.209922+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -650,19 +758,19 @@
       "ok": true,
       "label": "미국 10년 국채선물",
       "latest": {
-        "value": 108.53125,
+        "value": 108.546875,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "ZN=F",
-        "price": 108.53125,
-        "market_time_utc": "2026-08-18T17:33:23+00:00",
+        "price": 108.546875,
+        "market_time_utc": "2026-08-18T17:57:57+00:00",
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:44.235963+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:02.414402+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -677,12 +785,12 @@
       "market_snapshot": {
         "symbol": "ZB=F",
         "price": 108.625,
-        "market_time_utc": "2026-08-18T17:33:23+00:00",
+        "market_time_utc": "2026-08-18T17:57:56+00:00",
         "exchange": "CBT",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:44.468945+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:02.679443+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -690,19 +798,19 @@
       "ok": true,
       "label": "WTI 원유선물",
       "latest": {
-        "value": 84.18,
+        "value": 84.13,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "CL=F",
-        "price": 84.18,
-        "market_time_utc": "2026-08-18T17:33:43+00:00",
+        "price": 84.13,
+        "market_time_utc": "2026-08-18T17:58:00+00:00",
         "exchange": "NYM",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:44.753614+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:02.910708+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -710,19 +818,19 @@
       "ok": true,
       "label": "금선물",
       "latest": {
-        "value": 4420.9,
+        "value": 4413.7,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "GC=F",
-        "price": 4420.9,
-        "market_time_utc": "2026-08-18T17:33:41+00:00",
+        "price": 4413.7,
+        "market_time_utc": "2026-08-18T17:58:00+00:00",
         "exchange": "CMX",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:44.984612+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:03.138953+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -730,19 +838,19 @@
       "ok": true,
       "label": "구리선물",
       "latest": {
-        "value": 6.486,
+        "value": 6.477,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "HG=F",
-        "price": 6.486,
-        "market_time_utc": "2026-08-18T17:33:36+00:00",
+        "price": 6.477,
+        "market_time_utc": "2026-08-18T17:57:57+00:00",
         "exchange": "CMX",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:45.234995+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:03.401964+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -757,12 +865,12 @@
       "market_snapshot": {
         "symbol": "DX-Y.NYB",
         "price": 99.653,
-        "market_time_utc": "2026-08-18T17:33:44+00:00",
+        "market_time_utc": "2026-08-18T17:58:01+00:00",
         "exchange": "NYB",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:45.473005+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:03.611999+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     },
@@ -770,19 +878,19 @@
       "ok": true,
       "label": "비트코인선물",
       "latest": {
-        "value": 64935.0,
+        "value": 64780.0,
         "date": "2026-08-18"
       },
       "source": "Yahoo Finance delayed futures",
       "market_snapshot": {
         "symbol": "BTC=F",
-        "price": 64935.0,
-        "market_time_utc": "2026-08-18T17:32:24+00:00",
+        "price": 64780.0,
+        "market_time_utc": "2026-08-18T17:57:34+00:00",
         "exchange": "CME",
         "exchange_timezone": "America/New_York",
         "market_state": null,
         "source": "Yahoo Finance chart metadata",
-        "retrieved_at_utc": "2026-08-18T17:43:45.689672+00:00",
+        "retrieved_at_utc": "2026-08-18T18:08:03.811091+00:00",
         "refetch_policy": "network_each_workflow_no_cache"
       }
     }
@@ -790,134 +898,134 @@
   "market_snapshots": {
     "ES=F": {
       "symbol": "ES=F",
-      "price": 7722.0,
-      "market_time_utc": "2026-08-18T17:33:40+00:00",
+      "price": 7717.75,
+      "market_time_utc": "2026-08-18T17:57:59+00:00",
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:42.958473+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:01.185220+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "NQ=F": {
       "symbol": "NQ=F",
-      "price": 29615.0,
-      "market_time_utc": "2026-08-18T17:33:41+00:00",
+      "price": 29572.0,
+      "market_time_utc": "2026-08-18T17:58:01+00:00",
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:43.193851+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:01.442659+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "RTY=F": {
       "symbol": "RTY=F",
-      "price": 3030.5,
-      "market_time_utc": "2026-08-18T17:33:42+00:00",
+      "price": 3028.1,
+      "market_time_utc": "2026-08-18T17:58:01+00:00",
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:43.500476+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:01.711462+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZT=F": {
       "symbol": "ZT=F",
       "price": 103.05078,
-      "market_time_utc": "2026-08-18T17:33:41+00:00",
+      "market_time_utc": "2026-08-18T17:56:34+00:00",
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:43.775152+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:01.920186+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZF=F": {
       "symbol": "ZF=F",
-      "price": 106.41406,
-      "market_time_utc": "2026-08-18T17:33:34+00:00",
+      "price": 106.42969,
+      "market_time_utc": "2026-08-18T17:57:49+00:00",
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:44.008408+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:02.209922+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZN=F": {
       "symbol": "ZN=F",
-      "price": 108.53125,
-      "market_time_utc": "2026-08-18T17:33:23+00:00",
+      "price": 108.546875,
+      "market_time_utc": "2026-08-18T17:57:57+00:00",
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:44.235963+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:02.414402+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "ZB=F": {
       "symbol": "ZB=F",
       "price": 108.625,
-      "market_time_utc": "2026-08-18T17:33:23+00:00",
+      "market_time_utc": "2026-08-18T17:57:56+00:00",
       "exchange": "CBT",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:44.468945+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:02.679443+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "CL=F": {
       "symbol": "CL=F",
-      "price": 84.18,
-      "market_time_utc": "2026-08-18T17:33:43+00:00",
+      "price": 84.13,
+      "market_time_utc": "2026-08-18T17:58:00+00:00",
       "exchange": "NYM",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:44.753614+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:02.910708+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "GC=F": {
       "symbol": "GC=F",
-      "price": 4420.9,
-      "market_time_utc": "2026-08-18T17:33:41+00:00",
+      "price": 4413.7,
+      "market_time_utc": "2026-08-18T17:58:00+00:00",
       "exchange": "CMX",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:44.984612+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:03.138953+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "HG=F": {
       "symbol": "HG=F",
-      "price": 6.486,
-      "market_time_utc": "2026-08-18T17:33:36+00:00",
+      "price": 6.477,
+      "market_time_utc": "2026-08-18T17:57:57+00:00",
       "exchange": "CMX",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:45.234995+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:03.401964+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "DX-Y.NYB": {
       "symbol": "DX-Y.NYB",
       "price": 99.653,
-      "market_time_utc": "2026-08-18T17:33:44+00:00",
+      "market_time_utc": "2026-08-18T17:58:01+00:00",
       "exchange": "NYB",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:45.473005+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:03.611999+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     },
     "BTC=F": {
       "symbol": "BTC=F",
-      "price": 64935.0,
-      "market_time_utc": "2026-08-18T17:32:24+00:00",
+      "price": 64780.0,
+      "market_time_utc": "2026-08-18T17:57:34+00:00",
       "exchange": "CME",
       "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-18T17:43:45.689672+00:00",
+      "retrieved_at_utc": "2026-08-18T18:08:03.811091+00:00",
       "refetch_policy": "network_each_workflow_no_cache"
     }
   },

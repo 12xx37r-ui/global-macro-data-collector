@@ -3,7 +3,7 @@
   "engine_version": "card9-2.6.0-oecd-cli-direct",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-08-18T17:43:34.977918+00:00",
+  "generated_at_utc": "2026-08-18T18:07:53.030958+00:00",
   "current": 43.9925529025267,
   "current_date": "2026-07-01",
   "forecast_3m": 45.298874455769166,
@@ -37,6 +37,13 @@
         "mean_reversion_12m": 92,
         "mean_reversion_24m": 76
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 1.1690184539187143,
+        "baseline_rmse": 1.1846882598720083,
+        "skill_pct": 1.3226944576108957
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
@@ -47,11 +54,13 @@
           "significant_10pct": false,
           "hac_lag": 0
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 0
+          "hac_lag": 0,
+          "recent_oos_nonnegative_skill": true
         }
       }
     },
@@ -74,6 +83,13 @@
         "mean_reversion_12m": 109,
         "mean_reversion_24m": 59
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 1.796239553059439,
+        "baseline_rmse": 1.9825574123095093,
+        "skill_pct": 9.397854412348439
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
@@ -84,11 +100,13 @@
           "significant_10pct": false,
           "hac_lag": 2
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 2
+          "hac_lag": 2,
+          "recent_oos_nonnegative_skill": true
         }
       }
     },
@@ -110,6 +128,13 @@
         "persistence": 12,
         "mean_reversion_12m": 168
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 1.808208387172013,
+        "baseline_rmse": 2.0952956290498057,
+        "skill_pct": 13.701514855351638
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
@@ -120,11 +145,13 @@
           "significant_10pct": true,
           "hac_lag": 5
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 5
+          "hac_lag": 5,
+          "recent_oos_nonnegative_skill": true
         }
       }
     },
@@ -147,6 +174,13 @@
         "mean_reversion_12m": 83,
         "mean_reversion_24m": 64
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 2.35590164578171,
+        "baseline_rmse": 2.3096064720299343,
+        "skill_pct": -2.004461552754777
+      },
+      "degradation_status": "DEGRADED",
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
@@ -157,11 +191,13 @@
           "significant_10pct": true,
           "hac_lag": 11
         },
+        "degradation_blocked": true,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 11
+          "hac_lag": 11,
+          "recent_oos_nonnegative_skill": true
         }
       }
     }

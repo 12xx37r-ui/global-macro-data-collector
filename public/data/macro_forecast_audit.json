@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at_utc": "2026-08-18T17:43:59.920174+00:00",
+  "generated_at_utc": "2026-08-18T18:08:19.039004+00:00",
   "global_m2": {
     "current": 5.385196,
     "forecast_3m": 5.433719,
@@ -22,6 +22,13 @@
             "horizon": "3m"
           },
           "source_confidence": 71
+        },
+        "forecast_confidence": {
+          "score": 81,
+          "grade": "HIGH",
+          "passed": true,
+          "samples": 72,
+          "skill_pct": 39.548910905835186
         }
       },
       "EA": {
@@ -48,6 +55,13 @@
               "direction_accuracy_min": 55.0
             }
           }
+        },
+        "forecast_confidence": {
+          "score": 82,
+          "grade": "HIGH",
+          "passed": true,
+          "samples": 60,
+          "skill_pct": 17.428375041886447
         }
       },
       "JP": {
@@ -74,6 +88,13 @@
               "direction_accuracy_min": 55.0
             }
           }
+        },
+        "forecast_confidence": {
+          "score": 78,
+          "grade": "HIGH",
+          "passed": true,
+          "samples": 60,
+          "skill_pct": 13.455647359914058
         }
       },
       "CN": {
@@ -94,6 +115,13 @@
             "passed": false,
             "reason": "연속 월별 YoY 이력 18개월 미만"
           }
+        },
+        "forecast_confidence": {
+          "score": 35,
+          "grade": "LOW",
+          "passed": false,
+          "samples": 0,
+          "skill_pct": 0.0
         }
       }
     }
@@ -393,8 +421,86 @@
     }
   },
   "registry_summary": {
-    "validated": 4,
-    "reference_only": 5
+    "validated": 5,
+    "reference_only": 7,
+    "degraded": 0
+  },
+  "engine_health": {
+    "schema_version": "1.0",
+    "generated_at_utc": "2026-08-18T18:08:19.033126+00:00",
+    "status": "HEALTHY",
+    "data_coverage": {
+      "weight": 1.0,
+      "regions": [
+        "CN",
+        "EA",
+        "JP",
+        "US"
+      ],
+      "quality": "FULL"
+    },
+    "stale_inputs": [],
+    "fallbacks": [
+      "global_m2:CN"
+    ],
+    "forecast_counts": {
+      "validated": 5,
+      "reference_only": 7,
+      "degraded": 0
+    },
+    "api": {
+      "errors": 0,
+      "providers": {
+        "ECB": {
+          "provider": "ECB",
+          "request_attempts": 1,
+          "network_calls": 1,
+          "memory_cache_hits": 0,
+          "http_429": 0,
+          "http_5xx": 0,
+          "timeouts": 0,
+          "retries": 0,
+          "last_success_utc": "2026-08-18T18:08:07.433315+00:00",
+          "last_failure_utc": null,
+          "cooldown": false,
+          "final_status": "LIVE"
+        },
+        "BOJ": {
+          "provider": "BOJ",
+          "request_attempts": 1,
+          "network_calls": 1,
+          "memory_cache_hits": 0,
+          "http_429": 0,
+          "http_5xx": 0,
+          "timeouts": 0,
+          "retries": 0,
+          "last_success_utc": "2026-08-18T18:08:08.072893+00:00",
+          "last_failure_utc": null,
+          "cooldown": false,
+          "final_status": "LIVE"
+        },
+        "PBC": {
+          "provider": "PBC",
+          "request_attempts": 18,
+          "network_calls": 16,
+          "memory_cache_hits": 2,
+          "http_429": 0,
+          "http_5xx": 0,
+          "timeouts": 0,
+          "retries": 0,
+          "last_success_utc": "2026-08-18T18:08:18.964503+00:00",
+          "last_failure_utc": null,
+          "cooldown": false,
+          "final_status": "LIVE"
+        }
+      }
+    },
+    "runtime_ms": 12301,
+    "model_degradation": [],
+    "composite_oos": {
+      "status": "ACTIVE_ACCUMULATION",
+      "snapshot_count": 1
+    }
   },
   "policy": "Forecasts that fail their persistence/quality gate remain reference-only and are not promoted into the validated future composite. Composite-level signals require matured published-snapshot OOS validation."
 }

@@ -3,7 +3,7 @@
   "engine_version": "card10-2.9.0-gscpi-column-profile-resilient",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-08-18T17:43:42.824014+00:00",
+  "generated_at_utc": "2026-08-18T18:08:01.032396+00:00",
   "current": 45.95688679577424,
   "current_date": "2026-08-01",
   "forecast_3m": 48.20122110421089,
@@ -37,6 +37,13 @@
         "mean_reversion_12m": 151,
         "mean_reversion_24m": 16
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 5.43557187163883,
+        "baseline_rmse": 5.690938355784825,
+        "skill_pct": 4.48724741301082
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
@@ -47,11 +54,13 @@
           "significant_10pct": true,
           "hac_lag": 0
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 0
+          "hac_lag": 0,
+          "recent_oos_nonnegative_skill": true
         }
       }
     },
@@ -74,6 +83,13 @@
         "mean_reversion_24m": 21,
         "mean_reversion_12m": 145
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 7.967991938649848,
+        "baseline_rmse": 9.128678255859498,
+        "skill_pct": 12.7147247901374
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
@@ -84,11 +100,13 @@
           "significant_10pct": true,
           "hac_lag": 2
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 2
+          "hac_lag": 2,
+          "recent_oos_nonnegative_skill": true
         }
       }
     },
@@ -111,6 +129,13 @@
         "mean_reversion_24m": 107,
         "mean_reversion_12m": 61
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 5.984121398121133,
+        "baseline_rmse": 6.596636954827329,
+        "skill_pct": 9.285270068681973
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
@@ -121,11 +146,13 @@
           "significant_10pct": true,
           "hac_lag": 5
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 5
+          "hac_lag": 5,
+          "recent_oos_nonnegative_skill": true
         }
       }
     },
@@ -148,6 +175,13 @@
         "mean_reversion_24m": 163,
         "mean_reversion_12m": 5
       },
+      "recent_oos": {
+        "samples": 24,
+        "rmse": 5.610593297857788,
+        "baseline_rmse": 7.164462930066708,
+        "skill_pct": 21.688571039817674
+      },
+      "degradation_status": "STABLE",
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
@@ -158,11 +192,13 @@
           "significant_10pct": true,
           "hac_lag": 11
         },
+        "degradation_blocked": false,
         "requirements": {
           "skill_pct_min": 3.0,
           "direction_accuracy_min": 0.55,
           "dm_p_value_max": 0.05,
-          "hac_lag": 11
+          "hac_lag": 11,
+          "recent_oos_nonnegative_skill": true
         }
       }
     }
