@@ -3,31 +3,31 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T15:34:47.083442+00:00",
+  "generated_at_utc": "2026-08-18T15:52:37.543181+00:00",
   "observation_date": "2026-07-01",
-  "value": 4.393137,
-  "current": 4.393137,
-  "forecast": 4.662643,
-  "changePct": 6.134714,
-  "directionScore": 22.962675,
-  "current_yoy_pct": 4.393137,
-  "prior_3m_yoy_pct": 3.854124,
-  "acceleration_pp": 0.539013,
-  "coverage_weight": 0.7,
+  "value": 5.385196,
+  "current": 5.385196,
+  "forecast": 5.43885,
+  "changePct": 0.996333,
+  "directionScore": 22.613873,
+  "current_yoy_pct": 5.385196,
+  "prior_3m_yoy_pct": 5.277887,
+  "acceleration_pp": 0.107309,
+  "coverage_weight": 1.0,
   "coverage_regions": [
+    "CN",
     "EA",
     "JP",
     "US"
   ],
-  "full_coverage": false,
-  "coverage_quality": "DEGRADED",
-  "missing_regions": [
-    "CN"
-  ],
+  "full_coverage": true,
+  "coverage_quality": "FULL",
+  "missing_regions": [],
   "weights_used": {
-    "US": 0.571429,
-    "EA": 0.285714,
-    "JP": 0.142857
+    "US": 0.4,
+    "EA": 0.2,
+    "JP": 0.1,
+    "CN": 0.3
   },
   "components": {
     "US": {
@@ -40,7 +40,8 @@
       "source": "Federal Reserve Board H.6 Money Stock Measures",
       "source_url": "https://www.federalreserve.gov/releases/h6/current/default.htm",
       "status": "LIVE",
-      "age_days": 78
+      "age_days": 78,
+      "fetch_ms": 364427
     },
     "EA": {
       "region": "EA",
@@ -51,7 +52,8 @@
       "source": "ECB Data Portal BSI.M.U2.Y.V.M20.X.I.U2.2300.Z01.A",
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
-      "age_days": 78
+      "age_days": 78,
+      "fetch_ms": 1029
     },
     "JP": {
       "date": "2026-07-01",
@@ -63,17 +65,103 @@
       "source": "Bank of Japan Main Time-Series Statistics · MD02'MAM1YAM2M2MO",
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
-      "age_days": 48
+      "age_days": 48,
+      "fetch_ms": 768
+    },
+    "CN": {
+      "region": "CN",
+      "label": "China M2",
+      "date": "2026-07-01",
+      "yoy_pct": 7.7,
+      "yoy_3m_ago_pct": 8.6,
+      "level": 355.51,
+      "source": "People's Bank of China Financial Statistics Reports",
+      "source_url": "https://www.pbc.gov.cn/en/3688247/3688978/3709137/2026081815052522832/index.html",
+      "history_points": 4,
+      "status": "LIVE",
+      "age_days": 48,
+      "fetch_ms": 6367
     }
   },
   "statuses": {
     "US": "LIVE",
     "EA": "LIVE",
     "JP": "LIVE",
-    "CN": "UNAVAILABLE"
+    "CN": "LIVE"
   },
-  "errors": {
-    "CN": "ValueError: PBC recent Financial Statistics Report parse unavailable"
+  "errors": {},
+  "runtime_ms": 372592,
+  "api_health": {
+    "FRED": {
+      "provider": "FRED",
+      "request_attempts": 1,
+      "network_calls": 3,
+      "memory_cache_hits": 0,
+      "http_429": 0,
+      "http_5xx": 0,
+      "timeouts": 0,
+      "retries": 2,
+      "last_success_utc": null,
+      "last_failure_utc": "2026-08-18T15:52:29.138052+00:00",
+      "cooldown": true,
+      "final_status": "UNAVAILABLE"
+    },
+    "FED": {
+      "provider": "FED",
+      "request_attempts": 1,
+      "network_calls": 1,
+      "memory_cache_hits": 0,
+      "http_429": 0,
+      "http_5xx": 0,
+      "timeouts": 0,
+      "retries": 0,
+      "last_success_utc": "2026-08-18T15:52:29.316777+00:00",
+      "last_failure_utc": null,
+      "cooldown": false,
+      "final_status": "LIVE"
+    },
+    "ECB": {
+      "provider": "ECB",
+      "request_attempts": 1,
+      "network_calls": 1,
+      "memory_cache_hits": 0,
+      "http_429": 0,
+      "http_5xx": 0,
+      "timeouts": 0,
+      "retries": 0,
+      "last_success_utc": "2026-08-18T15:52:30.406102+00:00",
+      "last_failure_utc": null,
+      "cooldown": false,
+      "final_status": "LIVE"
+    },
+    "BOJ": {
+      "provider": "BOJ",
+      "request_attempts": 1,
+      "network_calls": 1,
+      "memory_cache_hits": 0,
+      "http_429": 0,
+      "http_5xx": 0,
+      "timeouts": 0,
+      "retries": 0,
+      "last_success_utc": "2026-08-18T15:52:30.928099+00:00",
+      "last_failure_utc": null,
+      "cooldown": false,
+      "final_status": "LIVE"
+    },
+    "PBC": {
+      "provider": "PBC",
+      "request_attempts": 5,
+      "network_calls": 5,
+      "memory_cache_hits": 0,
+      "http_429": 0,
+      "http_5xx": 0,
+      "timeouts": 0,
+      "retries": 0,
+      "last_success_utc": "2026-08-18T15:52:37.485990+00:00",
+      "last_failure_utc": null,
+      "cooldown": false,
+      "final_status": "LIVE"
+    }
   },
   "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
   "methodology": "Weighted YoY broad-money growth composite. Full-quality output requires US/CN/EA/JP; temporary gaps are transparently re-normalized and flagged PARTIAL/DEGRADED instead of being presented as full global coverage. 3-month acceleration informs the conservative forecast and direction score.",
