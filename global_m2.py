@@ -1033,7 +1033,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
 
     archive_listing_calls = 0
     archive_article_calls = 0
-    if len(contiguous_before) < 18 and not _cn_bootstrap_complete():
+    if len(contiguous_before) < 18 and len(candidates) >= 6 and not _cn_bootstrap_complete():
         latest_bootstrap_month = max(str(o.get("date"))[:7] for o in live_observations if o.get("date"))
         missing_archive = set(_missing_recent_months(provisional, latest_bootstrap_month, 18))
         archive_candidates, archive_listing_calls = _pbc_cn_archive_candidates(session, headers, missing_archive)
