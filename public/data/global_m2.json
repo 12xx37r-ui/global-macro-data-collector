@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T18:08:19.021944+00:00",
+  "generated_at_utc": "2026-08-18T18:28:50.038627+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -190,8 +190,8 @@
       },
       {
         "name": "DXY 3개월 예상",
-        "current": 99.65,
-        "forecast": 99.65,
+        "current": 99.64,
+        "forecast": 99.64,
         "signal": 0.0,
         "weight": 0.0,
         "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
@@ -219,24 +219,24 @@
     "status": "LIVE",
     "symbol": "DX-Y.NYB",
     "source": "Yahoo Finance DXY delayed market data",
-    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787075841",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787077594",
     "observation_date": "2026-08-18",
-    "market_time_utc": "2026-08-18T17:47:19+00:00",
-    "current": 99.65,
-    "forecast_1m": 99.65,
-    "forecast_3m": 99.65,
+    "market_time_utc": "2026-08-18T18:16:32+00:00",
+    "current": 99.64,
+    "forecast_1m": 99.64,
+    "forecast_3m": 99.64,
     "forecast_change_3m_pct": 0.0,
     "forecast_range_80": [
-      95.480675,
-      103.819325
+      95.471097,
+      103.808903
     ],
     "direction_3m": "flat",
     "confidence": 35,
     "selected_model_1m": "price_ensemble",
     "selected_model_3m": "price_ensemble",
     "backtest_1m": {
-      "rmse_pct": 1.7779752249876688,
-      "baseline_rmse_pct": 1.7779752249876688,
+      "rmse_pct": 1.7779853849703606,
+      "baseline_rmse_pct": 1.7779853849703606,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 47.94721407624634,
@@ -244,8 +244,8 @@
       "fallback_used": true
     },
     "backtest_3m": {
-      "rmse_pct": 3.264644999568656,
-      "baseline_rmse_pct": 3.264644999568656,
+      "rmse_pct": 3.264642278180468,
+      "baseline_rmse_pct": 3.264642278180468,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 36.48255813953488,
@@ -254,8 +254,8 @@
     },
     "price_model_audit": {
       "1m": {
-        "rmse_pct": 1.7779752249876688,
-        "baseline_rmse_pct": 1.7779752249876688,
+        "rmse_pct": 1.7779853849703606,
+        "baseline_rmse_pct": 1.7779853849703606,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 47.94721407624634,
@@ -263,8 +263,8 @@
         "fallback_used": true
       },
       "3m": {
-        "rmse_pct": 3.264644999568656,
-        "baseline_rmse_pct": 3.264644999568656,
+        "rmse_pct": 3.264642278180468,
+        "baseline_rmse_pct": 3.264642278180468,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 36.48255813953488,
@@ -275,7 +275,7 @@
     "macro_model_audit": {
       "1m": {
         "available": true,
-        "forecast_return_pct": -1.6436866531280852,
+        "forecast_return_pct": -1.643783470044642,
         "rmse_pct": 1.604634662597944,
         "baseline_rmse_pct": 1.4097792545506627,
         "skill_pct": 0.0,
@@ -307,8 +307,8 @@
         "candidate_audit": {
           "domestic_financial": {
             "available": true,
-            "forecast": 98.0254540478648,
-            "forecast_return_pct": -1.6436866531280852,
+            "forecast": 98.01552217739588,
+            "forecast_return_pct": -1.643783470044642,
             "rmse_pct": 1.604634662597944,
             "baseline_rmse_pct": 1.4097792545506627,
             "skill_pct": 0.0,
@@ -340,8 +340,8 @@
           },
           "relative_policy_rates": {
             "available": true,
-            "forecast": 98.0956299957202,
-            "forecast_return_pct": -1.572122750457826,
+            "forecast": 98.08473343626625,
+            "forecast_return_pct": -1.5731958397250823,
             "rmse_pct": 2.0022122904605113,
             "baseline_rmse_pct": 1.4097792545506627,
             "skill_pct": 0.0,
@@ -371,8 +371,8 @@
           },
           "combined": {
             "available": true,
-            "forecast": 98.50757123056441,
-            "forecast_return_pct": -1.1530636149827416,
+            "forecast": 98.49780124978875,
+            "forecast_return_pct": -1.1529464802253604,
             "rmse_pct": 1.9482569045092624,
             "baseline_rmse_pct": 1.4097792545506627,
             "skill_pct": 0.0,
@@ -411,7 +411,7 @@
       },
       "3m": {
         "available": true,
-        "forecast_return_pct": -6.142780365457615,
+        "forecast_return_pct": -6.140955641848034,
         "rmse_pct": 2.354337275961205,
         "baseline_rmse_pct": 1.4754285574270285,
         "skill_pct": 0.0,
@@ -443,8 +443,8 @@
         "candidate_audit": {
           "domestic_financial": {
             "available": true,
-            "forecast": 93.71293653024583,
-            "forecast_return_pct": -6.142780365457615,
+            "forecast": 93.70524216794068,
+            "forecast_return_pct": -6.140955641848034,
             "rmse_pct": 2.354337275961205,
             "baseline_rmse_pct": 1.4754285574270285,
             "skill_pct": 0.0,
@@ -476,8 +476,8 @@
           },
           "relative_policy_rates": {
             "available": true,
-            "forecast": 95.22885836214348,
-            "forecast_return_pct": -4.538101674120033,
+            "forecast": 95.2187320525902,
+            "forecast_return_pct": -4.538700269410416,
             "rmse_pct": 5.002444641328493,
             "baseline_rmse_pct": 1.4754285574270285,
             "skill_pct": 0.0,
@@ -507,8 +507,8 @@
           },
           "combined": {
             "available": true,
-            "forecast": 94.27612554767444,
-            "forecast_return_pct": -5.5436064602099275,
+            "forecast": 94.26804984227961,
+            "forecast_return_pct": -5.542137213869528,
             "rmse_pct": 5.045667548903678,
             "baseline_rmse_pct": 1.4754285574270285,
             "skill_pct": 0.0,
@@ -1485,7 +1485,7 @@
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-18T17:57:29.496724+00:00",
+      "upstream_generated_at_utc": "2026-08-18T18:26:42.158945+00:00",
       "age_days": 78,
       "fetch_ms": 0
     },
@@ -1909,7 +1909,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 717
+      "fetch_ms": 1513
     },
     "JP": {
       "date": "2026-07-01",
@@ -3200,7 +3200,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 895
+      "fetch_ms": 681
     },
     "CN": {
       "region": "CN",
@@ -3256,18 +3256,19 @@
       ],
       "history_bootstrap": {
         "triggered": true,
+        "targeted_listing_calls": 1,
         "table_calls": 0,
         "table_new_points": 0,
-        "article_calls": 5,
-        "new_points": 0,
+        "article_calls": 1,
+        "new_points": 1,
         "target_contiguous_points": 18,
         "contiguous_points": 7,
         "complete": false,
-        "strategy": "annual Money Supply tables first; bounded article fallback second"
+        "strategy": "exact missing months from official report index first; annual Money Supply tables second; target-aware bounded search/article fallback last"
       },
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 10687
+      "fetch_ms": 9404
     }
   },
   "statuses": {
@@ -3277,7 +3278,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 12301,
+  "runtime_ms": 11600,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3288,7 +3289,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T18:08:07.433315+00:00",
+      "last_success_utc": "2026-08-18T18:28:39.946199+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3302,21 +3303,21 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T18:08:08.072893+00:00",
+      "last_success_utc": "2026-08-18T18:28:40.327647+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     },
     "PBC": {
       "provider": "PBC",
-      "request_attempts": 18,
-      "network_calls": 16,
-      "memory_cache_hits": 2,
+      "request_attempts": 15,
+      "network_calls": 14,
+      "memory_cache_hits": 1,
       "http_429": 0,
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T18:08:18.964503+00:00",
+      "last_success_utc": "2026-08-18T18:28:49.964686+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
