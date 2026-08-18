@@ -250,3 +250,14 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertAlmostEqual(rows[1]['value'],10.0)
 if __name__ == '__main__':
     unittest.main()
+
+class FinalGlobalM2ImprovementTests(unittest.TestCase):
+    def test_pbc_money_supply_parser_accepts_english_month_headers(self):
+        html='''<table><tr><td>Item</td><td>Jan. 2024</td><td>Feb. 2024</td><td>Mar. 2024</td></tr><tr><td>Money & Quasi-money (M2)</td><td>2976250</td><td>2995573</td><td>3047952</td></tr></table>'''
+        rows=global_m2._extract_pbc_money_supply_levels(html)
+        self.assertEqual([x['date'] for x in rows],['2024-01-01','2024-02-01','2024-03-01'])
+
+    def test_global_composite_validation_requires_all_regions(self):
+        out=global_m2._global_m2_composite_validation({'US':{'yoy_history':[{'date':'2025-01-01','value':5}]}})
+        self.assertFalse(out['available'])
+        self.assertEqual(out['status'],'INSUFFICIENT_HISTORY')

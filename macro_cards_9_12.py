@@ -715,12 +715,21 @@ def walk_forward(vals:list[float], h:int, min_samples:int=60)->dict[str,Any]:
     b80=percentile([abs(x) for x in res],.8)
     da=mean(strategy_hits) if strategy_hits else None
     dm=dm_test_squared_errors(res,base_err,max_lag=max(0,h-1))
-    passed=len(res)>=min_samples and skill>=3.0 and da is not None and da>=.55 and dm.get('significant_5pct') and not fallback
+    recent_n=min(24,len(strategy_errors),len(base_err))
+    recent_model=strategy_errors[-recent_n:] if recent_n else []
+    recent_base=base_err[-recent_n:] if recent_n else []
+    recent_rm=rmse(recent_model) if recent_model else None
+    recent_br=rmse(recent_base) if recent_base else None
+    recent_skill=(1-recent_rm/recent_br)*100 if recent_rm is not None and recent_br not in (None,0) else None
+    degradation=bool(recent_n>=12 and recent_skill is not None and recent_skill<=0)
+    passed=len(res)>=min_samples and skill>=3.0 and da is not None and da>=.55 and dm.get('significant_5pct') and not fallback and not degradation
     return {'forecast':final,'model':final_best,'samples':len(res),'rmse':mr,'baseline_rmse':br,'skill_pct':skill,
             'direction_accuracy':da,'fallback_used':fallback,'range80':[final-b80,final+b80] if finite(b80) else None,
             'selection_method':'online_prequential_candidate_selection','selected_model_counts':selected_counts,
-            'quality_gate':{'passed':passed,'level':'독립검증 통과' if passed else '참고용/관망','dm_test':dm,
-                            'requirements':{'skill_pct_min':3.0,'direction_accuracy_min':.55,'dm_p_value_max':.05,'hac_lag':max(0,h-1)}}}
+            'recent_oos':{'samples':recent_n,'rmse':recent_rm,'baseline_rmse':recent_br,'skill_pct':recent_skill},
+            'degradation_status':'DEGRADED' if degradation else 'STABLE',
+            'quality_gate':{'passed':passed,'level':'독립검증 통과' if passed else '참고용/관망','dm_test':dm,'degradation_blocked':degradation,
+                            'requirements':{'skill_pct_min':3.0,'direction_accuracy_min':.55,'dm_p_value_max':.05,'hac_lag':max(0,h-1),'recent_oos_nonnegative_skill':True}}}
 
 def build_card9(session:requests.Session)->dict[str,Any]:
     data,errors,source_overrides=fetch_card9_data(session)
@@ -1078,25 +1087,44 @@ def _update_composite_oos(global_m2:dict[str,Any], card11:dict[str,Any], card12:
 
 def _global_registry(global_m2:dict[str,Any], card8:dict[str,Any], card9:dict[str,Any], card10:dict[str,Any], card11:dict[str,Any], card12:dict[str,Any], composite_oos:dict[str,Any])->dict[str,Any]:
     entries=[]
+    generated=now_iso()
+    def finalize(e:dict[str,Any], *, samples:int|None=None, degradation:str|None=None, confidence:float|None=None)->dict[str,Any]:
+        e.setdefault('reason','validated by horizon-specific quality gate' if e.get('status')=='VALIDATED' else 'quality gate not fully passed; reference only')
+        e['sample_count']=samples
+        e['last_validated_at']=generated if e.get('status')=='VALIDATED' else None
+        e['degradation_status']=degradation or 'NOT_APPLICABLE'
+        if confidence is None:
+            confidence=80 if e.get('status')=='VALIDATED' else 45
+        e['confidence']=round(float(confidence),1)
+        return e
     comps=global_m2.get('forecast_components') or {}
     comp_pass={k:bool(((v.get('validation') or {}).get('quality_gate') or {}).get('passed')) for k,v in comps.items()}
-    full_m2=bool(comp_pass) and all(comp_pass.values())
-    entries.append({'id':'global_m2_3m','label':'Global M2 YoY 3m','horizon':'3m','current':global_m2.get('current'),'forecast':global_m2.get('forecast'),'status':'VALIDATED' if full_m2 else 'REFERENCE_ONLY','usable':True,'benchmark_safe':True,'component_gates':comp_pass,'reason':'all regional forecast gates passed' if full_m2 else 'benchmark-safe composite, but at least one regional model is still on persistence/insufficient-history fallback'})
+    comp_val=global_m2.get('composite_forecast_validation_3m') or {}
+    full_m2=bool((comp_val.get('quality_gate') or {}).get('passed')) and all(comp_pass.values())
+    confs=[float(((v.get('forecast_confidence') or {}).get('score')) or 35) for v in comps.values()]
+    entries.append(finalize({'id':'global_m2_3m','label':'Global M2 YoY 3m','horizon':'3m','current':global_m2.get('current'),'forecast':global_m2.get('forecast'),'status':'VALIDATED' if full_m2 else 'REFERENCE_ONLY','usable':bool(full_m2),'benchmark_safe':True,'component_gates':comp_pass,'composite_validation':comp_val,'reason':'all regional gates and final composite OOS passed' if full_m2 else 'benchmark-safe, but regional/final-composite validation is incomplete'}, samples=int(comp_val.get('samples') or 0), confidence=(sum(confs)/len(confs) if confs else 35)))
     for key,card in (('card9',card9),('card10',card10)):
-        use=card.get('forecast_use') or {}; usable=bool(use.get('usable'))
-        entries.append({'id':f'{key}_3m','label':f'{key.upper()} 3m','horizon':'3m','current':card.get('current'),'forecast':card.get('forecast_3m'),'status':'VALIDATED' if usable else 'REFERENCE_ONLY','usable':usable,'validation':_generic_forecast_validation(card)})
-    gate8=((card8.get('quality_gates') or {}).get('3m') or {})
-    entries.append({'id':'card8_3m','label':'Card8 rates/real-yield 3m','horizon':'3m','status':'VALIDATED' if gate8.get('passed') else 'REFERENCE_ONLY','usable':bool(gate8.get('passed')),'passed_targets':gate8.get('passed_targets') or []})
+        use=card.get('forecast_use') or {}; fc=((card.get('forecasts') or {}).get('3m') or {}); usable=bool(use.get('usable')) and (fc.get('degradation_status')!='DEGRADED')
+        entries.append(finalize({'id':f'{key}_3m','label':f'{key.upper()} 3m','horizon':'3m','current':card.get('current'),'forecast':card.get('forecast_3m'),'status':'VALIDATED' if usable else 'REFERENCE_ONLY','usable':usable,'validation':_generic_forecast_validation(card),'reason':use.get('reason') or ('3m gate passed' if usable else '3m gate failed')},samples=int(fc.get('samples') or 0),degradation=fc.get('degradation_status'),confidence=min(90,45+float(fc.get('skill_pct') or 0)*2) if usable else 40))
+    # Card8 target-level registry: partial passage is explicit instead of hidden by an aggregate card gate.
+    t8=((((card8.get('forecasts') or {}).get('3m') or {}).get('targets')) or {})
+    for sid in ('DGS2','DGS10','DFII10','T10Y2Y'):
+        r=t8.get(sid) or {}; passed=bool((r.get('quality_gate') or {}).get('passed'))
+        entries.append(finalize({'id':f'card8_{sid}_3m','label':f'Card8 {sid} 3m','horizon':'3m','current':r.get('current'),'forecast':r.get('forecast'),'status':'VALIDATED' if passed else 'REFERENCE_ONLY','usable':passed,'reason':'; '.join((r.get('quality_gate') or {}).get('reasons') or [])[:260] or ('target gate passed' if passed else 'target gate failed')},samples=int(r.get('samples') or 0),confidence=75 if passed else 40))
     for item in ((card12.get('predictive_validation') or {}).get('passed_horizons') or []):
-        entries.append({'id':f'card12_{item}','label':f'Card12 {item}','horizon':item.split(':')[-1] if ':' in item else item,'status':'VALIDATED','usable':True})
+        group,horizon=(item.split(':',1)+[''])[:2] if ':' in item else (item,'')
+        fc=((((card12.get('predictive_validation') or {}).get('groups') or {}).get(group) or {}).get('forecasts') or {}).get(horizon) or {}
+        stable=fc.get('degradation_status')!='DEGRADED'
+        entries.append(finalize({'id':f'card12_{item}','label':f'Card12 {item}','horizon':horizon,'status':'VALIDATED' if stable else 'REFERENCE_ONLY','usable':stable,'reason':'horizon gate passed; rolling OOS stable' if stable else 'rolling OOS degradation detected'},samples=int(fc.get('samples') or 0),degradation=fc.get('degradation_status'),confidence=80 if stable else 40))
     def any_oos_pass(signal_name:str,horizon:str='3m')->bool:
         block=(((composite_oos.get('metrics') or {}).get(signal_name) or {}).get(horizon) or {})
         return any(bool((x.get('quality_gate') or {}).get('passed')) for x in block.values())
     liq=global_m2.get('forward_liquidity_outlook') or {}; liq_pass=any_oos_pass('forward_liquidity')
-    entries.append({'id':'forward_liquidity_3m','label':'Forward liquidity composite 3m','horizon':'3m','current':liq.get('score'),'forecast':None,'status':'VALIDATED' if liq_pass else 'REFERENCE_ONLY','usable':liq_pass,'input_validation':liq.get('validation_status'),'oos':((composite_oos.get('metrics') or {}).get('forward_liquidity') or {}).get('3m')})
-    c11_pass=bool((card11.get('future_quality_gate') or {}).get('passed')) and any_oos_pass('card11_future')
-    entries.append({'id':'card11_future_3m','label':'Card11 future composite 3m','horizon':'3m','current':card11.get('future_score'),'forecast':None,'status':'VALIDATED' if c11_pass else 'REFERENCE_ONLY','usable':c11_pass,'input_gate':card11.get('future_quality_gate'),'oos':((composite_oos.get('metrics') or {}).get('card11_future') or {}).get('3m')})
-    return {'schema_version':'1.0','generated_at_utc':now_iso(),'engine':'Global macro engine','entries':entries,'summary':{'validated':sum(1 for x in entries if x.get('status')=='VALIDATED'),'reference_only':sum(1 for x in entries if x.get('status')=='REFERENCE_ONLY')},'policy':'Only horizon-specific forecasts that pass their own gate are promoted. Composite signals additionally require realized published-snapshot OOS validation before VALIDATED status.'}
+    liq_oos=((composite_oos.get('metrics') or {}).get('forward_liquidity') or {}).get('3m') or {}
+    entries.append(finalize({'id':'forward_liquidity_3m','label':'Forward liquidity composite 3m','horizon':'3m','current':liq.get('score'),'forecast':None,'status':'VALIDATED' if liq_pass else 'REFERENCE_ONLY','usable':liq_pass,'input_validation':liq.get('validation_status'),'oos':liq_oos,'reason':'real published-snapshot OOS gate passed' if liq_pass else 'awaiting/failed real published-snapshot OOS validation'},samples=max([int((x or {}).get('samples') or 0) for x in liq_oos.values()] or [0])))
+    c11_oos=((composite_oos.get('metrics') or {}).get('card11_future') or {}).get('3m') or {}; c11_pass=bool((card11.get('future_quality_gate') or {}).get('passed')) and any_oos_pass('card11_future')
+    entries.append(finalize({'id':'card11_future_3m','label':'Card11 future composite 3m','horizon':'3m','current':card11.get('future_score'),'forecast':None,'status':'VALIDATED' if c11_pass else 'REFERENCE_ONLY','usable':c11_pass,'input_gate':card11.get('future_quality_gate'),'oos':c11_oos,'reason':'input gate + real OOS passed' if c11_pass else 'input gate and/or real published-snapshot OOS incomplete'},samples=max([int((x or {}).get('samples') or 0) for x in c11_oos.values()] or [0])))
+    return {'schema_version':'1.1','generated_at_utc':generated,'engine':'Global macro engine','entries':entries,'summary':{'validated':sum(1 for x in entries if x.get('status')=='VALIDATED'),'reference_only':sum(1 for x in entries if x.get('status')=='REFERENCE_ONLY'),'degraded':sum(1 for x in entries if x.get('degradation_status')=='DEGRADED')},'policy':'Only horizon-specific forecasts that pass their own gate are promoted; rolling OOS deterioration automatically downgrades eligible forecast blocks. Composite signals additionally require realized published-snapshot OOS validation.'}
 
 def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
     validations = {
@@ -1171,6 +1199,20 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
         'investment_conclusion': '검증을 통과한 하위 카드 신호와 최신성·완전성을 함께 반영해 자산군의 상대적 우호도를 판단합니다.',
     }
 
+
+
+def _engine_health(global_m2:dict[str,Any], registry:dict[str,Any], composite_oos:dict[str,Any])->dict[str,Any]:
+    api=global_m2.get('api_health') or {}
+    entries=registry.get('entries') or []
+    components=global_m2.get('components') or {}
+    stale=[k for k,v in components.items() if str(v.get('status')) not in ('LIVE',)]
+    fallbacks=[]
+    for k,v in (global_m2.get('forecast_components') or {}).items():
+        if bool((v.get('validation') or {}).get('fallback_used')): fallbacks.append(f'global_m2:{k}')
+    degraded=[e.get('id') for e in entries if e.get('degradation_status')=='DEGRADED']
+    api_errors=sum(int((v or {}).get('http_429') or 0)+int((v or {}).get('http_5xx') or 0)+int((v or {}).get('timeouts') or 0) for v in api.values())
+    return {'schema_version':'1.0','generated_at_utc':now_iso(),'status':'HEALTHY' if not stale and api_errors==0 else 'DEGRADED','data_coverage':{'weight':global_m2.get('coverage_weight'),'regions':global_m2.get('coverage_regions'),'quality':global_m2.get('coverage_quality')},'stale_inputs':stale,'fallbacks':fallbacks,'forecast_counts':registry.get('summary'),'api':{'errors':api_errors,'providers':api},'runtime_ms':global_m2.get('runtime_ms'),'model_degradation':degraded,'composite_oos':{'status':composite_oos.get('status'),'snapshot_count':composite_oos.get('snapshot_count')}}
+
 def main():
     session=build_http_session(); OUT_DIR.mkdir(parents=True,exist_ok=True)
     card9=build_card9(session); card10=build_card10(session); card12,asset_histories=_build_card12_with_histories(session)
@@ -1179,6 +1221,7 @@ def main():
     global_m2 = build_global_m2(session)
     composite_oos=_update_composite_oos(global_m2,card11,card12,asset_histories)
     registry=_global_registry(global_m2,card8,card9,card10,card11,card12,composite_oos)
+    engine_health=_engine_health(global_m2,registry,composite_oos)
     for n,obj in [(9,card9),(10,card10),(11,card11),(12,card12)]:
         (OUT_DIR/f'card{n}.json').write_text(json.dumps(obj,ensure_ascii=False,indent=2),encoding='utf-8')
     (OUT_DIR/'global_m2.json').write_text(json.dumps(global_m2,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -1192,11 +1235,13 @@ def main():
         'card12':{'validation':_card12_validation(card12),'passed_horizons':((card12.get('predictive_validation') or {}).get('passed_horizons') or [])},
         'composite_oos':{'status':composite_oos.get('status'),'snapshot_count':composite_oos.get('snapshot_count'),'metrics':composite_oos.get('metrics')},
         'registry_summary':registry.get('summary'),
+        'engine_health':engine_health,
         'policy':'Forecasts that fail their persistence/quality gate remain reference-only and are not promoted into the validated future composite. Composite-level signals require matured published-snapshot OOS validation.'
     }
     (OUT_DIR/'macro_forecast_audit.json').write_text(json.dumps(forecast_audit,ensure_ascii=False,indent=2),encoding='utf-8')
     (OUT_DIR/'macro_composite_oos.json').write_text(json.dumps(composite_oos,ensure_ascii=False,indent=2),encoding='utf-8')
     (OUT_DIR/'macro_forecast_registry.json').write_text(json.dumps(registry,ensure_ascii=False,indent=2),encoding='utf-8')
+    (OUT_DIR/'engine_health.json').write_text(json.dumps(engine_health,ensure_ascii=False,indent=2),encoding='utf-8')
     bundle={
         'generated_at_utc':now_iso(),
         'global_m2':global_m2,

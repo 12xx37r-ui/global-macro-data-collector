@@ -189,7 +189,16 @@ def _read_cn_history_cache() -> list[dict[str, Any]]:
 def _write_cn_history_cache(rows: list[dict[str, Any]]) -> None:
     CN_HISTORY_CACHE_PATH.parent.mkdir(parents=True,exist_ok=True)
     ded={str(r["date"])[:7]:{"date":str(r["date"])[:7]+"-01","value":float(r["value"])} for r in rows if r.get("date") and _num(r.get("value")) is not None}
-    CN_HISTORY_CACHE_PATH.write_text(json.dumps({"saved_at_utc":now_iso(),"history":[ded[k] for k in sorted(ded)]},ensure_ascii=False,indent=2),encoding="utf-8")
+    clean=[ded[k] for k in sorted(ded)]
+    contiguous,_=_recent_contiguous_month_history(clean)
+    CN_HISTORY_CACHE_PATH.write_text(json.dumps({"saved_at_utc":now_iso(),"history":clean,"bootstrap_complete":len(contiguous)>=18,"contiguous_points":len(contiguous)},ensure_ascii=False,indent=2),encoding="utf-8")
+
+def _cn_bootstrap_complete() -> bool:
+    try:
+        obj=json.loads(CN_HISTORY_CACHE_PATH.read_text(encoding="utf-8"))
+        return bool(isinstance(obj,dict) and obj.get("bootstrap_complete"))
+    except Exception:
+        return False
 
 
 def _provider_for_url(url: str) -> str:
@@ -752,6 +761,8 @@ def _extract_pbc_money_supply_levels(html: str) -> list[dict[str, Any]]:
     soup = BeautifulSoup(html, "html.parser")
     out: dict[str, dict[str, Any]] = {}
     month_re = re.compile(r"(20\d{2})[./-](0?[1-9]|1[0-2])")
+    eng_month_re = re.compile(r"(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)[.\s-]+(20\d{2})", re.I)
+    cn_month_re = re.compile(r"(20\d{2})年\s*(1[0-2]|0?[1-9])月")
     for table in soup.find_all("table"):
         rows = []
         for tr in table.find_all("tr"):
@@ -766,6 +777,14 @@ def _extract_pbc_money_supply_levels(html: str) -> list[dict[str, Any]]:
             for cell in cells:
                 for m in month_re.finditer(cell):
                     found.append(f"{int(m.group(1)):04d}-{int(m.group(2)):02d}")
+                for m in cn_month_re.finditer(cell):
+                    found.append(f"{int(m.group(1)):04d}-{int(m.group(2)):02d}")
+                for m in eng_month_re.finditer(cell):
+                    try:
+                        mon=datetime.strptime(m.group(1)[:3].title(), "%b").month
+                        found.append(f"{int(m.group(2)):04d}-{mon:02d}")
+                    except Exception:
+                        pass
             if len(found) >= 3:
                 months = found
                 break
@@ -914,7 +933,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     table_calls = 0
     table_new_points = 0
     table_level_rows: list[dict[str, Any]] = []
-    if len(contiguous_before) < 18 and len(candidates) >= 6:
+    if len(contiguous_before) < 18 and len(candidates) >= 6 and not _cn_bootstrap_complete():
         seen_urls = {c["url"] for c in candidates}
         table_candidates = _pbc_money_supply_table_candidates(session, headers, seen_urls)
         for c in table_candidates[:6]:
@@ -947,7 +966,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
 
     provisional_after_tables = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
     contiguous_after_tables, _ = _recent_contiguous_month_history(provisional_after_tables)
-    if len(contiguous_after_tables) < 18 and len(candidates) >= 6:
+    if len(contiguous_after_tables) < 18 and len(candidates) >= 6 and not _cn_bootstrap_complete():
         seen_urls = {c["url"] for c in candidates}
         older = list(candidates[1:])
         older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls))
@@ -1055,6 +1074,50 @@ def _with_prior_from_cache(component: dict[str, Any], old: dict[str, Any] | None
     return component
 
 
+
+
+def _regional_confidence(code: str, audit: dict[str, Any]) -> dict[str, Any]:
+    passed=bool((audit.get("quality_gate") or {}).get("passed"))
+    samples=int(audit.get("samples") or audit.get("backtests") or 0)
+    skill=float(audit.get("skill_pct") or 0.0)
+    da=audit.get("direction_accuracy")
+    score=35
+    if passed:
+        score=min(90,55+min(20,max(0,skill))+min(10,samples/12)+ (5 if da is not None and float(da)>=60 else 0))
+    grade="HIGH" if score>=75 else "MEDIUM" if score>=55 else "LOW"
+    return {"score":round(score),"grade":grade,"passed":passed,"samples":samples,"skill_pct":skill}
+
+def _global_m2_composite_validation(components: dict[str, Any], horizon: int = 3) -> dict[str, Any]:
+    """Walk-forward validation of the final fixed-weight composite itself.
+
+    Requires contemporaneous monthly YoY history for all four strategic regions;
+    no renormalized partial-history backtest is treated as equivalent to the
+    production 40/30/20/10 definition.
+    """
+    by_region={}
+    for code in WEIGHTS:
+        hist=(components.get(code) or {}).get("yoy_history") or []
+        by_region[code]={str(r.get("date"))[:7]:float(r.get("value")) for r in hist if r.get("date") and _num(r.get("value")) is not None}
+    common=sorted(set.intersection(*(set(x) for x in by_region.values()))) if all(by_region.values()) else []
+    if len(common) < 30+horizon:
+        return {"available":False,"status":"INSUFFICIENT_HISTORY","samples":0,"required_common_months":30+horizon,"common_months":len(common),"benchmark":"global-composite persistence"}
+    series=[sum(WEIGHTS[c]*by_region[c][m] for c in WEIGHTS) for m in common]
+    model_err=[]; base_err=[]; hits=cases=0
+    for i in range(24,len(series)-horizon):
+        hist=series[:i+1]
+        try: audit=_regional_yoy_forecast([{"date":common[j]+"-01","value":series[j]} for j in range(i+1)],horizon)
+        except Exception: continue
+        pred=float(audit.get("forecast") if _num(audit.get("forecast")) is not None else hist[-1]); actual=series[i+horizon]; base=hist[-1]
+        model_err.append(pred-actual); base_err.append(base-actual)
+        if abs(actual-base)>=0.05:
+            cases+=1; hits+=int((pred-base>=0)==(actual-base>=0))
+    if not model_err:
+        return {"available":False,"status":"INSUFFICIENT_HISTORY","samples":0,"common_months":len(common)}
+    r=_rmse(model_err); br=_rmse(base_err); skill=(1-r/br)*100 if br>0 else None; da=hits/cases*100 if cases else None
+    passed=bool(len(model_err)>=18 and skill is not None and skill>=3 and da is not None and da>=55)
+    return {"available":True,"status":"VALIDATED" if passed else "REFERENCE_ONLY","samples":len(model_err),"rmse":r,"baseline_rmse":br,"skill_pct":skill,"direction_accuracy":da,"direction_cases":cases,"quality_gate":{"passed":passed,"requirements":{"samples_min":18,"skill_pct_min":3.0,"direction_accuracy_min":55.0}},"benchmark":"global-composite persistence","common_months":len(common)}
+
+
 def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
     started = time.monotonic()
     _REQUEST_MEMO.clear()
@@ -1154,8 +1217,9 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
             audit = _regional_yoy_forecast(hist, 3) if hist else {"forecast":cur,"model":"persistence_no_history","samples":0,"skill_pct":0.0,"fallback_used":True,"quality_gate":{"passed":False,"reason":"장기 월별 YoY 이력 미확보"}}
             fc = float(audit.get("forecast")) if _num(audit.get("forecast")) is not None else cur
             method = "validated regional YoY walk-forward model" if not audit.get("fallback_used") else "persistence safety fallback"
-        component_forecasts[k] = {"current_yoy_pct": round(cur,6), "forecast_3m_yoy_pct": round(fc,6), "method": method, "validation": audit}
+        component_forecasts[k] = {"current_yoy_pct": round(cur,6), "forecast_3m_yoy_pct": round(fc,6), "method": method, "validation": audit, "forecast_confidence": _regional_confidence(k, audit)}
     forecast = sum(norm_weights[k] * float(component_forecasts[k]["forecast_3m_yoy_pct"]) for k in usable) if has_direct_us else legacy_forecast
+    composite_validation = _global_m2_composite_validation(components, 3)
     direction_score = max(-70.0, min(70.0, current * 4.0 + (forecast-current) * 20.0))
     change_pct = ((forecast / current) - 1.0) * 100.0 if abs(current) > 0.25 else (forecast - current) * 10.0
     forward_context = _load_forward_context(session)
@@ -1181,6 +1245,8 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "forecast_model": "region-specific forecast with direct US Fed-engine M2 model" if has_direct_us else "legacy composite acceleration fallback",
         "forecast_model_detail": "US uses the Fed-engine history model; CN/EA/JP use benchmark-safe regional YoY forecasts and automatically fall back to persistence when skill is not positive.",
         "forecast_components": component_forecasts,
+        "composite_forecast_validation_3m": composite_validation,
+        "forecast_confidence_by_region": {k:v.get("forecast_confidence") for k,v in component_forecasts.items()},
         "forward_liquidity_outlook": forward_liquidity,
         "us_dxy": ((forward_context.get("us_engine") or {}).get("dxy") or {}),
         "us_real_rate": ((forward_context.get("us_engine") or {}).get("real_rate") or {}),

@@ -243,3 +243,12 @@ class TestGscpiLowCallPolicy(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 fetch_gscpi_official(session)
         self.assertEqual(session.get.call_count,1)
+
+class FinalHealthTests(unittest.TestCase):
+    def test_engine_health_reports_fallbacks_and_counts(self):
+        from macro_cards_9_12 import _engine_health
+        gm={'coverage_weight':1.0,'coverage_regions':['US','CN','EA','JP'],'coverage_quality':'FULL','components':{'US':{'status':'LIVE'}},'forecast_components':{'CN':{'validation':{'fallback_used':True}}},'api_health':{},'runtime_ms':123}
+        reg={'entries':[{'id':'x','degradation_status':'STABLE'}],'summary':{'validated':1,'reference_only':0,'degraded':0}}
+        out=_engine_health(gm,reg,{'status':'ACTIVE_ACCUMULATION','snapshot_count':1})
+        self.assertIn('global_m2:CN',out['fallbacks'])
+        self.assertEqual(out['runtime_ms'],123)
