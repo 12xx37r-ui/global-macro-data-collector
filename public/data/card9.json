@@ -3,7 +3,7 @@
   "engine_version": "card9-2.6.0-oecd-cli-direct",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-08-18T16:20:22.452223+00:00",
+  "generated_at_utc": "2026-08-18T16:51:57.298847+00:00",
   "current": 43.9925529025267,
   "current_date": "2026-07-01",
   "forecast_3m": 45.298874455769166,
@@ -351,5 +351,11 @@
       "PSAVERT",
       "OECD_G20_CLI"
     ]
+  },
+  "forecast_use": {
+    "horizon": "3m",
+    "usable": false,
+    "status": "참고용",
+    "reason": "3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용"
   }
 }

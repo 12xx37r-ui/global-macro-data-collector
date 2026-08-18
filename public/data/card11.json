@@ -2,11 +2,58 @@
   "schema_version": "1.1",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-18T16:20:36.730028+00:00",
+  "generated_at_utc": "2026-08-18T16:52:11.755735+00:00",
   "score": 13.3,
   "market_signal": "neutral",
   "current_regime": "혼합·중립",
-  "future_regime": "중립적 투자환경",
+  "future_regime": "불리한 투자환경",
+  "future_score": -20.0,
+  "future_market_signal": "bad",
+  "future_inputs": {
+    "card8": {
+      "available": true,
+      "signal": 1.0,
+      "details": [
+        {
+          "series": "DGS2",
+          "current": 4.17,
+          "forecast": 4.11,
+          "signal": 1
+        }
+      ],
+      "validation": "3m target-level gates"
+    },
+    "card9": {
+      "available": false,
+      "signal": null,
+      "validation": "3m gate not passed"
+    },
+    "card10": {
+      "available": true,
+      "signal": -1,
+      "current": 45.95688679577424,
+      "forecast": 48.20122110421089,
+      "validation": "3m gate passed"
+    },
+    "card12": {
+      "available": true,
+      "signal": -1.0,
+      "details": [
+        {
+          "group": "equity",
+          "current": 58.82933385321745,
+          "forecast": 55.063877658028915,
+          "signal": -1
+        }
+      ],
+      "validation": "validated 3m groups only"
+    }
+  },
+  "future_quality_gate": {
+    "passed": true,
+    "validated_input_count": 3,
+    "rule": "검증된 3개월 하위신호 2개 이상일 때만 향후 종합판정 사용"
+  },
   "asset_environment": {
     "global_equities": "중립",
     "long_treasuries": "중립",

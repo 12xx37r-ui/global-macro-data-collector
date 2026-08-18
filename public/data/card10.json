@@ -3,7 +3,7 @@
   "engine_version": "card10-2.9.0-gscpi-column-profile-resilient",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-08-18T16:20:31.174152+00:00",
+  "generated_at_utc": "2026-08-18T16:52:05.917522+00:00",
   "current": 45.95688679577424,
   "current_date": "2026-08-01",
   "forecast_3m": 48.20122110421089,
@@ -338,5 +338,11 @@
       "GSCPI",
       "PPIFIS"
     ]
+  },
+  "forecast_use": {
+    "horizon": "3m",
+    "usable": true,
+    "status": "검증통과",
+    "reason": "3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용"
   }
 }

@@ -3,57 +3,114 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T16:20:41.784181+00:00",
+  "generated_at_utc": "2026-08-18T16:52:18.337584+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
-  "forecast": 5.292022,
-  "changePct": -1.73019,
-  "directionScore": 19.677301,
+  "forecast": 5.428562,
+  "changePct": 0.80529,
+  "directionScore": 22.408113,
   "current_yoy_pct": 5.385196,
   "prior_3m_yoy_pct": 5.277887,
   "acceleration_pp": 0.107309,
   "legacy_forecast": 5.43885,
   "forecast_model": "region-specific forecast with direct US Fed-engine M2 model",
+  "forecast_model_detail": "US uses the Fed-engine history model; CN/EA/JP use benchmark-safe regional YoY forecasts and automatically fall back to persistence when skill is not positive.",
   "forecast_components": {
     "US": {
       "current_yoy_pct": 5.525756,
       "forecast_3m_yoy_pct": 5.634172,
-      "method": "US Fed-engine history model"
+      "method": "US Fed-engine history model",
+      "validation": {
+        "skill_pct": null,
+        "fallback_used": false,
+        "quality_gate": {
+          "passed": true
+        },
+        "source_confidence": 71
+      }
     },
     "EA": {
       "current_yoy_pct": 3.224468,
-      "forecast_3m_yoy_pct": 3.241765,
-      "method": "half-persistence of 3m YoY acceleration"
+      "forecast_3m_yoy_pct": 3.224468,
+      "method": "persistence safety fallback",
+      "validation": {
+        "forecast": 3.224467660084618,
+        "model": "persistence",
+        "samples": 60,
+        "rmse": 2.2550971110358757,
+        "baseline_rmse": 2.2550971110358757,
+        "skill_pct": 0.0,
+        "direction_accuracy": 60.71428571428571,
+        "fallback_used": true,
+        "quality_gate": {
+          "passed": false,
+          "requirements": {
+            "samples_min": 18,
+            "skill_pct_min": 3.0,
+            "direction_accuracy_min": 55.0
+          }
+        }
+      }
     },
     "JP": {
       "current_yoy_pct": 2.2,
-      "forecast_3m_yoy_pct": 2.15,
-      "method": "half-persistence of 3m YoY acceleration"
+      "forecast_3m_yoy_pct": 2.2,
+      "method": "persistence safety fallback",
+      "validation": {
+        "forecast": 2.2,
+        "model": "persistence",
+        "samples": 60,
+        "rmse": 1.8384323031684722,
+        "baseline_rmse": 1.8384323031684722,
+        "skill_pct": 0.0,
+        "direction_accuracy": 57.14285714285714,
+        "fallback_used": true,
+        "quality_gate": {
+          "passed": false,
+          "requirements": {
+            "samples_min": 18,
+            "skill_pct_min": 3.0,
+            "direction_accuracy_min": 55.0
+          }
+        }
+      }
     },
     "CN": {
       "current_yoy_pct": 7.7,
-      "forecast_3m_yoy_pct": 7.25,
-      "method": "half-persistence of 3m YoY acceleration"
+      "forecast_3m_yoy_pct": 7.7,
+      "method": "persistence safety fallback",
+      "validation": {
+        "forecast": 7.7,
+        "model": "persistence_insufficient_history",
+        "samples": 0,
+        "skill_pct": 0.0,
+        "direction_accuracy": null,
+        "fallback_used": true,
+        "quality_gate": {
+          "passed": false,
+          "reason": "월별 YoY 이력 18개월 미만"
+        }
+      }
     }
   },
   "forward_liquidity_outlook": {
-    "score": -10.69,
-    "grade": "약불리",
-    "direction": "deteriorating",
+    "score": 7.01,
+    "grade": "중립",
+    "direction": "neutral",
     "inputs": [
       {
         "name": "Global M2 3개월 예상 변화",
         "current": 5.3852,
-        "forecast": 5.292,
-        "signal": -0.1863,
+        "forecast": 5.4286,
+        "signal": 0.0867,
         "weight": 0.6,
         "meaning": "광의통화 증가율 상승은 유동성에 우호적"
       },
       {
         "name": "DXY 3개월 예상",
-        "current": 99.6,
-        "forecast": 99.6,
+        "current": 99.622,
+        "forecast": 99.622,
         "signal": -0.0,
         "weight": 0.25,
         "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
@@ -77,22 +134,24 @@
     "status": "LIVE",
     "symbol": "DX-Y.NYB",
     "source": "Yahoo Finance DXY delayed market data",
-    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787069779",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787071411",
     "observation_date": "2026-08-18",
-    "market_time_utc": "2026-08-18T16:06:16+00:00",
-    "current": 99.6,
-    "forecast_1m": 99.6,
-    "forecast_3m": 99.6,
+    "market_time_utc": "2026-08-18T16:33:29+00:00",
+    "current": 99.622,
+    "forecast_1m": 99.622,
+    "forecast_3m": 99.622,
     "forecast_change_3m_pct": 0.0,
     "forecast_range_80": [
-      95.432784,
-      103.767216
+      95.453856,
+      103.790144
     ],
     "direction_3m": "flat",
     "confidence": 35,
+    "selected_model_1m": "price_ensemble",
+    "selected_model_3m": "price_ensemble",
     "backtest_1m": {
-      "rmse_pct": 1.778026810979969,
-      "baseline_rmse_pct": 1.778026810979969,
+      "rmse_pct": 1.7780038709471848,
+      "baseline_rmse_pct": 1.7780038709471848,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 47.94721407624634,
@@ -100,16 +159,96 @@
       "fallback_used": true
     },
     "backtest_3m": {
-      "rmse_pct": 3.2646317879421916,
-      "baseline_rmse_pct": 3.2646317879421916,
+      "rmse_pct": 3.2646374792564985,
+      "baseline_rmse_pct": 3.2646374792564985,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 36.48255813953488,
       "direction_cases": 688,
       "fallback_used": true
     },
-    "model": "walk-forward inverse-RMSE ensemble of 20d/60d/120d damped trends and 1y mean reversion; persistence safety fallback",
-    "limitation": "DXY price is Yahoo Finance delayed data; forecast is a statistical direction estimate, not an ICE real-time quote or guaranteed target."
+    "price_model_audit": {
+      "1m": {
+        "rmse_pct": 1.7780038709471848,
+        "baseline_rmse_pct": 1.7780038709471848,
+        "skill_pct": 0.0,
+        "backtests": 760,
+        "direction_accuracy": 47.94721407624634,
+        "direction_cases": 682,
+        "fallback_used": true
+      },
+      "3m": {
+        "rmse_pct": 3.2646374792564985,
+        "baseline_rmse_pct": 3.2646374792564985,
+        "skill_pct": 0.0,
+        "backtests": 760,
+        "direction_accuracy": 36.48255813953488,
+        "direction_cases": 688,
+        "fallback_used": true
+      }
+    },
+    "macro_model_audit": {
+      "1m": {
+        "available": true,
+        "forecast_return_pct": -0.5770660175742383,
+        "rmse_pct": 1.5853113059429444,
+        "baseline_rmse_pct": 1.4097792545506627,
+        "skill_pct": 0.0,
+        "direction_accuracy": 34.54545454545455,
+        "direction_cases": 55,
+        "backtests": 62,
+        "quality_gate": {
+          "passed": false,
+          "requirements": {
+            "skill_pct_min": 2.0,
+            "direction_accuracy_min": 52.0,
+            "samples_min": 36
+          }
+        },
+        "features": [
+          "DXY 21d momentum",
+          "DXY 63d momentum",
+          "US 2Y yield",
+          "US 2Y 21d change",
+          "10Y-2Y curve",
+          "NFCI",
+          "HY OAS",
+          "VIX"
+        ],
+        "model": "expanding walk-forward ridge regression on existing Fed-engine market/financial inputs"
+      },
+      "3m": {
+        "available": true,
+        "forecast_return_pct": -3.0335843981637245,
+        "rmse_pct": 2.4624015130141608,
+        "baseline_rmse_pct": 1.4754285574270285,
+        "skill_pct": 0.0,
+        "direction_accuracy": 23.684210526315788,
+        "direction_cases": 38,
+        "backtests": 45,
+        "quality_gate": {
+          "passed": false,
+          "requirements": {
+            "skill_pct_min": 2.0,
+            "direction_accuracy_min": 52.0,
+            "samples_min": 36
+          }
+        },
+        "features": [
+          "DXY 21d momentum",
+          "DXY 63d momentum",
+          "US 2Y yield",
+          "US 2Y 21d change",
+          "10Y-2Y curve",
+          "NFCI",
+          "HY OAS",
+          "VIX"
+        ],
+        "model": "expanding walk-forward ridge regression on existing Fed-engine market/financial inputs"
+      }
+    },
+    "model": "validated selection between price-only ensemble and macro-aware ridge model; persistence remains the hard safety benchmark",
+    "limitation": "DXY price is Yahoo Finance delayed data. Macro candidate uses only already-collected US market/financial inputs; no additional API is called. Forecast is not a guaranteed target."
   },
   "coverage_weight": 1.0,
   "coverage_regions": [
@@ -140,7 +279,7 @@
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-18T16:16:22.527178+00:00",
+      "upstream_generated_at_utc": "2026-08-18T16:43:36.389768+00:00",
       "age_days": 78,
       "fetch_ms": 0
     },
@@ -150,16 +289,1296 @@
       "date": "2026-06-01",
       "yoy_pct": 3.224467660084618,
       "yoy_3m_ago_pct": 3.189873154849776,
+      "yoy_history": [
+        {
+          "date": "2018-01-01",
+          "value": 4.412419629747921
+        },
+        {
+          "date": "2018-02-01",
+          "value": 4.822633631719819
+        },
+        {
+          "date": "2018-03-01",
+          "value": 4.278875368582047
+        },
+        {
+          "date": "2018-04-01",
+          "value": 4.329824138360894
+        },
+        {
+          "date": "2018-05-01",
+          "value": 4.708597681716142
+        },
+        {
+          "date": "2018-06-01",
+          "value": 4.747066444774606
+        },
+        {
+          "date": "2018-07-01",
+          "value": 4.515000604031272
+        },
+        {
+          "date": "2018-08-01",
+          "value": 4.065845097555565
+        },
+        {
+          "date": "2018-09-01",
+          "value": 4.232529845785948
+        },
+        {
+          "date": "2019-01-01",
+          "value": 5.575439848791786
+        },
+        {
+          "date": "2019-02-01",
+          "value": 4.584501946906783
+        },
+        {
+          "date": "2019-03-01",
+          "value": 5.121434609646824
+        },
+        {
+          "date": "2019-04-01",
+          "value": 5.3727583003797985
+        },
+        {
+          "date": "2019-05-01",
+          "value": 5.240274374336518
+        },
+        {
+          "date": "2019-06-01",
+          "value": 4.9960781671337
+        },
+        {
+          "date": "2019-07-01",
+          "value": 5.518341848273423
+        },
+        {
+          "date": "2019-08-01",
+          "value": 6.2277254125709725
+        },
+        {
+          "date": "2019-09-01",
+          "value": 6.093960970841206
+        },
+        {
+          "date": "2020-01-01",
+          "value": 11.800996712776213
+        },
+        {
+          "date": "2020-02-01",
+          "value": 5.577267417955745
+        },
+        {
+          "date": "2020-03-01",
+          "value": 7.479649680585632
+        },
+        {
+          "date": "2020-04-01",
+          "value": 8.319449744821972
+        },
+        {
+          "date": "2020-05-01",
+          "value": 9.042245981014819
+        },
+        {
+          "date": "2020-06-01",
+          "value": 9.393625790389383
+        },
+        {
+          "date": "2020-07-01",
+          "value": 10.100287625391902
+        },
+        {
+          "date": "2020-08-01",
+          "value": 9.72597916752993
+        },
+        {
+          "date": "2020-09-01",
+          "value": 10.19065189404933
+        },
+        {
+          "date": "2021-01-01",
+          "value": 6.9494053526553135
+        },
+        {
+          "date": "2021-02-01",
+          "value": 12.25891014338847
+        },
+        {
+          "date": "2021-03-01",
+          "value": 10.279024526562775
+        },
+        {
+          "date": "2021-04-01",
+          "value": 9.213123831787051
+        },
+        {
+          "date": "2021-05-01",
+          "value": 8.62865779908024
+        },
+        {
+          "date": "2021-06-01",
+          "value": 8.391750739712368
+        },
+        {
+          "date": "2021-07-01",
+          "value": 7.8944400010613425
+        },
+        {
+          "date": "2021-08-01",
+          "value": 8.064588401307704
+        },
+        {
+          "date": "2021-09-01",
+          "value": 7.80962949374695
+        },
+        {
+          "date": "2022-01-01",
+          "value": 3.383431250863711
+        },
+        {
+          "date": "2022-02-01",
+          "value": 7.050803702795316
+        },
+        {
+          "date": "2022-03-01",
+          "value": 6.780766402632188
+        },
+        {
+          "date": "2022-04-01",
+          "value": 6.554738021630557
+        },
+        {
+          "date": "2022-05-01",
+          "value": 6.24039519256403
+        },
+        {
+          "date": "2022-06-01",
+          "value": 6.1371012068923925
+        },
+        {
+          "date": "2022-07-01",
+          "value": 6.002021562569482
+        },
+        {
+          "date": "2022-08-01",
+          "value": 6.335343462051024
+        },
+        {
+          "date": "2022-09-01",
+          "value": 5.838625807488396
+        },
+        {
+          "date": "2023-01-01",
+          "value": -0.9758554732561819
+        },
+        {
+          "date": "2023-02-01",
+          "value": 1.615410464371192
+        },
+        {
+          "date": "2023-03-01",
+          "value": 0.9401485472880333
+        },
+        {
+          "date": "2023-04-01",
+          "value": 0.4220581313256977
+        },
+        {
+          "date": "2023-05-01",
+          "value": -0.12781537038387691
+        },
+        {
+          "date": "2023-06-01",
+          "value": -0.5993902128956008
+        },
+        {
+          "date": "2023-07-01",
+          "value": -1.2722372057252684
+        },
+        {
+          "date": "2023-08-01",
+          "value": -2.3554156826955053
+        },
+        {
+          "date": "2023-09-01",
+          "value": -2.2544575788018495
+        },
+        {
+          "date": "2024-01-01",
+          "value": 2.7191031393901444
+        },
+        {
+          "date": "2024-02-01",
+          "value": -0.6188619815345242
+        },
+        {
+          "date": "2024-03-01",
+          "value": -0.3044425168739373
+        },
+        {
+          "date": "2024-04-01",
+          "value": 0.17377178488338085
+        },
+        {
+          "date": "2024-05-01",
+          "value": 0.5500526222030677
+        },
+        {
+          "date": "2024-06-01",
+          "value": 1.2556203846961322
+        },
+        {
+          "date": "2024-07-01",
+          "value": 1.213369470311787
+        },
+        {
+          "date": "2024-08-01",
+          "value": 1.7009459299242913
+        },
+        {
+          "date": "2024-09-01",
+          "value": 2.110266206787581
+        },
+        {
+          "date": "2025-01-01",
+          "value": 3.1239288441942126
+        },
+        {
+          "date": "2025-02-01",
+          "value": 2.9531693098233003
+        },
+        {
+          "date": "2025-03-01",
+          "value": 3.1886276384056167
+        },
+        {
+          "date": "2025-04-01",
+          "value": 3.4016387280058513
+        },
+        {
+          "date": "2025-05-01",
+          "value": 3.426437788808423
+        },
+        {
+          "date": "2025-06-01",
+          "value": 2.8968543404147784
+        },
+        {
+          "date": "2025-07-01",
+          "value": 3.108412630486068
+        },
+        {
+          "date": "2025-08-01",
+          "value": 2.9596003875751897
+        },
+        {
+          "date": "2025-09-01",
+          "value": 2.6757490717808086
+        },
+        {
+          "date": "2026-01-01",
+          "value": 3.241712119089879
+        },
+        {
+          "date": "2026-02-01",
+          "value": 3.217865880436044
+        },
+        {
+          "date": "2026-03-01",
+          "value": 3.189873154849776
+        },
+        {
+          "date": "2026-04-01",
+          "value": 2.947709842801438
+        },
+        {
+          "date": "2026-05-01",
+          "value": 2.9962296496305107
+        },
+        {
+          "date": "2026-06-01",
+          "value": 3.224467660084618
+        }
+      ],
       "source": "ECB Data Portal BSI.M.U2.Y.V.M20.X.I.U2.2300.Z01.A",
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 1034
+      "fetch_ms": 620
     },
     "JP": {
       "date": "2026-07-01",
       "yoy_pct": 2.2,
       "yoy_3m_ago_pct": 2.3,
+      "yoy_history": [
+        {
+          "date": "2000-01-01",
+          "value": 2.0
+        },
+        {
+          "date": "2000-02-01",
+          "value": 2.1
+        },
+        {
+          "date": "2000-03-01",
+          "value": 1.9
+        },
+        {
+          "date": "2000-04-01",
+          "value": 2.9
+        },
+        {
+          "date": "2000-05-01",
+          "value": 2.2
+        },
+        {
+          "date": "2000-06-01",
+          "value": 1.9
+        },
+        {
+          "date": "2000-07-01",
+          "value": 2.0
+        },
+        {
+          "date": "2000-08-01",
+          "value": 1.8
+        },
+        {
+          "date": "2000-09-01",
+          "value": 2.0
+        },
+        {
+          "date": "2001-01-01",
+          "value": 3.3
+        },
+        {
+          "date": "2001-02-01",
+          "value": 2.6
+        },
+        {
+          "date": "2001-03-01",
+          "value": 2.5
+        },
+        {
+          "date": "2001-04-01",
+          "value": 2.3
+        },
+        {
+          "date": "2001-05-01",
+          "value": 2.6
+        },
+        {
+          "date": "2001-06-01",
+          "value": 2.9
+        },
+        {
+          "date": "2001-07-01",
+          "value": 3.0
+        },
+        {
+          "date": "2001-08-01",
+          "value": 2.9
+        },
+        {
+          "date": "2001-09-01",
+          "value": 3.2
+        },
+        {
+          "date": "2002-01-01",
+          "value": 2.2
+        },
+        {
+          "date": "2002-02-01",
+          "value": 3.5
+        },
+        {
+          "date": "2002-03-01",
+          "value": 3.7
+        },
+        {
+          "date": "2002-04-01",
+          "value": 3.5
+        },
+        {
+          "date": "2002-05-01",
+          "value": 3.5
+        },
+        {
+          "date": "2002-06-01",
+          "value": 3.4
+        },
+        {
+          "date": "2002-07-01",
+          "value": 3.3
+        },
+        {
+          "date": "2002-08-01",
+          "value": 3.4
+        },
+        {
+          "date": "2002-09-01",
+          "value": 3.2
+        },
+        {
+          "date": "2003-01-01",
+          "value": 1.5
+        },
+        {
+          "date": "2003-02-01",
+          "value": 1.9
+        },
+        {
+          "date": "2003-03-01",
+          "value": 1.7
+        },
+        {
+          "date": "2003-04-01",
+          "value": 1.3
+        },
+        {
+          "date": "2003-05-01",
+          "value": 1.6
+        },
+        {
+          "date": "2003-06-01",
+          "value": 1.8
+        },
+        {
+          "date": "2003-07-01",
+          "value": 1.8
+        },
+        {
+          "date": "2003-08-01",
+          "value": 1.9
+        },
+        {
+          "date": "2003-09-01",
+          "value": 1.8
+        },
+        {
+          "date": "2004-01-01",
+          "value": 2.0
+        },
+        {
+          "date": "2004-02-01",
+          "value": 1.7
+        },
+        {
+          "date": "2004-03-01",
+          "value": 1.7
+        },
+        {
+          "date": "2004-04-01",
+          "value": 1.8
+        },
+        {
+          "date": "2004-05-01",
+          "value": 2.0
+        },
+        {
+          "date": "2004-06-01",
+          "value": 1.7
+        },
+        {
+          "date": "2004-07-01",
+          "value": 1.8
+        },
+        {
+          "date": "2004-08-01",
+          "value": 1.9
+        },
+        {
+          "date": "2004-09-01",
+          "value": 2.1
+        },
+        {
+          "date": "2005-01-01",
+          "value": 1.9
+        },
+        {
+          "date": "2005-02-01",
+          "value": 1.8
+        },
+        {
+          "date": "2005-03-01",
+          "value": 2.0
+        },
+        {
+          "date": "2005-04-01",
+          "value": 1.8
+        },
+        {
+          "date": "2005-05-01",
+          "value": 1.4
+        },
+        {
+          "date": "2005-06-01",
+          "value": 1.6
+        },
+        {
+          "date": "2005-07-01",
+          "value": 1.6
+        },
+        {
+          "date": "2005-08-01",
+          "value": 1.6
+        },
+        {
+          "date": "2005-09-01",
+          "value": 2.0
+        },
+        {
+          "date": "2006-01-01",
+          "value": 0.7
+        },
+        {
+          "date": "2006-02-01",
+          "value": 1.7
+        },
+        {
+          "date": "2006-03-01",
+          "value": 1.4
+        },
+        {
+          "date": "2006-04-01",
+          "value": 1.6
+        },
+        {
+          "date": "2006-05-01",
+          "value": 1.3
+        },
+        {
+          "date": "2006-06-01",
+          "value": 1.1
+        },
+        {
+          "date": "2006-07-01",
+          "value": 0.5
+        },
+        {
+          "date": "2006-08-01",
+          "value": 0.4
+        },
+        {
+          "date": "2006-09-01",
+          "value": 0.5
+        },
+        {
+          "date": "2007-01-01",
+          "value": 2.1
+        },
+        {
+          "date": "2007-02-01",
+          "value": 1.0
+        },
+        {
+          "date": "2007-03-01",
+          "value": 1.1
+        },
+        {
+          "date": "2007-04-01",
+          "value": 1.1
+        },
+        {
+          "date": "2007-05-01",
+          "value": 1.4
+        },
+        {
+          "date": "2007-06-01",
+          "value": 1.8
+        },
+        {
+          "date": "2007-07-01",
+          "value": 2.0
+        },
+        {
+          "date": "2007-08-01",
+          "value": 1.8
+        },
+        {
+          "date": "2007-09-01",
+          "value": 1.7
+        },
+        {
+          "date": "2008-01-01",
+          "value": 1.8
+        },
+        {
+          "date": "2008-02-01",
+          "value": 2.4
+        },
+        {
+          "date": "2008-03-01",
+          "value": 2.3
+        },
+        {
+          "date": "2008-04-01",
+          "value": 1.9
+        },
+        {
+          "date": "2008-05-01",
+          "value": 2.1
+        },
+        {
+          "date": "2008-06-01",
+          "value": 2.2
+        },
+        {
+          "date": "2008-07-01",
+          "value": 2.1
+        },
+        {
+          "date": "2008-08-01",
+          "value": 2.4
+        },
+        {
+          "date": "2008-09-01",
+          "value": 2.2
+        },
+        {
+          "date": "2009-01-01",
+          "value": 3.1
+        },
+        {
+          "date": "2009-02-01",
+          "value": 2.1
+        },
+        {
+          "date": "2009-03-01",
+          "value": 2.2
+        },
+        {
+          "date": "2009-04-01",
+          "value": 2.7
+        },
+        {
+          "date": "2009-05-01",
+          "value": 2.7
+        },
+        {
+          "date": "2009-06-01",
+          "value": 2.5
+        },
+        {
+          "date": "2009-07-01",
+          "value": 2.7
+        },
+        {
+          "date": "2009-08-01",
+          "value": 2.8
+        },
+        {
+          "date": "2009-09-01",
+          "value": 3.0
+        },
+        {
+          "date": "2010-01-01",
+          "value": 2.3
+        },
+        {
+          "date": "2010-02-01",
+          "value": 2.7
+        },
+        {
+          "date": "2010-03-01",
+          "value": 2.7
+        },
+        {
+          "date": "2010-04-01",
+          "value": 2.9
+        },
+        {
+          "date": "2010-05-01",
+          "value": 3.1
+        },
+        {
+          "date": "2010-06-01",
+          "value": 2.9
+        },
+        {
+          "date": "2010-07-01",
+          "value": 2.7
+        },
+        {
+          "date": "2010-08-01",
+          "value": 2.8
+        },
+        {
+          "date": "2010-09-01",
+          "value": 2.8
+        },
+        {
+          "date": "2011-01-01",
+          "value": 3.1
+        },
+        {
+          "date": "2011-02-01",
+          "value": 2.4
+        },
+        {
+          "date": "2011-03-01",
+          "value": 2.6
+        },
+        {
+          "date": "2011-04-01",
+          "value": 2.7
+        },
+        {
+          "date": "2011-05-01",
+          "value": 2.7
+        },
+        {
+          "date": "2011-06-01",
+          "value": 2.8
+        },
+        {
+          "date": "2011-07-01",
+          "value": 2.9
+        },
+        {
+          "date": "2011-08-01",
+          "value": 2.7
+        },
+        {
+          "date": "2011-09-01",
+          "value": 2.7
+        },
+        {
+          "date": "2012-01-01",
+          "value": 2.6
+        },
+        {
+          "date": "2012-02-01",
+          "value": 2.9
+        },
+        {
+          "date": "2012-03-01",
+          "value": 3.0
+        },
+        {
+          "date": "2012-04-01",
+          "value": 2.6
+        },
+        {
+          "date": "2012-05-01",
+          "value": 2.2
+        },
+        {
+          "date": "2012-06-01",
+          "value": 2.3
+        },
+        {
+          "date": "2012-07-01",
+          "value": 2.3
+        },
+        {
+          "date": "2012-08-01",
+          "value": 2.4
+        },
+        {
+          "date": "2012-09-01",
+          "value": 2.4
+        },
+        {
+          "date": "2013-01-01",
+          "value": 4.2
+        },
+        {
+          "date": "2013-02-01",
+          "value": 2.9
+        },
+        {
+          "date": "2013-03-01",
+          "value": 3.0
+        },
+        {
+          "date": "2013-04-01",
+          "value": 3.2
+        },
+        {
+          "date": "2013-05-01",
+          "value": 3.5
+        },
+        {
+          "date": "2013-06-01",
+          "value": 3.8
+        },
+        {
+          "date": "2013-07-01",
+          "value": 3.7
+        },
+        {
+          "date": "2013-08-01",
+          "value": 3.8
+        },
+        {
+          "date": "2013-09-01",
+          "value": 3.8
+        },
+        {
+          "date": "2014-01-01",
+          "value": 3.5
+        },
+        {
+          "date": "2014-02-01",
+          "value": 4.0
+        },
+        {
+          "date": "2014-03-01",
+          "value": 3.5
+        },
+        {
+          "date": "2014-04-01",
+          "value": 3.4
+        },
+        {
+          "date": "2014-05-01",
+          "value": 3.3
+        },
+        {
+          "date": "2014-06-01",
+          "value": 3.0
+        },
+        {
+          "date": "2014-07-01",
+          "value": 3.0
+        },
+        {
+          "date": "2014-08-01",
+          "value": 3.0
+        },
+        {
+          "date": "2014-09-01",
+          "value": 3.0
+        },
+        {
+          "date": "2015-01-01",
+          "value": 3.1
+        },
+        {
+          "date": "2015-02-01",
+          "value": 3.5
+        },
+        {
+          "date": "2015-03-01",
+          "value": 3.6
+        },
+        {
+          "date": "2015-04-01",
+          "value": 3.6
+        },
+        {
+          "date": "2015-05-01",
+          "value": 4.1
+        },
+        {
+          "date": "2015-06-01",
+          "value": 3.8
+        },
+        {
+          "date": "2015-07-01",
+          "value": 3.9
+        },
+        {
+          "date": "2015-08-01",
+          "value": 4.1
+        },
+        {
+          "date": "2015-09-01",
+          "value": 3.8
+        },
+        {
+          "date": "2016-01-01",
+          "value": 3.9
+        },
+        {
+          "date": "2016-02-01",
+          "value": 3.1
+        },
+        {
+          "date": "2016-03-01",
+          "value": 3.0
+        },
+        {
+          "date": "2016-04-01",
+          "value": 3.3
+        },
+        {
+          "date": "2016-05-01",
+          "value": 3.3
+        },
+        {
+          "date": "2016-06-01",
+          "value": 3.3
+        },
+        {
+          "date": "2016-07-01",
+          "value": 3.3
+        },
+        {
+          "date": "2016-08-01",
+          "value": 3.2
+        },
+        {
+          "date": "2016-09-01",
+          "value": 3.4
+        },
+        {
+          "date": "2017-01-01",
+          "value": 3.6
+        },
+        {
+          "date": "2017-02-01",
+          "value": 4.1
+        },
+        {
+          "date": "2017-03-01",
+          "value": 4.2
+        },
+        {
+          "date": "2017-04-01",
+          "value": 3.9
+        },
+        {
+          "date": "2017-05-01",
+          "value": 3.8
+        },
+        {
+          "date": "2017-06-01",
+          "value": 3.9
+        },
+        {
+          "date": "2017-07-01",
+          "value": 4.0
+        },
+        {
+          "date": "2017-08-01",
+          "value": 4.0
+        },
+        {
+          "date": "2017-09-01",
+          "value": 4.0
+        },
+        {
+          "date": "2018-01-01",
+          "value": 2.4
+        },
+        {
+          "date": "2018-02-01",
+          "value": 3.2
+        },
+        {
+          "date": "2018-03-01",
+          "value": 3.1
+        },
+        {
+          "date": "2018-04-01",
+          "value": 3.2
+        },
+        {
+          "date": "2018-05-01",
+          "value": 3.2
+        },
+        {
+          "date": "2018-06-01",
+          "value": 3.1
+        },
+        {
+          "date": "2018-07-01",
+          "value": 2.9
+        },
+        {
+          "date": "2018-08-01",
+          "value": 2.9
+        },
+        {
+          "date": "2018-09-01",
+          "value": 2.8
+        },
+        {
+          "date": "2019-01-01",
+          "value": 2.6
+        },
+        {
+          "date": "2019-02-01",
+          "value": 2.4
+        },
+        {
+          "date": "2019-03-01",
+          "value": 2.4
+        },
+        {
+          "date": "2019-04-01",
+          "value": 2.4
+        },
+        {
+          "date": "2019-05-01",
+          "value": 2.5
+        },
+        {
+          "date": "2019-06-01",
+          "value": 2.2
+        },
+        {
+          "date": "2019-07-01",
+          "value": 2.2
+        },
+        {
+          "date": "2019-08-01",
+          "value": 2.3
+        },
+        {
+          "date": "2019-09-01",
+          "value": 2.3
+        },
+        {
+          "date": "2020-01-01",
+          "value": 9.2
+        },
+        {
+          "date": "2020-02-01",
+          "value": 2.8
+        },
+        {
+          "date": "2020-03-01",
+          "value": 3.1
+        },
+        {
+          "date": "2020-04-01",
+          "value": 3.7
+        },
+        {
+          "date": "2020-05-01",
+          "value": 5.1
+        },
+        {
+          "date": "2020-06-01",
+          "value": 7.3
+        },
+        {
+          "date": "2020-07-01",
+          "value": 7.9
+        },
+        {
+          "date": "2020-08-01",
+          "value": 8.6
+        },
+        {
+          "date": "2020-09-01",
+          "value": 9.0
+        },
+        {
+          "date": "2021-01-01",
+          "value": 3.7
+        },
+        {
+          "date": "2021-02-01",
+          "value": 9.6
+        },
+        {
+          "date": "2021-03-01",
+          "value": 9.5
+        },
+        {
+          "date": "2021-04-01",
+          "value": 9.3
+        },
+        {
+          "date": "2021-05-01",
+          "value": 8.0
+        },
+        {
+          "date": "2021-06-01",
+          "value": 5.9
+        },
+        {
+          "date": "2021-07-01",
+          "value": 5.3
+        },
+        {
+          "date": "2021-08-01",
+          "value": 4.7
+        },
+        {
+          "date": "2021-09-01",
+          "value": 4.2
+        },
+        {
+          "date": "2022-01-01",
+          "value": 2.9
+        },
+        {
+          "date": "2022-02-01",
+          "value": 3.6
+        },
+        {
+          "date": "2022-03-01",
+          "value": 3.5
+        },
+        {
+          "date": "2022-04-01",
+          "value": 3.4
+        },
+        {
+          "date": "2022-05-01",
+          "value": 3.1
+        },
+        {
+          "date": "2022-06-01",
+          "value": 3.3
+        },
+        {
+          "date": "2022-07-01",
+          "value": 3.4
+        },
+        {
+          "date": "2022-08-01",
+          "value": 3.4
+        },
+        {
+          "date": "2022-09-01",
+          "value": 3.3
+        },
+        {
+          "date": "2023-01-01",
+          "value": 2.3
+        },
+        {
+          "date": "2023-02-01",
+          "value": 2.6
+        },
+        {
+          "date": "2023-03-01",
+          "value": 2.5
+        },
+        {
+          "date": "2023-04-01",
+          "value": 2.6
+        },
+        {
+          "date": "2023-05-01",
+          "value": 2.6
+        },
+        {
+          "date": "2023-06-01",
+          "value": 2.6
+        },
+        {
+          "date": "2023-07-01",
+          "value": 2.5
+        },
+        {
+          "date": "2023-08-01",
+          "value": 2.5
+        },
+        {
+          "date": "2023-09-01",
+          "value": 2.4
+        },
+        {
+          "date": "2024-01-01",
+          "value": 1.3
+        },
+        {
+          "date": "2024-02-01",
+          "value": 2.4
+        },
+        {
+          "date": "2024-03-01",
+          "value": 2.5
+        },
+        {
+          "date": "2024-04-01",
+          "value": 2.2
+        },
+        {
+          "date": "2024-05-01",
+          "value": 1.8
+        },
+        {
+          "date": "2024-06-01",
+          "value": 1.5
+        },
+        {
+          "date": "2024-07-01",
+          "value": 1.5
+        },
+        {
+          "date": "2024-08-01",
+          "value": 1.3
+        },
+        {
+          "date": "2024-09-01",
+          "value": 1.2
+        },
+        {
+          "date": "2025-01-01",
+          "value": 1.7
+        },
+        {
+          "date": "2025-02-01",
+          "value": 1.2
+        },
+        {
+          "date": "2025-03-01",
+          "value": 0.8
+        },
+        {
+          "date": "2025-04-01",
+          "value": 0.5
+        },
+        {
+          "date": "2025-05-01",
+          "value": 0.6
+        },
+        {
+          "date": "2025-06-01",
+          "value": 0.8
+        },
+        {
+          "date": "2025-07-01",
+          "value": 1.0
+        },
+        {
+          "date": "2025-08-01",
+          "value": 1.3
+        },
+        {
+          "date": "2025-09-01",
+          "value": 1.5
+        },
+        {
+          "date": "2026-01-01",
+          "value": 1.6
+        },
+        {
+          "date": "2026-02-01",
+          "value": 1.7
+        },
+        {
+          "date": "2026-03-01",
+          "value": 2.0
+        },
+        {
+          "date": "2026-04-01",
+          "value": 2.3
+        },
+        {
+          "date": "2026-05-01",
+          "value": 2.5
+        },
+        {
+          "date": "2026-06-01",
+          "value": 2.2
+        },
+        {
+          "date": "2026-07-01",
+          "value": 2.2
+        }
+      ],
       "level": 12970074.0,
       "region": "JP",
       "label": "Japan M2",
@@ -167,7 +1586,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 709
+      "fetch_ms": 740
     },
     "CN": {
       "region": "CN",
@@ -179,9 +1598,27 @@
       "source": "People's Bank of China Financial Statistics Reports",
       "source_url": "https://www.pbc.gov.cn/en/3688247/3688978/3709137/2026081815052522832/index.html",
       "history_points": 4,
+      "yoy_history": [
+        {
+          "date": "2026-04-01",
+          "value": 8.6
+        },
+        {
+          "date": "2026-05-01",
+          "value": 8.6
+        },
+        {
+          "date": "2026-06-01",
+          "value": 8.0
+        },
+        {
+          "date": "2026-07-01",
+          "value": 7.7
+        }
+      ],
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 3308
+      "fetch_ms": 5217
     }
   },
   "statuses": {
@@ -191,7 +1628,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 5053,
+  "runtime_ms": 6579,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -202,7 +1639,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T16:20:37.763952+00:00",
+      "last_success_utc": "2026-08-18T16:52:12.375705+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -216,7 +1653,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T16:20:38.170825+00:00",
+      "last_success_utc": "2026-08-18T16:52:12.809515+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -230,13 +1667,13 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T16:20:41.716197+00:00",
+      "last_success_utc": "2026-08-18T16:52:18.269996+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     }
   },
   "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
-  "methodology": "Weighted YoY broad-money growth composite. Current weights remain US/CN/EA/JP 40/30/20/10. The 3-month forecast uses the Fed-engine history-based US M2 forecast when available and conservative region acceleration for CN/EA/JP; the prior composite-acceleration forecast is retained as legacy_forecast for audit. DXY and real-yield signals are reported separately in forward_liquidity_outlook and do not alter the M2 level forecast.",
+  "methodology": "Weighted YoY broad-money growth composite. Current weights remain US/CN/EA/JP 40/30/20/10. US reuses the Fed-engine history model. CN/EA/JP use monthly YoY walk-forward models only when they beat persistence; otherwise they automatically remain at persistence. The prior composite-acceleration forecast is retained as legacy_forecast for audit. DXY and real-yield signals are reported separately and never alter the M2 level forecast.",
   "is_proxy": false
 }
