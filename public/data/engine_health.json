@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "generated_at_utc": "2026-08-18T19:14:14.405878+00:00",
+  "generated_at_utc": "2026-08-18T19:20:09.646993+00:00",
   "status": "HEALTHY_WITH_FALLBACKS",
   "pipeline_health": "HEALTHY",
   "forecast_health": "PARTIAL",
@@ -35,7 +35,7 @@
         "http_5xx": 0,
         "timeouts": 0,
         "retries": 0,
-        "last_success_utc": "2026-08-18T19:14:00.868956+00:00",
+        "last_success_utc": "2026-08-18T19:19:57.354354+00:00",
         "last_failure_utc": null,
         "cooldown": false,
         "final_status": "LIVE"
@@ -49,28 +49,28 @@
         "http_5xx": 0,
         "timeouts": 0,
         "retries": 0,
-        "last_success_utc": "2026-08-18T19:14:01.490222+00:00",
+        "last_success_utc": "2026-08-18T19:19:57.835437+00:00",
         "last_failure_utc": null,
         "cooldown": false,
         "final_status": "LIVE"
       },
       "PBC": {
         "provider": "PBC",
-        "request_attempts": 26,
-        "network_calls": 25,
+        "request_attempts": 19,
+        "network_calls": 18,
         "memory_cache_hits": 1,
         "http_429": 0,
         "http_5xx": 0,
         "timeouts": 0,
         "retries": 0,
-        "last_success_utc": "2026-08-18T19:14:14.299369+00:00",
+        "last_success_utc": "2026-08-18T19:20:09.480900+00:00",
         "last_failure_utc": null,
         "cooldown": false,
         "final_status": "LIVE"
       }
     }
   },
-  "runtime_ms": 14755,
+  "runtime_ms": 13042,
   "model_degradation": [],
   "global_m2_composite_validation": {
     "available": false,
