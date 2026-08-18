@@ -111,7 +111,9 @@ class GlobalM2Tests(unittest.TestCase):
             if url.endswith('/q1.html'): return R(q1)
             return R('unneeded')
         session=global_m2.requests.Session()
-        with patch.object(session, 'get', side_effect=fake_get):
+        with patch.object(session, 'get', side_effect=fake_get), \
+             patch.object(global_m2, '_read_cn_history_cache', return_value=[]), \
+             patch.object(global_m2, '_write_cn_history_cache'):
             global_m2._REQUEST_MEMO.clear(); global_m2._API_HEALTH.clear(); global_m2._PROVIDER_LAST_CALL.clear()
             out=global_m2._fetch_pbc(session)
         self.assertEqual(out['date'], '2026-06-01')

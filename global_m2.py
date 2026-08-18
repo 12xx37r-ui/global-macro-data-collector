@@ -713,33 +713,48 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         selected.append(prior)
 
     # At most four additional reports may be tried if a selected report changes HTML shape.
+    # IMPORTANT: cache is history/backfill only. It must never satisfy the live-fetch loop or
+    # override the current observation selected from the fresh official PBC listing.
     fallback_candidates = [c for c in candidates if c not in selected][:4]
     cached_history = _read_cn_history_cache()
-    observations: list[dict[str, Any]] = [{"date":r["date"],"yoy_pct":float(r["value"]),"level":None,"source_url":None} for r in cached_history]
+    live_observations: list[dict[str, Any]] = []
     errors: list[str] = []
-    backfill: list[dict[str, str]] = []
     for c in selected + fallback_candidates:
-        if len(observations) >= 2:
-            obs_months = sorted(str(o["date"])[:7] for o in observations if o.get("date"))
+        if len(live_observations) >= 2:
+            obs_months = sorted(str(o["date"])[:7] for o in live_observations if o.get("date"))
             if obs_months and _month_number(obs_months[-1]) - _month_number(obs_months[0]) >= 3:
                 break
         try:
             rr = _get_retry(session, c["url"], headers=headers, attempts=2, timeout=(5, 12))
             parsed = _extract_pbc_article(rr.text, c["url"])
             if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
-                observations.append(parsed)
+                live_observations.append(parsed)
         except Exception as exc:
             errors.append(f"{c['month']}: {type(exc).__name__}: {str(exc)[:120]}")
 
-    if not observations:
+    if not live_observations:
         raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (" · " + " | ".join(errors[-2:]) if errors else ""))
 
-    dedup = {str(o["date"])[:7]: o for o in observations}
-    rows = [dedup[k] for k in sorted(dedup)]
-    latest = rows[-1]
+    # The current value must come from this run's official PBC article, never silently from cache.
+    live_dedup = {str(o["date"])[:7]: o for o in live_observations}
+    live_rows = [live_dedup[k] for k in sorted(live_dedup)]
+    latest = live_rows[-1]
     latest_m = str(latest["date"])[:7]
+
+    # Merge cached history only for historical modelling / genuine 3m backfill, and cap it at
+    # the live latest month so a stale/future cache entry cannot override a fresh listing fixture.
+    cached_obs = [
+        {"date": r["date"], "yoy_pct": float(r["value"]), "level": None, "source_url": None}
+        for r in cached_history
+        if r.get("date") and _num(r.get("value")) is not None and str(r["date"])[:7] <= latest_m
+    ]
+    dedup = {str(o["date"])[:7]: o for o in cached_obs}
+    for o in live_rows:
+        dedup[str(o["date"])[:7]] = o  # live wins for overlapping months
+    rows = [dedup[k] for k in sorted(dedup)]
+
     target_num = _month_number(latest_m) - 3
-    prior_candidates = [o for o in rows[:-1] if _month_number(str(o["date"])[:7]) <= target_num]
+    prior_candidates = [o for o in rows if str(o.get("date", ""))[:7] != latest_m and _month_number(str(o["date"])[:7]) <= target_num]
     if not prior_candidates:
         raise ValueError("PBC latest M2 obtained but genuine 3-month comparison observation unavailable")
     prior = prior_candidates[-1]
