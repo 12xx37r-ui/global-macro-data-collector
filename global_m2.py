@@ -796,9 +796,17 @@ def _pbc_cn_archive_candidates(
 
 
 def _pbc_parse_candidate(rr_text: str, c: dict[str, str]) -> dict[str, Any] | None:
-    """Parse a PBC report and use its archive month when period titles omit an explicit date."""
+    """Parse a PBC report and anchor it to the observation month derived from its archive title.
+
+    PBC period reports are typically published after the observation period:
+    - H1 / 上半年 is published in July but represents June.
+    - Annual reports are published in January but represent December.
+    The article parser can see the publication date first, so only filling the
+    candidate month when date is missing mislabels these reports and causes them
+    to collide with July/January observations already in history.
+    """
     parsed = _extract_pbc_article(rr_text, c["url"])
-    if parsed and not parsed.get("date") and c.get("month"):
+    if parsed and c.get("month"):
         parsed["date"] = str(c["month"]) + "-01"
     return parsed
 
