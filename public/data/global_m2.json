@@ -3,24 +3,31 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T13:46:43.926325+00:00",
-  "observation_date": "2026-06-01",
-  "value": 4.75866,
-  "current": 4.75866,
-  "forecast": 5.081417,
-  "changePct": 6.782529,
-  "directionScore": 25.489788,
-  "current_yoy_pct": 4.75866,
-  "prior_3m_yoy_pct": 4.113145,
-  "acceleration_pp": 0.645515,
-  "coverage_weight": 0.6,
+  "generated_at_utc": "2026-08-18T15:34:47.083442+00:00",
+  "observation_date": "2026-07-01",
+  "value": 4.393137,
+  "current": 4.393137,
+  "forecast": 4.662643,
+  "changePct": 6.134714,
+  "directionScore": 22.962675,
+  "current_yoy_pct": 4.393137,
+  "prior_3m_yoy_pct": 3.854124,
+  "acceleration_pp": 0.539013,
+  "coverage_weight": 0.7,
   "coverage_regions": [
     "EA",
+    "JP",
     "US"
   ],
+  "full_coverage": false,
+  "coverage_quality": "DEGRADED",
+  "missing_regions": [
+    "CN"
+  ],
   "weights_used": {
-    "US": 0.666667,
-    "EA": 0.333333
+    "US": 0.571429,
+    "EA": 0.285714,
+    "JP": 0.142857
   },
   "components": {
     "US": {
@@ -45,19 +52,30 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78
+    },
+    "JP": {
+      "date": "2026-07-01",
+      "yoy_pct": 2.2,
+      "yoy_3m_ago_pct": 2.3,
+      "level": 12970074.0,
+      "region": "JP",
+      "label": "Japan M2",
+      "source": "Bank of Japan Main Time-Series Statistics · MD02'MAM1YAM2M2MO",
+      "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
+      "status": "LIVE",
+      "age_days": 48
     }
   },
   "statuses": {
     "US": "LIVE",
     "EA": "LIVE",
-    "JP": "UNAVAILABLE",
+    "JP": "LIVE",
     "CN": "UNAVAILABLE"
   },
   "errors": {
-    "JP": "ValueError: BOJ M2 official page reachable but observation parse unavailable",
-    "CN": "ValueError: PBC current M2 report parse unavailable"
+    "CN": "ValueError: PBC recent Financial Statistics Report parse unavailable"
   },
-  "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2; missing regions reweighted",
-  "methodology": "Weighted YoY broad-money growth composite; 3-month acceleration informs a conservative forecast and direction score. Strategic weights are fixed and re-normalized when a source is temporarily unavailable.",
+  "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
+  "methodology": "Weighted YoY broad-money growth composite. Full-quality output requires US/CN/EA/JP; temporary gaps are transparently re-normalized and flagged PARTIAL/DEGRADED instead of being presented as full global coverage. 3-month acceleration informs the conservative forecast and direction score.",
   "is_proxy": false
 }
