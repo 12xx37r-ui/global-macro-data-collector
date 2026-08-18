@@ -1,0 +1,209 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-08-18T17:43:59.914359+00:00",
+  "engine": "Global macro engine",
+  "entries": [
+    {
+      "id": "global_m2_3m",
+      "label": "Global M2 YoY 3m",
+      "horizon": "3m",
+      "current": 5.385196,
+      "forecast": 5.433719,
+      "status": "REFERENCE_ONLY",
+      "usable": true,
+      "benchmark_safe": true,
+      "component_gates": {
+        "US": true,
+        "EA": true,
+        "JP": true,
+        "CN": false
+      },
+      "reason": "benchmark-safe composite, but at least one regional model is still on persistence/insufficient-history fallback"
+    },
+    {
+      "id": "card9_3m",
+      "label": "CARD9 3m",
+      "horizon": "3m",
+      "current": 43.9925529025267,
+      "forecast": 45.298874455769166,
+      "status": "REFERENCE_ONLY",
+      "usable": false,
+      "validation": {
+        "passed": false,
+        "passed_horizons": []
+      }
+    },
+    {
+      "id": "card10_3m",
+      "label": "CARD10 3m",
+      "horizon": "3m",
+      "current": 45.95688679577424,
+      "forecast": 48.20122110421089,
+      "status": "VALIDATED",
+      "usable": true,
+      "validation": {
+        "passed": true,
+        "passed_horizons": [
+          "1m",
+          "3m",
+          "6m",
+          "12m"
+        ]
+      }
+    },
+    {
+      "id": "card8_3m",
+      "label": "Card8 rates/real-yield 3m",
+      "horizon": "3m",
+      "status": "REFERENCE_ONLY",
+      "usable": false,
+      "passed_targets": [
+        "DGS2"
+      ]
+    },
+    {
+      "id": "card12_equity:3m",
+      "label": "Card12 equity:3m",
+      "horizon": "3m",
+      "status": "VALIDATED",
+      "usable": true
+    },
+    {
+      "id": "card12_rates:1m",
+      "label": "Card12 rates:1m",
+      "horizon": "1m",
+      "status": "VALIDATED",
+      "usable": true
+    },
+    {
+      "id": "card12_crypto:1m",
+      "label": "Card12 crypto:1m",
+      "horizon": "1m",
+      "status": "VALIDATED",
+      "usable": true
+    },
+    {
+      "id": "forward_liquidity_3m",
+      "label": "Forward liquidity composite 3m",
+      "horizon": "3m",
+      "current": 9.7,
+      "forecast": null,
+      "status": "REFERENCE_ONLY",
+      "usable": false,
+      "input_validation": "PARTIALLY_VALIDATED_INPUTS",
+      "oos": {
+        "sp500": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "nasdaq100": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "bitcoin": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "card11_future_3m",
+      "label": "Card11 future composite 3m",
+      "horizon": "3m",
+      "current": -20.0,
+      "forecast": null,
+      "status": "REFERENCE_ONLY",
+      "usable": false,
+      "input_gate": {
+        "passed": true,
+        "validated_input_count": 3,
+        "rule": "검증된 3개월 하위신호 2개 이상일 때만 향후 종합판정 사용"
+      },
+      "oos": {
+        "sp500": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "nasdaq100": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "bitcoin": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "validated": 4,
+    "reference_only": 5
+  },
+  "policy": "Only horizon-specific forecasts that pass their own gate are promoted. Composite signals additionally require realized published-snapshot OOS validation before VALIDATED status."
+}

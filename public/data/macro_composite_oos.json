@@ -1,0 +1,202 @@
+{
+  "schema_version": "1.0",
+  "generated_at_utc": "2026-08-18T17:43:59.914313+00:00",
+  "method": "real published-snapshot forward validation; no synthetic vintage reconstruction",
+  "snapshot_count": 1,
+  "metrics": {
+    "forward_liquidity": {
+      "1m": {
+        "sp500": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "nasdaq100": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "bitcoin": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        }
+      },
+      "3m": {
+        "sp500": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "nasdaq100": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "bitcoin": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        }
+      }
+    },
+    "card11_future": {
+      "1m": {
+        "sp500": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "nasdaq100": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "bitcoin": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        }
+      },
+      "3m": {
+        "sp500": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "nasdaq100": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        },
+        "bitcoin": {
+          "samples": 0,
+          "direction_accuracy": null,
+          "majority_direction_accuracy": null,
+          "direction_skill_vs_majority": null,
+          "mean_forward_return_pct": null,
+          "quality_gate": {
+            "passed": false,
+            "requirements": {
+              "samples_min": 24,
+              "direction_accuracy_min": 0.55,
+              "direction_skill_vs_majority_min_exclusive": 0.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "status": "ACTIVE_ACCUMULATION",
+  "note": "Quality gates remain false until at least 24 matured observations exist for a horizon/asset pair."
+}
