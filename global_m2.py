@@ -469,7 +469,7 @@ def _fetch_us_fed_h6(session: requests.Session) -> dict[str, Any]:
         attempts=1,
         timeout=(4, 10),
     )
-    soup = BeautifulSoup(r.text, "html.parser")
+    soup = BeautifulSoup(_pbc_response_html(r), "html.parser")
     rows: list[dict[str, Any]] = []
 
     # Table 1 has Date, seasonally adjusted M1, M2, ... . We find a table that
@@ -707,10 +707,9 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
 
 
 def _pbc_report_month(label: str) -> str | None:
-    text = re.sub(r"\s+", " ", str(label or "")).strip()
+    text = str(label or "").replace("\u00c2\u00a0", " ").replace("\u00a0", " ")
+    text = re.sub(r"\s+", " ", text).strip()
 
-    # English monthly titles. PBC commonly uses forms such as:
-    # "Financial Statistics Report (July, 2026)" as well as "July 2026".
     m = re.search(
         r"(January|February|March|April|May|June|July|August|September|October|November|December)"
         r"\s*,?\s*(20\d{2})",
@@ -725,7 +724,6 @@ def _pbc_report_month(label: str) -> str | None:
         }[m.group(1).lower()]
         return f"{int(m.group(2)):04d}-{month_no:02d}"
 
-    # Chinese explicit monthly titles.
     cm = re.search(r"(20\d{2})年\s*(1[0-2]|0?[1-9])月", text)
     if cm:
         return f"{int(cm.group(1)):04d}-{int(cm.group(2)):02d}"
@@ -735,29 +733,19 @@ def _pbc_report_month(label: str) -> str | None:
         return None
     year = int(y.group(1))
 
-    # Chinese / English period reports.
-    if "上半年" in text or re.search(r"\bH1\b|first half", text, re.I):
+    if "上半年" in text or "前6个月" in text or re.search(r"\bH1\b|first half", text, re.I):
         return f"{year:04d}-06"
-    if "前三季度" in text or re.search(r"\bQ1\s*[-–]\s*Q3\b|first three quarters", text, re.I):
+    if "前三季度" in text or "前9个月" in text or re.search(r"\bQ1\s*[-–]\s*Q3\b|first three quarters", text, re.I):
         return f"{year:04d}-09"
-    if "一季度" in text or re.search(r"\bQ1\b|first quarter", text, re.I):
+    if "一季度" in text or "前3个月" in text or re.search(r"\bQ1\b|first quarter", text, re.I):
         return f"{year:04d}-03"
 
-    # Annual report -> December only when there is no explicit month or period token.
-    # This avoids misclassifying "Financial Statistics Report (July, 2026)" as 2026-12.
-    if re.search(r"金融统计数据(?:报告|解读)|Financial Statistics Report", text, re.I):
-        has_month_word = re.search(
-            r"January|February|March|April|May|June|July|August|September|October|November|December",
-            text,
-            re.I,
-        )
-        has_period = re.search(
-            r"\d{1,2}月|上半年|前三季度|一季度|\bH1\b|\bQ1\b|first half|first quarter|first three quarters",
-            text,
-            re.I,
-        )
-        if not has_month_word and not has_period:
-            return f"{year:04d}-12"
+    if re.fullmatch(rf"{year}年金融统计数据(?:报告|解读)", text):
+        return f"{year:04d}-12"
+    if re.search(r"\bannual\b|full[- ]year|year[- ]end", text, re.I):
+        return f"{year:04d}-12"
+    if re.search(rf"Financial Statistics Report\s*\(\s*{year}\s*\)", text, re.I):
+        return f"{year:04d}-12"
 
     return None
 
@@ -939,7 +927,7 @@ def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[s
                     label = " ".join(a.stripped_strings).strip()
                     month = _pbc_report_month(label)
                     href = urljoin(u, str(a.get("href") or ""))
-                    if not month or not re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I):
+                    if not month or not re.search(r"Financial Statistics Report|金融统计数据(?:报告|解读)", label, re.I):
                         continue
                     if "pbc.gov.cn" not in href.lower() or href in seen_urls:
                         continue
@@ -1071,7 +1059,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     listing_error = None
     try:
         r = _get_retry(session, PBC_REPORTS_EN, headers=headers, attempts=2, timeout=(5, 12))
-        candidates = _pbc_listing_candidates(r.text, PBC_REPORTS_EN)
+        candidates = _pbc_listing_candidates(_pbc_response_html(r), PBC_REPORTS_EN)
     except Exception as exc:
         listing_error = f"{type(exc).__name__}: {str(exc)[:160]}"
 
@@ -1085,7 +1073,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
                 label = " ".join(a.stripped_strings).strip()
                 month = _pbc_report_month(label)
                 href = urljoin(u, str(a.get("href") or ""))
-                if month and re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I) and "pbc.gov.cn" in href.lower():
+                if month and re.search(r"Financial Statistics Report|金融统计数据(?:报告|解读)", label, re.I) and "pbc.gov.cn" in href.lower():
                     candidates.append({"month": month, "label": label, "url": href})
             candidates = sorted({x["url"]: x for x in candidates}.values(), key=lambda x: x["month"], reverse=True)
         except Exception:
@@ -1287,7 +1275,13 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         raise ValueError("PBC latest M2 obtained but genuine 3-month comparison observation unavailable")
     prior = prior_candidates[-1]
 
-    hist=[{"date":str(o["date"])[:7]+"-01","value":float(o["yoy_pct"])} for o in rows if o.get("date") and _num(o.get("yoy_pct")) is not None]
+    hist=[
+        {"date":str(o["date"])[:7]+"-01","value":float(o["yoy_pct"])}
+        for o in rows
+        if o.get("date")
+        and _num(o.get("yoy_pct")) is not None
+        and str(o["date"])[:7] <= latest_m
+    ]
     _write_cn_history_cache(hist)
     return {
         "region": "CN", "label": "China M2", "date": latest.get("date"),
