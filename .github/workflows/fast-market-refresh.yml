@@ -3,14 +3,16 @@ name: Fast Market Refresh V230
 on:
   workflow_dispatch:
   schedule:
-    - cron: "47 */2 * * 1-5"
+    # Full engine runs daily at 15:20 UTC.
+    # Keep fast refresh out of the full-run neighborhood: skip 14/16 UTC.
+    - cron: "47 0,2,4,6,8,10,12,18,20,22 * * 1-5"
 
 permissions:
   contents: write
 
 concurrency:
-  group: global-fast-market-${{ github.ref }}
-  cancel-in-progress: true
+  group: global-macro-engine-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   refresh:
