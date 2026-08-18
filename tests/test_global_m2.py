@@ -205,5 +205,30 @@ class GlobalM2Tests(unittest.TestCase):
         if out.get('skill_pct',0) <= 0:
             self.assertTrue(out.get('fallback_used'))
 
+    def test_forward_liquidity_excludes_failed_us_real_rate_forecast(self):
+        ctx={
+            'us_engine':{
+                'dxy':{'available':True,'current':100.0,'forecast_3m':100.0,'forecast_change_3m_pct':0.0,'backtest_3m':{'skill_pct':0.0,'fallback_used':True},'source':'Yahoo'},
+                'real_rate':{'available':True,'current_pct':2.4,'forecast_3m_pct':2.1,'forecast_usable_3m':False,'forecast_quality_gate':{'passed':False},'source':'FRED DFII10'}
+            },
+            'card8':{}
+        }
+        out=global_m2._forward_liquidity_outlook(5.0,5.1,ctx)
+        rr=[x for x in out['inputs'] if x['name'].startswith('미국 10년 실질금리')][0]
+        self.assertEqual(rr['weight'],0.0)
+        self.assertEqual(rr['signal'],0.0)
+        self.assertEqual(rr['validation'],'미통과·상위합성 제외')
+
+    def test_forward_liquidity_prefers_validated_us_real_rate_over_card8(self):
+        ctx={
+            'us_engine':{'real_rate':{'available':True,'current_pct':2.4,'forecast_3m_pct':2.2,'forecast_usable_3m':True,'forecast_quality_gate':{'passed':True},'source':'US engine real rate'}},
+            'card8':{'current':{'DFII10':{'value':2.4}},'forecasts':{'3m':{'targets':{'DFII10':{'forecast':2.8,'quality_gate':{'passed':True}}}}}}
+        }
+        out=global_m2._forward_liquidity_outlook(5.0,5.0,ctx)
+        rr=[x for x in out['inputs'] if x['name'].startswith('미국 10년 실질금리')][0]
+        self.assertEqual(rr['forecast'],2.2)
+        self.assertEqual(rr['origin'],'US Fed engine')
+        self.assertGreater(rr['signal'],0)
+
 if __name__ == '__main__':
     unittest.main()

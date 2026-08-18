@@ -376,29 +376,46 @@ def _forward_liquidity_outlook(current: float, forecast: float, context: dict[st
     inputs: list[dict[str, Any]] = []
     m2_change = forecast - current
     m2_signal = max(-1.0, min(1.0, m2_change / 0.50))
-    inputs.append({"name":"Global M2 3개월 예상 변화","current":round(current,4),"forecast":round(forecast,4),"signal":round(m2_signal,4),"weight":0.60,"meaning":"광의통화 증가율 상승은 유동성에 우호적"})
+    inputs.append({"name":"Global M2 3개월 예상 변화","current":round(current,4),"forecast":round(forecast,4),"signal":round(m2_signal,4),"weight":0.60,"meaning":"광의통화 증가율 상승은 유동성에 우호적","validation":"지역별 benchmark-safe forecast"})
+
     usctx = context.get("us_engine") or {}
     dxy = usctx.get("dxy") or {}
     dxy_change = _num(dxy.get("forecast_change_3m_pct"))
+    dxy_gate = bool((((dxy.get("backtest_3m") or {}).get("fallback_used")) is False) and _num((dxy.get("backtest_3m") or {}).get("skill_pct")) is not None and float((dxy.get("backtest_3m") or {}).get("skill_pct") or 0) > 0)
     if dxy.get("available") and dxy_change is not None:
-        sig = -max(-1.0, min(1.0, dxy_change / 3.0))
-        inputs.append({"name":"DXY 3개월 예상","current":dxy.get("current"),"forecast":dxy.get("forecast_3m"),"signal":round(sig,4),"weight":0.25,"meaning":"달러 약세는 글로벌 달러유동성에 상대적으로 우호적","source":dxy.get("source")})
-    card8 = context.get("card8") or {}
-    real_cur = _num((((card8.get("current") or {}).get("DFII10") or {}).get("value")))
-    real3 = _num((((((card8.get("forecasts") or {}).get("3m") or {}).get("targets") or {}).get("DFII10") or {}).get("forecast")))
-    gate = ((((((card8.get("forecasts") or {}).get("3m") or {}).get("targets") or {}).get("DFII10") or {}).get("quality_gate") or {}))
+        sig = -max(-1.0, min(1.0, dxy_change / 3.0)) if dxy_gate else 0.0
+        inputs.append({"name":"DXY 3개월 예상","current":dxy.get("current"),"forecast":dxy.get("forecast_3m"),"signal":round(sig,4),"weight":0.25 if dxy_gate else 0.0,"meaning":"달러 약세는 글로벌 달러유동성에 상대적으로 우호적","source":dxy.get("source"),"validation":"통과" if dxy_gate else "미통과·상위합성 제외"})
+
+    # Primary real-rate source is the US engine. Card 8 remains an independent
+    # fallback only when the US-engine block is unavailable. A failed forecast
+    # quality gate contributes zero forward signal rather than half-weight noise.
+    real = usctx.get("real_rate") or {}
+    real_cur = _num(real.get("current_pct"))
+    real3 = _num(real.get("forecast_3m_pct"))
+    real_gate = bool((real.get("forecast_quality_gate") or {}).get("passed")) or bool(real.get("forecast_usable_3m"))
+    real_source = real.get("source")
+    real_origin = "US Fed engine"
+    if real_cur is None or real3 is None:
+        card8 = context.get("card8") or {}
+        target = (((card8.get("forecasts") or {}).get("3m") or {}).get("targets") or {}).get("DFII10") or {}
+        real_cur = _num((((card8.get("current") or {}).get("DFII10") or {}).get("value")))
+        real3 = _num(target.get("forecast"))
+        real_gate = bool((target.get("quality_gate") or {}).get("passed"))
+        real_source = target.get("source") or "Card 8 DFII10"
+        real_origin = "Card 8 fallback"
     if real_cur is not None and real3 is not None:
-        sig = -max(-1.0, min(1.0, (real3 - real_cur) / 0.35))
-        weight = 0.15 if gate.get("passed") else 0.075
-        inputs.append({"name":"미국 10년 실질금리 3개월 예상","current":real_cur,"forecast":real3,"signal":round(sig,4),"weight":weight,"meaning":"실질금리 하락은 위험자산 유동성 환경에 우호적","validation":"통과" if gate.get("passed") else "미통과·절반가중"})
-    sw = sum(float(x["weight"]) for x in inputs) or 1.0
-    score = sum(float(x["signal"]) * float(x["weight"]) for x in inputs) / sw * 100.0
+        sig = -max(-1.0, min(1.0, (real3 - real_cur) / 0.35)) if real_gate else 0.0
+        inputs.append({"name":"미국 10년 실질금리 3개월 예상","current":real_cur,"forecast":real3,"signal":round(sig,4),"weight":0.15 if real_gate else 0.0,"meaning":"실질금리 하락은 위험자산 유동성 환경에 우호적","validation":"통과" if real_gate else "미통과·상위합성 제외","source":real_source,"origin":real_origin})
+
+    active = [x for x in inputs if float(x.get("weight") or 0.0) > 0]
+    sw = sum(float(x["weight"]) for x in active) or 1.0
+    score = sum(float(x["signal"]) * float(x["weight"]) for x in active) / sw * 100.0
     return {
         "score": round(score, 2), "grade": _liquidity_grade(score),
         "direction": "improving" if score >= 10 else "deteriorating" if score <= -10 else "neutral",
-        "inputs": inputs,
-        "validation_status": "UNVALIDATED_COMPOSITE",
-        "note": "M2 전망 자체와 분리된 보조 유동성 환경지표입니다. DXY·실질금리 보조신호는 Global M2 수치를 직접 바꾸지 않습니다.",
+        "inputs": inputs, "validated_input_count": len(active),
+        "validation_status": "PARTIALLY_VALIDATED_INPUTS",
+        "note": "M2 전망과 분리된 보조 유동성 환경지표입니다. DXY·실질금리는 자체 forecast gate를 통과한 경우에만 합성점수에 들어가며, 실패 시 weight=0입니다. 합성점수 자체의 자산수익률 OOS 검증은 별도 과제입니다.",
     }
 
 # ---------- United States ----------
@@ -696,30 +713,31 @@ def _month_number(month: str) -> int:
 
 
 def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[str, str], seen_urls: set[str]) -> list[dict[str, str]]:
-    """Discover older official PBC reports with at most two bounded search calls.
+    """Discover older official PBC reports with a hard bounded search budget.
 
-    This path is only used while the persistent China history cache is below the
-    minimum modelling depth. Once enough months are cached, normal runs never
-    perform these extra discovery calls.
+    English and Chinese report titles are both queried because older PBC search
+    results are not consistently bilingual. This path is bootstrap-only: once a
+    contiguous modelling window exists, normal runs make none of these calls.
     """
     out: list[dict[str, str]] = []
-    for page in (1, 2):
-        try:
-            u = PBC_SEARCH.format(page=page, query=quote("Financial Statistics Report"))
-            r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
-            soup = BeautifulSoup(r.text, "html.parser")
-            for a in soup.find_all("a", href=True):
-                label = " ".join(a.stripped_strings).strip()
-                month = _pbc_report_month(label)
-                href = urljoin(u, str(a.get("href") or ""))
-                if not month or not re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I):
-                    continue
-                if "pbc.gov.cn" not in href.lower() or href in seen_urls:
-                    continue
-                seen_urls.add(href)
-                out.append({"month": month, "label": label, "url": href})
-        except Exception:
-            continue
+    for query in ("Financial Statistics Report", "金融统计数据报告"):
+        for page in (1, 2):
+            try:
+                u = PBC_SEARCH.format(page=page, query=quote(query))
+                r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
+                soup = BeautifulSoup(r.text, "html.parser")
+                for a in soup.find_all("a", href=True):
+                    label = " ".join(a.stripped_strings).strip()
+                    month = _pbc_report_month(label)
+                    href = urljoin(u, str(a.get("href") or ""))
+                    if not month or not re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I):
+                        continue
+                    if "pbc.gov.cn" not in href.lower() or href in seen_urls:
+                        continue
+                    seen_urls.add(href)
+                    out.append({"month": month, "label": label, "url": href})
+            except Exception:
+                continue
     return sorted(out, key=lambda x: x["month"], reverse=True)
 
 
@@ -794,20 +812,28 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     if not live_observations:
         raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (" · " + " | ".join(errors[-2:]) if errors else ""))
 
-    # One-time/early-run history bootstrap. The normal official index currently exposes
-    # several recent reports; only when that real listing shape is present and fewer than
-    # 18 cached months exist do we make bounded search/article calls for older history.
-    # Unit fixtures with a tiny listing therefore remain strictly low-call.
-    if len(cached_history) < 18 and len(candidates) >= 6:
+    # One-time/early-run history bootstrap. Modelling requires a *contiguous* monthly
+    # window, not merely 18 scattered observations. We therefore continue only until
+    # the most-recent contiguous block reaches 18 months, with a hard article budget.
+    # Unit fixtures with a tiny listing remain strictly low-call.
+    provisional = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in live_observations]
+    contiguous_before, _ = _recent_contiguous_month_history(provisional)
+    if len(contiguous_before) < 18 and len(candidates) >= 6:
         seen_urls = {c["url"] for c in candidates}
         older = list(candidates[1:])
         older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls))
+        # newest missing months first; this maximises the chance of extending the
+        # contiguous tail with the fewest article requests.
+        older = sorted({c["url"]: c for c in older}.values(), key=lambda x: x["month"], reverse=True)
         cached_months = {str(r.get("date"))[:7] for r in cached_history if r.get("date")}
         live_months = {str(r.get("date"))[:7] for r in live_observations if r.get("date")}
-        need = max(0, 18 - len(cached_months | live_months))
         used_months = set(cached_months) | set(live_months)
         for c in older:
-            if need <= 0 or bootstrap_calls >= 16:
+            if bootstrap_calls >= 20:
+                break
+            provisional_now = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
+            contiguous_now, _ = _recent_contiguous_month_history(provisional_now)
+            if len(contiguous_now) >= 18:
                 break
             if c.get("month") in used_months:
                 continue
@@ -820,7 +846,6 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
                     if mk not in used_months:
                         bootstrap_observations.append(parsed)
                         used_months.add(mk)
-                        need -= 1
             except Exception:
                 bootstrap_calls += 1
                 continue
@@ -867,8 +892,9 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             "triggered": bootstrap_calls > 0,
             "article_calls": bootstrap_calls,
             "new_points": len(bootstrap_observations),
-            "target_points": 18,
-            "complete": len(hist) >= 18,
+            "target_contiguous_points": 18,
+            "contiguous_points": len(_recent_contiguous_month_history(hist)[0]),
+            "complete": len(_recent_contiguous_month_history(hist)[0]) >= 18,
         },
     }
 
@@ -1024,6 +1050,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "forecast_components": component_forecasts,
         "forward_liquidity_outlook": forward_liquidity,
         "us_dxy": ((forward_context.get("us_engine") or {}).get("dxy") or {}),
+        "us_real_rate": ((forward_context.get("us_engine") or {}).get("real_rate") or {}),
         "coverage_weight": round(weight_sum, 4),
         "coverage_regions": sorted(usable),
         "full_coverage": weight_sum >= 0.999 and len(usable) == 4,
