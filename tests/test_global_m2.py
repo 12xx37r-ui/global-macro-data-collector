@@ -62,6 +62,34 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertIsNone(out['value'])
         self.assertEqual(out['coverage_regions'], [])
 
+    def test_boj_main_table_parser_path(self):
+        html = """<table><tr><td>2026/03</td><td>1.1</td>""" + "<td>0</td>"*7 + "<td>12000000</td></tr>" + \
+               "<tr><td>2026/04</td><td>1.2</td>" + "<td>0</td>"*7 + "<td>12100000</td></tr>" + \
+               "<tr><td>2026/05</td><td>1.4</td>" + "<td>0</td>"*7 + "<td>12200000</td></tr>" + \
+               "<tr><td>2026/06</td><td>1.6</td>" + "<td>0</td>"*7 + "<td>12300000</td></tr></table>"
+        class R:
+            text = html
+        with patch.object(global_m2, '_get_retry', return_value=R()):
+            out = global_m2._fetch_boj(global_m2.requests.Session())
+        self.assertEqual(out['date'], '2026-06-01')
+        self.assertAlmostEqual(out['yoy_pct'], 1.6)
+        self.assertAlmostEqual(out['yoy_3m_ago_pct'], 1.1)
+
+    def test_full_coverage_quality_flag(self):
+        sample = {
+            'US': {'region':'US','date':'2026-06-01','yoy_pct':4.0,'yoy_3m_ago_pct':3.0},
+            'CN': {'region':'CN','date':'2026-06-01','yoy_pct':8.0,'yoy_3m_ago_pct':7.0},
+            'EA': {'region':'EA','date':'2026-06-01','yoy_pct':3.0,'yoy_3m_ago_pct':2.0},
+            'JP': {'region':'JP','date':'2026-06-01','yoy_pct':1.0,'yoy_3m_ago_pct':1.5},
+        }
+        with patch.object(global_m2, '_load_last_good', return_value={}), patch.object(global_m2, '_save_last_good'), \
+             patch.object(global_m2, '_fetch_us', return_value=sample['US']), patch.object(global_m2, '_fetch_pbc', return_value=sample['CN']), \
+             patch.object(global_m2, '_fetch_ecb', return_value=sample['EA']), patch.object(global_m2, '_fetch_boj', return_value=sample['JP']):
+            out = global_m2.build_global_m2()
+        self.assertTrue(out['full_coverage'])
+        self.assertEqual(out['coverage_quality'], 'FULL')
+        self.assertEqual(out['missing_regions'], [])
+
 
 if __name__ == '__main__':
     unittest.main()

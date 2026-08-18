@@ -28,8 +28,8 @@ FRED_US_M2 = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=M2SL&cosd=2018-
 FED_H6_CURRENT = "https://www.federalreserve.gov/releases/h6/current/default.htm"
 ECB_M2_KEY = "BSI.M.U2.Y.V.M20.X.I.U2.2300.Z01.A"
 ECB_M2_CSV = f"https://data-api.ecb.europa.eu/service/data/BSI/{ECB_M2_KEY[4:]}?format=csvdata&startPeriod=2018-01"
-BOJ_M2_PAGE = "https://www.stat-search.boj.or.jp/ssi/mtshtml/mam1yam2m2mo.html"
-PBC_SEARCH = "https://wzdig.pbc.gov.cn/search/pcRender?pNo=1&pageId=c177a85bd02b4114bebebd210809f691&q=M2&sr=pubDate%20desc"
+BOJ_M2_PAGE = "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
+PBC_SEARCH = "https://wzdig.pbc.gov.cn/search/pcRender?pNo={page}&pageId=c177a85bd02b4114bebebd210809f691&q={query}&sr=pubDate%20desc"
 
 
 def now_iso() -> str:
@@ -256,40 +256,55 @@ def _parse_boj_text(text: str) -> dict[str, Any] | None:
 
 
 def _fetch_boj(session: requests.Session) -> dict[str, Any]:
+    """Fetch Japan M2 from BOJ's current main time-series table.
+
+    The old per-series HTML route became brittle after BOJ's 2026 time-series/API
+    refresh.  The main statistics table exposes the official M2 YoY series in a
+    stable first data column (series code MD02'MAM1YAM2M2MO), so parse that first
+    and keep the legacy text parser only as a fallback.
+    """
     r = _get_retry(session, BOJ_M2_PAGE, attempts=3)
     soup = BeautifulSoup(r.text, "html.parser")
+    yoy: list[tuple[str, float]] = []
+    levels: list[dict[str, Any]] = []
 
-    links: list[str] = []
-    for a in soup.find_all("a", href=True):
-        href = str(a.get("href") or "")
-        label = " ".join(a.stripped_strings).lower()
-        low = href.lower()
-        if any(k in low for k in ("csv", "download", "famecgi")) or any(k in label for k in ("csv", "download")):
-            u = urljoin(BOJ_M2_PAGE, href)
-            if u not in links:
-                links.append(u)
+    for tr in soup.find_all("tr"):
+        cells = [" ".join(x.stripped_strings).strip() for x in tr.find_all(["th", "td"])]
+        if len(cells) < 2:
+            continue
+        mk = _month_key(cells[0])
+        if not mk:
+            continue
+        y = _num(cells[1])
+        if y is not None and -30 <= y <= 30:
+            yoy.append((mk, y))
+        # In the BOJ main table, column 9 is M2 average amount outstanding.
+        if len(cells) >= 10:
+            lv = _num(cells[9])
+            if lv is not None and lv > 100:
+                levels.append({"date": mk + "-01", "value": lv})
 
-    for url in links[:8]:
-        try:
-            rr = _get_retry(session, url, attempts=2)
-            parsed = _parse_boj_text(rr.text)
-            if parsed:
-                parsed.update({
-                    "region": "JP", "label": "Japan M2",
-                    "source": "Bank of Japan Money Stock official export",
-                    "source_url": url,
-                })
-                return parsed
-        except Exception:
-            pass
+    vals = sorted({m: v for m, v in yoy}.items())
+    if len(vals) >= 4:
+        latest_m, latest_yoy = vals[-1]
+        prior3 = vals[-4][1]
+        out = {"date": latest_m + "-01", "yoy_pct": latest_yoy, "yoy_3m_ago_pct": prior3}
+        if levels:
+            bym = {str(x["date"])[:7]: x["value"] for x in levels}
+            out["level"] = bym.get(latest_m)
+        out.update({
+            "region": "JP", "label": "Japan M2",
+            "source": "Bank of Japan Main Time-Series Statistics · MD02'MAM1YAM2M2MO",
+            "source_url": BOJ_M2_PAGE,
+        })
+        return out
 
-    # Try visible HTML/table text as a last official route.
     parsed = _parse_boj_text(soup.get_text("\n"))
     if not parsed:
-        raise ValueError("BOJ M2 official page reachable but observation parse unavailable")
+        raise ValueError("BOJ M2 official main time-series page has no usable observations")
     parsed.update({
         "region": "JP", "label": "Japan M2",
-        "source": "Bank of Japan Money Stock official page",
+        "source": "Bank of Japan Money Stock official main time-series page",
         "source_url": BOJ_M2_PAGE,
     })
     return parsed
@@ -343,47 +358,74 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
 
 
 def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
+    """Fetch China M2 from recent PBC Financial Statistics Reports.
+
+    Search specifically for the monthly report title instead of generic ``M2``;
+    then parse several recent reports so ``yoy_3m_ago_pct`` is a genuine
+    three-month comparison rather than a last-good substitution.
+    """
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) GlobalMacroDataCollector/3.1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) GlobalMacroDataCollector/3.2",
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.7",
     }
-    r = _get_retry(session, PBC_SEARCH, headers=headers, attempts=3)
-    soup = BeautifulSoup(r.text, "html.parser")
+    queries = ["金融统计数据报告", "Financial Statistics Report"]
     candidates: list[str] = []
+    for query in queries:
+        from urllib.parse import quote
+        for page in range(1, 4):
+            try:
+                url = PBC_SEARCH.format(page=page, query=quote(query))
+                r = _get_retry(session, url, headers=headers, attempts=2)
+                soup = BeautifulSoup(r.text, "html.parser")
+                for a in soup.find_all("a", href=True):
+                    label = " ".join(a.stripped_strings)
+                    href = urljoin(url, str(a.get("href") or ""))
+                    if not re.search(r"pbc\.gov\.cn", href, re.I):
+                        continue
+                    if ("金融统计数据报告" in label or "Financial Statistics Report" in label):
+                        if href not in candidates:
+                            candidates.append(href)
+                for href in re.findall(r'https?://[^"\']*pbc\.gov\.cn[^"\'\s<>]+', r.text, re.I):
+                    href = href.replace("\\/", "/")
+                    if href not in candidates:
+                        candidates.append(href)
+            except Exception:
+                continue
 
-    for a in soup.find_all("a", href=True):
-        label = " ".join(a.stripped_strings)
-        href = urljoin(PBC_SEARCH, a.get("href"))
-        if "pbc.gov.cn" in href and (
-            re.search(r"\bM2\b", label, re.I)
-            or "金融统计数据报告" in label
-            or "金融统计数据" in label
-            or "Financial Statistics Report" in label
-        ):
-            if href not in candidates:
-                candidates.append(href)
-
-    # Some PBC search responses contain article URLs in JSON/JS rather than anchors.
-    for href in re.findall(r'https?://[^"\']*pbc\.gov\.cn[^"\'\s<>]+', r.text, re.I):
-        href = href.replace("\\/", "/")
-        if href not in candidates:
-            candidates.append(href)
-
+    observations: list[dict[str, Any]] = []
     errors = []
-    for url in candidates[:12]:
+    for url in candidates[:30]:
         try:
             rr = _get_retry(session, url, headers=headers, attempts=2)
             parsed = _extract_pbc_article(rr.text, url)
-            if parsed and parsed.get("date"):
-                parsed.update({
-                    "region": "CN", "label": "China M2",
-                    "source": "People's Bank of China Financial Statistics Report",
-                })
-                return parsed
+            if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
+                observations.append(parsed)
         except Exception as exc:
             errors.append(str(exc)[:160])
 
-    raise ValueError("PBC current M2 report parse unavailable" + (": " + errors[-1] if errors else ""))
+    if not observations:
+        raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (": " + errors[-1] if errors else ""))
+
+    dedup = {str(o["date"])[:7]: o for o in observations}
+    rows = [dedup[k] for k in sorted(dedup)]
+    latest = rows[-1]
+    latest_m = str(latest["date"])[:7]
+    ly, lm = map(int, latest_m.split("-"))
+    target_num = ly * 12 + lm - 3
+    def month_num(o):
+        y, m = map(int, str(o["date"])[:7].split("-")); return y * 12 + m
+    prior_candidates = [o for o in rows[:-1] if month_num(o) <= target_num]
+    prior = prior_candidates[-1] if prior_candidates else (rows[-4] if len(rows) >= 4 else rows[0])
+
+    return {
+        "region": "CN", "label": "China M2", "date": latest.get("date"),
+        "yoy_pct": float(latest["yoy_pct"]),
+        "yoy_3m_ago_pct": float(prior["yoy_pct"]),
+        "level": latest.get("level"),
+        "source": "People's Bank of China Financial Statistics Reports",
+        "source_url": latest.get("source_url"),
+        "history_points": len(rows),
+    }
 
 
 def _load_last_good() -> dict[str, Any]:
@@ -493,12 +535,15 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "acceleration_pp": round(acceleration, 6),
         "coverage_weight": round(weight_sum, 4),
         "coverage_regions": sorted(usable),
+        "full_coverage": weight_sum >= 0.999 and len(usable) == 4,
+        "coverage_quality": "FULL" if weight_sum >= 0.999 and len(usable) == 4 else ("PARTIAL" if weight_sum >= 0.75 else "DEGRADED"),
+        "missing_regions": sorted(set(WEIGHTS) - set(usable)),
         "weights_used": {k: round(v, 6) for k, v in norm_weights.items()},
         "components": components,
         "statuses": statuses,
         "errors": errors,
-        "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2; missing regions reweighted",
-        "methodology": "Weighted YoY broad-money growth composite; 3-month acceleration informs a conservative forecast and direction score. Strategic weights are fixed and re-normalized when a source is temporarily unavailable.",
+        "source": "Composite: Federal Reserve/FRED US M2 + ECB Euro-area M2 + PBC China M2 + BOJ Japan M2",
+        "methodology": "Weighted YoY broad-money growth composite. Full-quality output requires US/CN/EA/JP; temporary gaps are transparently re-normalized and flagged PARTIAL/DEGRADED instead of being presented as full global coverage. 3-month acceleration informs the conservative forecast and direction score.",
         "is_proxy": False,
     }
     _save_last_good(out)
