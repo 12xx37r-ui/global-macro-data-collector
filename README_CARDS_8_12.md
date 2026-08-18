@@ -26,3 +26,11 @@
 ## Important
 The US policy-rate path is read from the existing US engine and is not recalculated here.
 Treasury futures are used as delayed/free direction and volatility cross-checks; they cannot promote a failed OOS horizon.
+
+## Global M2 composite (V3 additive)
+
+The full daily workflow now also builds `public/data/global_m2.json` and embeds the same object at both `global_m2` and `macro.global_m2` in `cards_8_12_bundle.json`.
+
+The composite is not the old US-only M2 proxy. It attempts four public/official regional inputs: US M2 (FRED M2SL), euro-area M2 (ECB Data Portal), China M2 (PBC Financial Statistics Report), and Japan M2 (BOJ Money Stock). Fixed strategic weights are re-normalized when a region is temporarily unavailable. A per-region status (`LIVE`, `LAST-GOOD`, `UNAVAILABLE`), source URL, observation date, coverage weight, errors, and methodology are exposed in the JSON.
+
+The output contains `current`, `forecast`, `changePct`, and `directionScore` so downstream consumers do not need to force a neutral score merely because only a scalar `value` is present. The legacy `value` alias remains for backward compatibility.

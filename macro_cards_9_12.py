@@ -8,6 +8,8 @@ from typing import Any
 import requests
 from openpyxl import load_workbook
 
+from global_m2 import build_global_m2
+
 from treasury_card8 import (
     build_http_session, fetch_fred_all, finite, latest, values, change,
     annualized_index_change, clamp, mean, percentile, rmse, dm_test_squared_errors,
@@ -999,8 +1001,16 @@ def main():
     card9=build_card9(session); card10=build_card10(session); card12=build_card12(session)
     card8=load_json(OUT_DIR/'us_treasury_card8.json')
     card11=build_card11(card8,card9,card10,card12)
+    global_m2 = build_global_m2(session)
     for n,obj in [(9,card9),(10,card10),(11,card11),(12,card12)]:
         (OUT_DIR/f'card{n}.json').write_text(json.dumps(obj,ensure_ascii=False,indent=2),encoding='utf-8')
-    (OUT_DIR/'cards_8_12_bundle.json').write_text(json.dumps({'generated_at_utc':now_iso(),'cards':{'8':card8,'9':card9,'10':card10,'11':card11,'12':card12}},ensure_ascii=False,indent=2),encoding='utf-8')
+    (OUT_DIR/'global_m2.json').write_text(json.dumps(global_m2,ensure_ascii=False,indent=2),encoding='utf-8')
+    bundle={
+        'generated_at_utc':now_iso(),
+        'global_m2':global_m2,
+        'macro':{'global_m2':global_m2},
+        'cards':{'8':card8,'9':card9,'10':card10,'11':card11,'12':card12}
+    }
+    (OUT_DIR/'cards_8_12_bundle.json').write_text(json.dumps(bundle,ensure_ascii=False,indent=2),encoding='utf-8')
 
 if __name__=='__main__': main()
