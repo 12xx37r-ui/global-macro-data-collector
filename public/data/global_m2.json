@@ -3,17 +3,17 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T19:20:09.635745+00:00",
-  "observation_date": "2026-07-01",
-  "value": 5.385196,
-  "current": 5.385196,
-  "forecast": 5.433719,
-  "changePct": 0.901044,
-  "directionScore": 22.511243,
-  "current_yoy_pct": 5.385196,
-  "prior_3m_yoy_pct": 5.277887,
-  "acceleration_pp": 0.107309,
-  "legacy_forecast": 5.43885,
+  "generated_at_utc": "2026-08-18T19:25:32.813095+00:00",
+  "observation_date": "2026-12-01",
+  "value": 5.475196,
+  "current": 5.475196,
+  "forecast": 5.523719,
+  "changePct": 0.886233,
+  "directionScore": 22.871243,
+  "current_yoy_pct": 5.475196,
+  "prior_3m_yoy_pct": 5.007887,
+  "acceleration_pp": 0.467309,
+  "legacy_forecast": 5.70885,
   "forecast_model": "region-specific forecast with direct US Fed-engine M2 model",
   "forecast_model_detail": "US uses the Fed-engine history model; CN/EA/JP use benchmark-safe regional YoY forecasts and automatically fall back to persistence when skill is not positive.",
   "forecast_components": {
@@ -109,19 +109,19 @@
       }
     },
     "CN": {
-      "current_yoy_pct": 7.7,
-      "forecast_3m_yoy_pct": 7.7,
+      "current_yoy_pct": 8.0,
+      "forecast_3m_yoy_pct": 8.0,
       "method": "persistence safety fallback",
       "validation": {
-        "forecast": 7.7,
+        "forecast": 8.0,
         "model": "persistence_insufficient_history",
         "samples": 0,
         "skill_pct": 0.0,
         "direction_accuracy": null,
         "fallback_used": true,
-        "history_points_total": 17,
-        "history_points_contiguous": 7,
-        "history_gaps_dropped": 10,
+        "history_points_total": 19,
+        "history_points_contiguous": 1,
+        "history_gaps_dropped": 18,
         "quality_gate": {
           "passed": false,
           "reason": "연속 월별 YoY 이력 18개월 미만"
@@ -141,7 +141,7 @@
     "status": "INSUFFICIENT_HISTORY",
     "samples": 0,
     "required_common_months": 33,
-    "common_months": 16,
+    "common_months": 17,
     "benchmark": "global-composite persistence"
   },
   "forecast_confidence_by_region": {
@@ -181,8 +181,8 @@
     "inputs": [
       {
         "name": "Global M2 3개월 예상 변화",
-        "current": 5.3852,
-        "forecast": 5.4337,
+        "current": 5.4752,
+        "forecast": 5.5237,
         "signal": 0.097,
         "weight": 0.6,
         "meaning": "광의통화 증가율 상승은 유동성에 우호적",
@@ -1909,7 +1909,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 765
+      "fetch_ms": 1285
     },
     "JP": {
       "date": "2026-07-01",
@@ -3200,18 +3200,18 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 734
+      "fetch_ms": 721
     },
     "CN": {
       "region": "CN",
       "label": "China M2",
-      "date": "2026-07-01",
-      "yoy_pct": 7.7,
-      "yoy_3m_ago_pct": 8.6,
-      "level": 355.51,
+      "date": "2026-12-01",
+      "yoy_pct": 8.0,
+      "yoy_3m_ago_pct": 7.7,
+      "level": 356.71,
       "source": "People's Bank of China Financial Statistics Reports",
-      "source_url": "https://www.pbc.gov.cn/en/3688247/3688978/3709137/2026081815052522832/index.html",
-      "history_points": 17,
+      "source_url": "https://www.pbc.gov.cn/en/3688247/3688978/3709137/2026071615101246166/index.html",
+      "history_points": 19,
       "yoy_history": [
         {
           "date": "2023-01-01",
@@ -3254,6 +3254,10 @@
           "value": 8.0
         },
         {
+          "date": "2025-12-01",
+          "value": 8.5
+        },
+        {
           "date": "2026-01-01",
           "value": 9.0
         },
@@ -3280,25 +3284,29 @@
         {
           "date": "2026-07-01",
           "value": 7.7
+        },
+        {
+          "date": "2026-12-01",
+          "value": 8.0
         }
       ],
       "history_bootstrap": {
-        "triggered": true,
+        "triggered": false,
         "targeted_listing_calls": 1,
-        "archive_listing_calls": 2,
-        "archive_article_calls": 2,
+        "archive_listing_calls": 3,
+        "archive_article_calls": 0,
         "table_calls": 0,
         "table_new_points": 0,
-        "article_calls": 1,
+        "article_calls": 0,
         "new_points": 1,
         "target_contiguous_points": 18,
-        "contiguous_points": 7,
+        "contiguous_points": 1,
         "complete": false,
         "strategy": "exact missing months from official English index first; official PBC Chinese data-interpretation archive second; annual Money Supply/search fallback only for unresolved gaps"
       },
       "status": "LIVE",
-      "age_days": 48,
-      "fetch_ms": 11540
+      "age_days": 0,
+      "fetch_ms": 8952
     }
   },
   "statuses": {
@@ -3308,7 +3316,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 13042,
+  "runtime_ms": 10961,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3319,7 +3327,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:19:57.354354+00:00",
+      "last_success_utc": "2026-08-18T19:25:23.133890+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3333,21 +3341,21 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:19:57.835437+00:00",
+      "last_success_utc": "2026-08-18T19:25:23.667437+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     },
     "PBC": {
       "provider": "PBC",
-      "request_attempts": 19,
-      "network_calls": 18,
-      "memory_cache_hits": 1,
+      "request_attempts": 15,
+      "network_calls": 15,
+      "memory_cache_hits": 0,
       "http_429": 0,
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:20:09.480900+00:00",
+      "last_success_utc": "2026-08-18T19:25:32.808182+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
