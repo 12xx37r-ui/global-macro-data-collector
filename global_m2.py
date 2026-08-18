@@ -741,6 +741,99 @@ def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[s
     return sorted(out, key=lambda x: x["month"], reverse=True)
 
 
+
+def _extract_pbc_money_supply_levels(html: str) -> list[dict[str, Any]]:
+    """Parse official PBC Money Supply tables into monthly M2 level rows.
+
+    PBC annual tables expose many months in one HTML table, so three annual
+    tables can provide enough history for YoY modelling with far fewer requests
+    than fetching one Financial Statistics Report per month.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    out: dict[str, dict[str, Any]] = {}
+    month_re = re.compile(r"(20\d{2})[./-](0?[1-9]|1[0-2])")
+    for table in soup.find_all("table"):
+        rows = []
+        for tr in table.find_all("tr"):
+            cells = [" ".join(td.stripped_strings).strip() for td in tr.find_all(["th", "td"])]
+            if cells:
+                rows.append(cells)
+        if not rows:
+            continue
+        months: list[str] = []
+        for cells in rows:
+            found = []
+            for cell in cells:
+                for m in month_re.finditer(cell):
+                    found.append(f"{int(m.group(1)):04d}-{int(m.group(2)):02d}")
+            if len(found) >= 3:
+                months = found
+                break
+        if not months:
+            continue
+        for cells in rows:
+            joined = " ".join(cells)
+            if not re.search(r"货币和准货币\s*[（(]?M2[）)]?|Money\s*&\s*Quasi[- ]money", joined, re.I):
+                continue
+            nums: list[float] = []
+            for cell in cells:
+                cleaned = cell.replace(",", "").replace(" ", "")
+                for token in re.findall(r"(?<!\d)(\d{4,}(?:\.\d+)?)(?!\d)", cleaned):
+                    try:
+                        v = float(token)
+                    except ValueError:
+                        continue
+                    if v > 10000:
+                        nums.append(v)
+            if len(nums) < 3:
+                continue
+            # Labels may occupy leading columns; numerical observations are in
+            # chronological order. Pair the common tail to avoid layout offsets.
+            n = min(len(months), len(nums))
+            for mk, value in zip(months[-n:], nums[-n:]):
+                out[mk] = {"date": mk + "-01", "level": value}
+    return [out[k] for k in sorted(out)]
+
+
+def _pbc_money_supply_table_candidates(session: requests.Session, headers: dict[str, str], seen_urls: set[str]) -> list[dict[str, str]]:
+    """Discover recent official PBC annual Money Supply tables with a hard cap."""
+    out: list[dict[str, str]] = []
+    for query in ("货币供应量", "Money Supply"):
+        for page in (1, 2):
+            try:
+                u = PBC_SEARCH.format(page=page, query=quote(query))
+                r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
+                soup = BeautifulSoup(r.text, "html.parser")
+                for a in soup.find_all("a", href=True):
+                    context = " ".join((a.parent or a).stripped_strings).strip()
+                    label = " ".join(a.stripped_strings).strip()
+                    text = f"{label} {context}"
+                    if not re.search(r"货币供应量|Money\s+Supply", text, re.I):
+                        continue
+                    href = urljoin(u, str(a.get("href") or ""))
+                    if "pbc.gov.cn" not in href.lower() or href in seen_urls:
+                        continue
+                    seen_urls.add(href)
+                    ym = re.search(r"(20\d{2})", text)
+                    out.append({"year": ym.group(1) if ym else "", "label": label or context, "url": href})
+            except Exception:
+                continue
+    # Prefer explicitly newer tables, then preserve discovery order.
+    return sorted(out, key=lambda x: x.get("year") or "0000", reverse=True)
+
+
+def _yoy_from_level_history(level_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    by = {str(r.get("date"))[:7]: _num(r.get("level")) for r in level_rows if r.get("date")}
+    out = []
+    for mk in sorted(by):
+        cur = by.get(mk)
+        y, m = map(int, mk.split("-"))
+        prev = by.get(f"{y-1:04d}-{m:02d}")
+        if cur is None or prev in (None, 0):
+            continue
+        out.append({"date": mk + "-01", "value": (float(cur) / float(prev) - 1.0) * 100.0})
+    return out
+
 def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     """Fetch China M2 with bounded official-PBC requests.
 
@@ -812,24 +905,61 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     if not live_observations:
         raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (" · " + " | ".join(errors[-2:]) if errors else ""))
 
-    # One-time/early-run history bootstrap. Modelling requires a *contiguous* monthly
-    # window, not merely 18 scattered observations. We therefore continue only until
-    # the most-recent contiguous block reaches 18 months, with a hard article budget.
-    # Unit fixtures with a tiny listing remain strictly low-call.
+    # One-time/early-run history bootstrap. Prefer official annual Money Supply
+    # tables because one table contains many monthly M2 levels. Only if that
+    # bounded low-call path cannot create a contiguous window do we fall back to
+    # individual Financial Statistics Report articles.
     provisional = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in live_observations]
     contiguous_before, _ = _recent_contiguous_month_history(provisional)
+    table_calls = 0
+    table_new_points = 0
+    table_level_rows: list[dict[str, Any]] = []
     if len(contiguous_before) < 18 and len(candidates) >= 6:
+        seen_urls = {c["url"] for c in candidates}
+        table_candidates = _pbc_money_supply_table_candidates(session, headers, seen_urls)
+        for c in table_candidates[:6]:
+            provisional_now = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in live_observations]
+            provisional_now += _yoy_from_level_history(table_level_rows)
+            contiguous_now, _ = _recent_contiguous_month_history(provisional_now)
+            if len(contiguous_now) >= 18:
+                break
+            try:
+                rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
+                table_calls += 1
+                parsed_levels = _extract_pbc_money_supply_levels(rr.text)
+                existing = {str(x.get("date"))[:7] for x in table_level_rows if x.get("date")}
+                for row in parsed_levels:
+                    if str(row.get("date"))[:7] not in existing:
+                        table_level_rows.append(row)
+                        existing.add(str(row.get("date"))[:7])
+            except Exception:
+                table_calls += 1
+                continue
+        table_yoy = _yoy_from_level_history(table_level_rows)
+        known = {str(r.get("date"))[:7] for r in cached_history if r.get("date")}
+        known |= {str(o.get("date"))[:7] for o in live_observations if o.get("date")}
+        for row in table_yoy:
+            mk = str(row.get("date"))[:7]
+            if mk and mk not in known:
+                bootstrap_observations.append({"date": row["date"], "yoy_pct": row["value"], "level": None, "source_url": "PBC Money Supply annual table"})
+                known.add(mk)
+                table_new_points += 1
+
+    provisional_after_tables = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
+    contiguous_after_tables, _ = _recent_contiguous_month_history(provisional_after_tables)
+    if len(contiguous_after_tables) < 18 and len(candidates) >= 6:
         seen_urls = {c["url"] for c in candidates}
         older = list(candidates[1:])
         older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls))
-        # newest missing months first; this maximises the chance of extending the
-        # contiguous tail with the fewest article requests.
         older = sorted({c["url"]: c for c in older}.values(), key=lambda x: x["month"], reverse=True)
         cached_months = {str(r.get("date"))[:7] for r in cached_history if r.get("date")}
         live_months = {str(r.get("date"))[:7] for r in live_observations if r.get("date")}
-        used_months = set(cached_months) | set(live_months)
+        bootstrap_months = {str(r.get("date"))[:7] for r in bootstrap_observations if r.get("date")}
+        used_months = set(cached_months) | set(live_months) | set(bootstrap_months)
+        # Article fallback is intentionally smaller now that annual tables are
+        # attempted first. This avoids the former search/article fan-out.
         for c in older:
-            if bootstrap_calls >= 20:
+            if bootstrap_calls >= 8:
                 break
             provisional_now = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
             contiguous_now, _ = _recent_contiguous_month_history(provisional_now)
@@ -889,12 +1019,15 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         "source_url": latest.get("source_url"),
         "history_points": len(hist), "yoy_history": hist,
         "history_bootstrap": {
-            "triggered": bootstrap_calls > 0,
+            "triggered": (table_calls + bootstrap_calls) > 0,
+            "table_calls": table_calls,
+            "table_new_points": table_new_points,
             "article_calls": bootstrap_calls,
             "new_points": len(bootstrap_observations),
             "target_contiguous_points": 18,
             "contiguous_points": len(_recent_contiguous_month_history(hist)[0]),
             "complete": len(_recent_contiguous_month_history(hist)[0]) >= 18,
+            "strategy": "annual Money Supply tables first; bounded article fallback second",
         },
     }
 

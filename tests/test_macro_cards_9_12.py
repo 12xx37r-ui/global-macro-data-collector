@@ -1,5 +1,5 @@
 import unittest
-from macro_cards_9_12 import candidates, walk_forward, build_card11
+from macro_cards_9_12 import candidates, walk_forward, build_card11, _snapshot_oos_metrics, _global_registry
 
 class TestCards(unittest.TestCase):
     def test_candidates(self):
@@ -26,6 +26,37 @@ class TestCards(unittest.TestCase):
         self.assertIn('future_score',out)
         self.assertTrue(out['future_quality_gate']['passed'])
 
+
+    def test_snapshot_oos_metrics_matures_without_lookahead(self):
+        snaps=[]
+        hist={'ES=F':[],'NQ=F':[],'BTC=F':[]}
+        from datetime import date, timedelta
+        base=date(2020,1,1)
+        for i in range(30):
+            d=base+timedelta(days=i*100)
+            start=100+i
+            sign=1 if i%2==0 else -1
+            snaps.append({'date':d.isoformat(),'forward_liquidity_score':10*sign,'card11_future_score':20*sign,'asset_start':{'ES=F':start,'NQ=F':start,'BTC=F':start}})
+            end=start*(1.05 if sign>0 else .95)
+            for sym in hist:
+                hist[sym].append({'date':(d+timedelta(days=90)).isoformat(),'value':end})
+        out=_snapshot_oos_metrics(snaps,hist)
+        self.assertTrue(out['forward_liquidity']['3m']['sp500']['quality_gate']['passed'])
+        self.assertEqual(out['forward_liquidity']['3m']['sp500']['samples'],30)
+
+    def test_global_registry_keeps_composite_reference_only_until_all_components_pass(self):
+        gm={'current':5,'forecast':5.1,'forecast_components':{'US':{'validation':{'quality_gate':{'passed':True}}},'CN':{'validation':{'quality_gate':{'passed':False}}}},'forward_liquidity_outlook':{'score':5,'validation_status':'PARTIALLY_VALIDATED_INPUTS'}}
+        c8={'quality_gates':{'3m':{'passed':False,'passed_targets':['DGS2']}}}
+        c9={'forecast_use':{'usable':False},'forecasts':{},'current':50}
+        c10={'forecast_use':{'usable':True},'forecasts':{'3m':{'quality_gate':{'passed':True}}},'current':50,'forecast_3m':51}
+        c11={'future_score':-20,'future_quality_gate':{'passed':True}}
+        c12={'predictive_validation':{'passed_horizons':['equity:3m']}}
+        oos={'metrics':{'forward_liquidity':{'3m':{}},'card11_future':{'3m':{}}}}
+        reg=_global_registry(gm,c8,c9,c10,c11,c12,oos)
+        by={x['id']:x for x in reg['entries']}
+        self.assertEqual(by['global_m2_3m']['status'],'REFERENCE_ONLY')
+        self.assertEqual(by['card10_3m']['status'],'VALIDATED')
+        self.assertEqual(by['card11_future_3m']['status'],'REFERENCE_ONLY')
 if __name__=='__main__': unittest.main()
 
 

@@ -17,6 +17,7 @@ from treasury_card8 import (
 
 ROOT = Path(__file__).resolve().parent
 OUT_DIR = ROOT / 'public' / 'data'
+SIGNAL_HISTORY_CACHE_PATH = OUT_DIR / 'cache' / 'macro_signal_history.json'
 
 # Card 9: employment and consumption. Mostly official US + OECD global proxies.
 CARD9_SERIES = {
@@ -803,7 +804,7 @@ def yahoo_history(session:requests.Session,symbol:str)->list[dict[str,Any]]:
     rows,_=yahoo_history_with_snapshot(session,symbol)
     return rows
 
-def build_card12(session:requests.Session)->dict[str,Any]:
+def _build_card12_with_histories(session:requests.Session)->tuple[dict[str,Any],dict[str,list[dict[str,Any]]]]:
     histories={}; snapshots={}; errors=[]
     for idx,sym in enumerate(YAHOO_SYMBOLS):
         try:
@@ -846,7 +847,7 @@ def build_card12(session:requests.Session)->dict[str,Any]:
     composite=mean([x for x in [group_scores.get('equity'),group_scores.get('rates'),group_scores.get('commodities')] if finite(x)])
     signal='good' if composite>.25 else 'bad' if composite<-.25 else 'neutral'
     predictive=build_futures_forecasts(histories)
-    return {'schema_version':'1.1','card':12,'title':'선물시장 현재신호·검증형 방향예측','generated_at_utc':now_iso(),
+    card={'schema_version':'1.1','card':12,'title':'선물시장 현재신호·검증형 방향예측','generated_at_utc':now_iso(),
             'current':current,'group_scores':group_scores,'market_signal':signal,
             'current_regime':'위험선호 우세' if signal=='good' else '위험회피 우세' if signal=='bad' else '선물시장 혼조',
             'future_regime':'검증 통과 기간만 방향예측 사용',
@@ -859,6 +860,10 @@ def build_card12(session:requests.Session)->dict[str,Any]:
             'market_snapshots':snapshots,
             'freshness_contract':{'version':'V218','new_network_calls':0,'network_refetch_each_workflow':True,'http_cache_bypass':True,'existing_current_semantics_changed':False},
             'limitations':['무료 지연 선물자료와 달러인덱스 대체신호를 사용하며 거래소 실시간 유료 시세를 대체하지 않습니다.','선물가격은 미래 현물가격의 단순 예측값이 아닙니다.','검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다.']}
+    return card,histories
+
+def build_card12(session:requests.Session)->dict[str,Any]:
+    return _build_card12_with_histories(session)[0]
 
 def _age_days(date_text: str | None) -> int | None:
     try:
@@ -970,6 +975,129 @@ def _future_signal_card12(card12: dict[str, Any]) -> dict[str, Any]:
         vals.append(sig); details.append({'group':g,'current':cur,'forecast':fc['forecast'],'signal':sig})
     return {'available':bool(vals),'signal':mean(vals) if vals else None,'details':details,'validation':'validated 3m groups only'}
 
+
+def _read_signal_history() -> list[dict[str, Any]]:
+    try:
+        obj=json.loads(SIGNAL_HISTORY_CACHE_PATH.read_text(encoding='utf-8'))
+        rows=obj.get('snapshots') if isinstance(obj,dict) else []
+        return rows if isinstance(rows,list) else []
+    except Exception:
+        return []
+
+
+def _write_signal_history(rows: list[dict[str, Any]]) -> None:
+    SIGNAL_HISTORY_CACHE_PATH.parent.mkdir(parents=True,exist_ok=True)
+    clean=rows[-500:]
+    SIGNAL_HISTORY_CACHE_PATH.write_text(json.dumps({'saved_at_utc':now_iso(),'snapshots':clean},ensure_ascii=False,indent=2),encoding='utf-8')
+
+
+def _price_near_or_after(rows:list[dict[str,Any]], target:date, max_gap_days:int=10)->float|None:
+    for row in rows:
+        try: d=datetime.fromisoformat(str(row.get('date'))[:10]).date()
+        except Exception: continue
+        if d < target: continue
+        if (d-target).days > max_gap_days: return None
+        v=row.get('value')
+        if finite(v): return float(v)
+    return None
+
+
+def _snapshot_oos_metrics(snapshots:list[dict[str,Any]], asset_histories:dict[str,list[dict[str,Any]]])->dict[str,Any]:
+    """Realized-forward validation from snapshots actually published by the engine.
+
+    This intentionally does not reconstruct synthetic historical vintages.  It
+    accumulates real run-time snapshots and labels them only after the horizon
+    has elapsed, preventing look-ahead and revision leakage.
+    """
+    assets={'sp500':'ES=F','nasdaq100':'NQ=F','bitcoin':'BTC=F'}
+    signals={'forward_liquidity':'forward_liquidity_score','card11_future':'card11_future_score'}
+    out={}
+    for signal_name,field in signals.items():
+        by_h={}
+        for h,days in (('1m',30),('3m',90)):
+            asset_out={}
+            for asset,sym in assets.items():
+                pairs=[]
+                for snap in snapshots:
+                    try: origin=datetime.fromisoformat(str(snap.get('date'))[:10]).date()
+                    except Exception: continue
+                    score=snap.get(field); start=((snap.get('asset_start') or {}).get(sym))
+                    if not finite(score) or not finite(start) or abs(float(score)) < 1e-9: continue
+                    end=_price_near_or_after(asset_histories.get(sym,[]), origin+timedelta(days=days))
+                    if not finite(end) or float(start)==0: continue
+                    ret=(float(end)/float(start)-1)*100
+                    pairs.append((float(score),ret))
+                n=len(pairs)
+                hits=sum(1 for score,ret in pairs if score*ret>0)
+                acc=hits/n if n else None
+                positives=sum(1 for _,ret in pairs if ret>0)
+                negatives=n-positives
+                baseline=max(positives,negatives)/n if n else None
+                skill=(acc-baseline) if acc is not None and baseline is not None else None
+                passed=bool(n>=24 and acc is not None and acc>=.55 and skill is not None and skill>0)
+                asset_out[asset]={
+                    'samples':n,'direction_accuracy':acc,'majority_direction_accuracy':baseline,
+                    'direction_skill_vs_majority':skill,
+                    'mean_forward_return_pct':mean([r for _,r in pairs]) if pairs else None,
+                    'quality_gate':{'passed':passed,'requirements':{'samples_min':24,'direction_accuracy_min':.55,'direction_skill_vs_majority_min_exclusive':0.0}},
+                }
+            by_h[h]=asset_out
+        out[signal_name]=by_h
+    return out
+
+
+def _update_composite_oos(global_m2:dict[str,Any], card11:dict[str,Any], card12:dict[str,Any], asset_histories:dict[str,list[dict[str,Any]]])->dict[str,Any]:
+    rows=_read_signal_history()
+    today=datetime.now(timezone.utc).date().isoformat()
+    asset_start={}
+    for sym in ('ES=F','NQ=F','BTC=F'):
+        vals=asset_histories.get(sym,[])
+        if vals and finite(vals[-1].get('value')): asset_start[sym]=float(vals[-1]['value'])
+    liq=global_m2.get('forward_liquidity_outlook') or {}
+    snapshot={
+        'date':today,
+        'generated_at_utc':now_iso(),
+        'forward_liquidity_score':liq.get('score') if str(liq.get('validation_status') or '').startswith(('PARTIALLY','VALIDATED')) else None,
+        'forward_liquidity_input_validation':liq.get('validation_status'),
+        'card11_future_score':card11.get('future_score') if (card11.get('future_quality_gate') or {}).get('passed') else None,
+        'card11_future_gate':bool((card11.get('future_quality_gate') or {}).get('passed')),
+        'asset_start':asset_start,
+    }
+    by_date={str(r.get('date')):r for r in rows if r.get('date')}
+    by_date[today]=snapshot
+    rows=[by_date[k] for k in sorted(by_date)]
+    _write_signal_history(rows)
+    metrics=_snapshot_oos_metrics(rows,asset_histories)
+    return {
+        'schema_version':'1.0','generated_at_utc':now_iso(),'method':'real published-snapshot forward validation; no synthetic vintage reconstruction',
+        'snapshot_count':len(rows),'metrics':metrics,
+        'status':'ACTIVE_ACCUMULATION',
+        'note':'Quality gates remain false until at least 24 matured observations exist for a horizon/asset pair.'
+    }
+
+
+def _global_registry(global_m2:dict[str,Any], card8:dict[str,Any], card9:dict[str,Any], card10:dict[str,Any], card11:dict[str,Any], card12:dict[str,Any], composite_oos:dict[str,Any])->dict[str,Any]:
+    entries=[]
+    comps=global_m2.get('forecast_components') or {}
+    comp_pass={k:bool(((v.get('validation') or {}).get('quality_gate') or {}).get('passed')) for k,v in comps.items()}
+    full_m2=bool(comp_pass) and all(comp_pass.values())
+    entries.append({'id':'global_m2_3m','label':'Global M2 YoY 3m','horizon':'3m','current':global_m2.get('current'),'forecast':global_m2.get('forecast'),'status':'VALIDATED' if full_m2 else 'REFERENCE_ONLY','usable':True,'benchmark_safe':True,'component_gates':comp_pass,'reason':'all regional forecast gates passed' if full_m2 else 'benchmark-safe composite, but at least one regional model is still on persistence/insufficient-history fallback'})
+    for key,card in (('card9',card9),('card10',card10)):
+        use=card.get('forecast_use') or {}; usable=bool(use.get('usable'))
+        entries.append({'id':f'{key}_3m','label':f'{key.upper()} 3m','horizon':'3m','current':card.get('current'),'forecast':card.get('forecast_3m'),'status':'VALIDATED' if usable else 'REFERENCE_ONLY','usable':usable,'validation':_generic_forecast_validation(card)})
+    gate8=((card8.get('quality_gates') or {}).get('3m') or {})
+    entries.append({'id':'card8_3m','label':'Card8 rates/real-yield 3m','horizon':'3m','status':'VALIDATED' if gate8.get('passed') else 'REFERENCE_ONLY','usable':bool(gate8.get('passed')),'passed_targets':gate8.get('passed_targets') or []})
+    for item in ((card12.get('predictive_validation') or {}).get('passed_horizons') or []):
+        entries.append({'id':f'card12_{item}','label':f'Card12 {item}','horizon':item.split(':')[-1] if ':' in item else item,'status':'VALIDATED','usable':True})
+    def any_oos_pass(signal_name:str,horizon:str='3m')->bool:
+        block=(((composite_oos.get('metrics') or {}).get(signal_name) or {}).get(horizon) or {})
+        return any(bool((x.get('quality_gate') or {}).get('passed')) for x in block.values())
+    liq=global_m2.get('forward_liquidity_outlook') or {}; liq_pass=any_oos_pass('forward_liquidity')
+    entries.append({'id':'forward_liquidity_3m','label':'Forward liquidity composite 3m','horizon':'3m','current':liq.get('score'),'forecast':None,'status':'VALIDATED' if liq_pass else 'REFERENCE_ONLY','usable':liq_pass,'input_validation':liq.get('validation_status'),'oos':((composite_oos.get('metrics') or {}).get('forward_liquidity') or {}).get('3m')})
+    c11_pass=bool((card11.get('future_quality_gate') or {}).get('passed')) and any_oos_pass('card11_future')
+    entries.append({'id':'card11_future_3m','label':'Card11 future composite 3m','horizon':'3m','current':card11.get('future_score'),'forecast':None,'status':'VALIDATED' if c11_pass else 'REFERENCE_ONLY','usable':c11_pass,'input_gate':card11.get('future_quality_gate'),'oos':((composite_oos.get('metrics') or {}).get('card11_future') or {}).get('3m')})
+    return {'schema_version':'1.0','generated_at_utc':now_iso(),'engine':'Global macro engine','entries':entries,'summary':{'validated':sum(1 for x in entries if x.get('status')=='VALIDATED'),'reference_only':sum(1 for x in entries if x.get('status')=='REFERENCE_ONLY')},'policy':'Only horizon-specific forecasts that pass their own gate are promoted. Composite signals additionally require realized published-snapshot OOS validation before VALIDATED status.'}
+
 def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
     validations = {
         'card8': _card8_validation(card8),
@@ -1045,10 +1173,12 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
 
 def main():
     session=build_http_session(); OUT_DIR.mkdir(parents=True,exist_ok=True)
-    card9=build_card9(session); card10=build_card10(session); card12=build_card12(session)
+    card9=build_card9(session); card10=build_card10(session); card12,asset_histories=_build_card12_with_histories(session)
     card8=load_json(OUT_DIR/'us_treasury_card8.json')
     card11=build_card11(card8,card9,card10,card12)
     global_m2 = build_global_m2(session)
+    composite_oos=_update_composite_oos(global_m2,card11,card12,asset_histories)
+    registry=_global_registry(global_m2,card8,card9,card10,card11,card12,composite_oos)
     for n,obj in [(9,card9),(10,card10),(11,card11),(12,card12)]:
         (OUT_DIR/f'card{n}.json').write_text(json.dumps(obj,ensure_ascii=False,indent=2),encoding='utf-8')
     (OUT_DIR/'global_m2.json').write_text(json.dumps(global_m2,ensure_ascii=False,indent=2),encoding='utf-8')
@@ -1060,9 +1190,13 @@ def main():
         'card10':{'current':card10.get('current'),'forecast_3m':card10.get('forecast_3m'),'forecast_use':card10.get('forecast_use'),'validation':_generic_forecast_validation(card10)},
         'card11':{'current_score':card11.get('score'),'future_score':card11.get('future_score'),'future_market_signal':card11.get('future_market_signal'),'future_quality_gate':card11.get('future_quality_gate')},
         'card12':{'validation':_card12_validation(card12),'passed_horizons':((card12.get('predictive_validation') or {}).get('passed_horizons') or [])},
-        'policy':'Forecasts that fail their persistence/quality gate remain reference-only and are not promoted into the validated future composite.'
+        'composite_oos':{'status':composite_oos.get('status'),'snapshot_count':composite_oos.get('snapshot_count'),'metrics':composite_oos.get('metrics')},
+        'registry_summary':registry.get('summary'),
+        'policy':'Forecasts that fail their persistence/quality gate remain reference-only and are not promoted into the validated future composite. Composite-level signals require matured published-snapshot OOS validation.'
     }
     (OUT_DIR/'macro_forecast_audit.json').write_text(json.dumps(forecast_audit,ensure_ascii=False,indent=2),encoding='utf-8')
+    (OUT_DIR/'macro_composite_oos.json').write_text(json.dumps(composite_oos,ensure_ascii=False,indent=2),encoding='utf-8')
+    (OUT_DIR/'macro_forecast_registry.json').write_text(json.dumps(registry,ensure_ascii=False,indent=2),encoding='utf-8')
     bundle={
         'generated_at_utc':now_iso(),
         'global_m2':global_m2,

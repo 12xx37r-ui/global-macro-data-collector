@@ -230,5 +230,23 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertEqual(rr['origin'],'US Fed engine')
         self.assertGreater(rr['signal'],0)
 
+
+    def test_pbc_money_supply_table_parser_extracts_m2_levels(self):
+        html = """<table>
+        <tr><td>Item</td><td>2024.01</td><td>2024.02</td><td>2024.03</td></tr>
+        <tr><td>货币和准货币（M2） Money & Quasi-money</td><td>2976250.20</td><td>2995572.97</td><td>3047952.16</td></tr>
+        </table>"""
+        rows=global_m2._extract_pbc_money_supply_levels(html)
+        self.assertEqual([r['date'] for r in rows],['2024-01-01','2024-02-01','2024-03-01'])
+        self.assertAlmostEqual(rows[-1]['level'],3047952.16)
+
+    def test_pbc_yoy_from_level_history(self):
+        levels=[]
+        for y,m,v in [(2024,1,100),(2024,2,110),(2025,1,108),(2025,2,121)]:
+            levels.append({'date':f'{y:04d}-{m:02d}-01','level':v})
+        rows=global_m2._yoy_from_level_history(levels)
+        self.assertEqual(len(rows),2)
+        self.assertAlmostEqual(rows[0]['value'],8.0)
+        self.assertAlmostEqual(rows[1]['value'],10.0)
 if __name__ == '__main__':
     unittest.main()
