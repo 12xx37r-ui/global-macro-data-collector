@@ -57,7 +57,7 @@ def _num(v: Any) -> float | None:
 
 def _month_key(s: str) -> str | None:
     s = str(s or "").strip()
-    m = re.search(r"(20\d{2})[-/年.\s](0?[1-9]|1[0-2])", s)
+    m = re.search(r"(20\d{2})[-/年.\s](1[0-2]|0?[1-9])(?!\d)", s)
     if m:
         return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}"
     for fmt in ("%b. %Y", "%b %Y", "%B %Y"):
@@ -103,6 +103,29 @@ def _history_from_yoy_pairs(vals: list[tuple[str, float]]) -> list[dict[str, Any
     return [{"date": m + "-01", "value": float(v)} for m, v in sorted({m: float(v) for m, v in vals}.items())]
 
 
+def _recent_contiguous_month_history(history: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+    """Return the most recent contiguous monthly block and the number of gaps dropped."""
+    ded: dict[str, dict[str, Any]] = {}
+    for row in history:
+        mk = _month_key(row.get("date"))
+        v = _num(row.get("value"))
+        if mk and v is not None:
+            ded[mk] = {"date": mk + "-01", "value": float(v)}
+    keys = sorted(ded)
+    if not keys:
+        return [], 0
+    block = [ded[keys[-1]]]
+    expected = _month_number(keys[-1]) - 1
+    for mk in reversed(keys[:-1]):
+        n = _month_number(mk)
+        if n == expected:
+            block.append(ded[mk]); expected -= 1
+        elif n < expected:
+            break
+    block.reverse()
+    return block, max(0, len(keys) - len(block))
+
+
 def _regional_candidates(values: list[float], horizon: int = 3) -> list[float]:
     cur = values[-1]
     def slope(months: int, damp: float) -> float:
@@ -124,9 +147,10 @@ def _regional_candidates(values: list[float], horizon: int = 3) -> list[float]:
 
 
 def _regional_yoy_forecast(history: list[dict[str, Any]], horizon: int = 3) -> dict[str, Any]:
-    vals=[float(x["value"]) for x in history if _num(x.get("value")) is not None]
+    continuous, gaps = _recent_contiguous_month_history(history)
+    vals=[float(x["value"]) for x in continuous if _num(x.get("value")) is not None]
     if len(vals) < 18:
-        return {"forecast": vals[-1] if vals else None, "model":"persistence_insufficient_history", "samples":0, "skill_pct":0.0, "direction_accuracy":None, "fallback_used":True, "quality_gate":{"passed":False,"reason":"월별 YoY 이력 18개월 미만"}}
+        return {"forecast": vals[-1] if vals else None, "model":"persistence_insufficient_history", "samples":0, "skill_pct":0.0, "direction_accuracy":None, "fallback_used":True, "history_points_total":len(history), "history_points_contiguous":len(vals), "history_gaps_dropped":gaps, "quality_gate":{"passed":False,"reason":"연속 월별 YoY 이력 18개월 미만"}}
     start=max(12,len(vals)-60-horizon)
     errs=[[] for _ in range(5)]; base=[]
     origins=list(range(start,len(vals)-horizon))
@@ -151,7 +175,7 @@ def _regional_yoy_forecast(history: list[dict[str, Any]], horizon: int = 3) -> d
     fallback=skill<=0 or n<12
     if fallback: fc=vals[-1]; skill=max(0.0,skill); rmse=br
     passed=(not fallback) and n>=18 and skill>=3.0 and (da is None or da>=55.0)
-    return {"forecast":fc,"model":"inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion" if not fallback else "persistence", "samples":n,"rmse":rmse,"baseline_rmse":br,"skill_pct":skill,"direction_accuracy":da,"fallback_used":fallback,"quality_gate":{"passed":passed,"requirements":{"samples_min":18,"skill_pct_min":3.0,"direction_accuracy_min":55.0}}}
+    return {"forecast":fc,"model":"inverse-RMSE ensemble of persistence/3m/6m/12m/mean-reversion" if not fallback else "persistence", "samples":n,"rmse":rmse,"baseline_rmse":br,"skill_pct":skill,"direction_accuracy":da,"fallback_used":fallback,"history_points_total":len(history),"history_points_contiguous":len(vals),"history_gaps_dropped":gaps,"quality_gate":{"passed":passed,"requirements":{"samples_min":18,"skill_pct_min":3.0,"direction_accuracy_min":55.0}}}
 
 
 def _read_cn_history_cache() -> list[dict[str, Any]]:
@@ -319,7 +343,9 @@ def _fetch_us_engine(session: requests.Session) -> dict[str, Any]:
         "region": "US", "label": "United States M2",
         "date": m2.get("observation_date"), "yoy_pct": yoy, "yoy_3m_ago_pct": p3,
         "level": m2.get("level_billions_usd"), "forecast_yoy_3m_pct": _num(m2.get("forecast_3m_yoy_pct")),
-        "forecast_confidence": m2.get("confidence"), "status": m2.get("status") or "LIVE",
+        "forecast_confidence": m2.get("confidence"), "forecast_validation": m2.get("backtest_3m") or {},
+        "forecast_quality_gate": m2.get("forecast_quality_gate") or {}, "yoy_history": m2.get("yoy_history") or [],
+        "status": m2.get("status") or "LIVE",
         "source": "Fed policy engine · " + str(m2.get("source") or "US M2"),
         "source_url": m2.get("source_url") or FED_ENGINE_US_CONTEXT,
         "upstream_generated_at_utc": ctx.get("generated_at_utc"),
@@ -627,6 +653,9 @@ def _pbc_report_month(label: str) -> str | None:
     m = re.search(r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+(20\d{2})", text, re.I)
     if m:
         return datetime.strptime(m.group(0).title(), "%B %Y").strftime("%Y-%m")
+    cm = re.search(r"(20\d{2})年\s*(1[0-2]|0?[1-9])月", text)
+    if cm:
+        return f"{int(cm.group(1)):04d}-{int(cm.group(2)):02d}"
     y = re.search(r"(20\d{2})", text)
     if not y:
         return None
@@ -648,7 +677,7 @@ def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
     seen: set[str] = set()
     for a in soup.find_all("a", href=True):
         label = " ".join(a.stripped_strings).strip()
-        if not re.search(r"Financial Statistics Report", label, re.I):
+        if not re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I):
             continue
         month = _pbc_report_month(label)
         if not month:
@@ -664,6 +693,34 @@ def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
 def _month_number(month: str) -> int:
     y, m = map(int, month.split("-"))
     return y * 12 + m
+
+
+def _pbc_history_bootstrap_candidates(session: requests.Session, headers: dict[str, str], seen_urls: set[str]) -> list[dict[str, str]]:
+    """Discover older official PBC reports with at most two bounded search calls.
+
+    This path is only used while the persistent China history cache is below the
+    minimum modelling depth. Once enough months are cached, normal runs never
+    perform these extra discovery calls.
+    """
+    out: list[dict[str, str]] = []
+    for page in (1, 2):
+        try:
+            u = PBC_SEARCH.format(page=page, query=quote("Financial Statistics Report"))
+            r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
+            soup = BeautifulSoup(r.text, "html.parser")
+            for a in soup.find_all("a", href=True):
+                label = " ".join(a.stripped_strings).strip()
+                month = _pbc_report_month(label)
+                href = urljoin(u, str(a.get("href") or ""))
+                if not month or not re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I):
+                    continue
+                if "pbc.gov.cn" not in href.lower() or href in seen_urls:
+                    continue
+                seen_urls.add(href)
+                out.append({"month": month, "label": label, "url": href})
+        except Exception:
+            continue
+    return sorted(out, key=lambda x: x["month"], reverse=True)
 
 
 def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
@@ -696,7 +753,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
                 label = " ".join(a.stripped_strings).strip()
                 month = _pbc_report_month(label)
                 href = urljoin(u, str(a.get("href") or ""))
-                if month and re.search(r"Financial Statistics Report", label, re.I) and "pbc.gov.cn" in href.lower():
+                if month and re.search(r"Financial Statistics Report|金融统计数据报告", label, re.I) and "pbc.gov.cn" in href.lower():
                     candidates.append({"month": month, "label": label, "url": href})
             candidates = sorted({x["url"]: x for x in candidates}.values(), key=lambda x: x["month"], reverse=True)
         except Exception:
@@ -718,6 +775,8 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     fallback_candidates = [c for c in candidates if c not in selected][:4]
     cached_history = _read_cn_history_cache()
     live_observations: list[dict[str, Any]] = []
+    bootstrap_observations: list[dict[str, Any]] = []
+    bootstrap_calls = 0
     errors: list[str] = []
     for c in selected + fallback_candidates:
         if len(live_observations) >= 2:
@@ -735,6 +794,37 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
     if not live_observations:
         raise ValueError("PBC recent Financial Statistics Report parse unavailable" + (" · " + " | ".join(errors[-2:]) if errors else ""))
 
+    # One-time/early-run history bootstrap. The normal official index currently exposes
+    # several recent reports; only when that real listing shape is present and fewer than
+    # 18 cached months exist do we make bounded search/article calls for older history.
+    # Unit fixtures with a tiny listing therefore remain strictly low-call.
+    if len(cached_history) < 18 and len(candidates) >= 6:
+        seen_urls = {c["url"] for c in candidates}
+        older = list(candidates[1:])
+        older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls))
+        cached_months = {str(r.get("date"))[:7] for r in cached_history if r.get("date")}
+        live_months = {str(r.get("date"))[:7] for r in live_observations if r.get("date")}
+        need = max(0, 18 - len(cached_months | live_months))
+        used_months = set(cached_months) | set(live_months)
+        for c in older:
+            if need <= 0 or bootstrap_calls >= 16:
+                break
+            if c.get("month") in used_months:
+                continue
+            try:
+                rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
+                bootstrap_calls += 1
+                parsed = _extract_pbc_article(rr.text, c["url"])
+                if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
+                    mk = str(parsed["date"])[:7]
+                    if mk not in used_months:
+                        bootstrap_observations.append(parsed)
+                        used_months.add(mk)
+                        need -= 1
+            except Exception:
+                bootstrap_calls += 1
+                continue
+
     # The current value must come from this run's official PBC article, never silently from cache.
     live_dedup = {str(o["date"])[:7]: o for o in live_observations}
     live_rows = [live_dedup[k] for k in sorted(live_dedup)]
@@ -749,6 +839,10 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         if r.get("date") and _num(r.get("value")) is not None and str(r["date"])[:7] <= latest_m
     ]
     dedup = {str(o["date"])[:7]: o for o in cached_obs}
+    for o in bootstrap_observations:
+        mk = str(o.get("date") or "")[:7]
+        if mk and mk <= latest_m:
+            dedup[mk] = o
     for o in live_rows:
         dedup[str(o["date"])[:7]] = o  # live wins for overlapping months
     rows = [dedup[k] for k in sorted(dedup)]
@@ -769,6 +863,13 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
         "source": "People's Bank of China Financial Statistics Reports",
         "source_url": latest.get("source_url"),
         "history_points": len(hist), "yoy_history": hist,
+        "history_bootstrap": {
+            "triggered": bootstrap_calls > 0,
+            "article_calls": bootstrap_calls,
+            "new_points": len(bootstrap_observations),
+            "target_points": 18,
+            "complete": len(hist) >= 18,
+        },
     }
 
 
@@ -880,7 +981,15 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
             fc = float(c["forecast_yoy_3m_pct"])
             method = "US Fed-engine history model"
             has_direct_us = True
-            audit = {"skill_pct": None, "fallback_used": False, "quality_gate": {"passed": True}, "source_confidence": c.get("forecast_confidence")}
+            src_bt = c.get("forecast_validation") if isinstance(c.get("forecast_validation"), dict) else {}
+            src_gate = c.get("forecast_quality_gate") if isinstance(c.get("forecast_quality_gate"), dict) else {}
+            audit = {
+                "skill_pct": src_bt.get("skill_pct"), "rmse_pct": src_bt.get("rmse_pct"),
+                "baseline_rmse_pct": src_bt.get("baseline_rmse_pct"), "backtests": src_bt.get("backtests"),
+                "fallback_used": bool(src_bt.get("fallback_used", False)),
+                "quality_gate": src_gate or {"passed": not bool(src_bt.get("fallback_used", False))},
+                "source_confidence": c.get("forecast_confidence"),
+            }
         else:
             hist = c.get("yoy_history") if isinstance(c.get("yoy_history"), list) else []
             audit = _regional_yoy_forecast(hist, 3) if hist else {"forecast":cur,"model":"persistence_no_history","samples":0,"skill_pct":0.0,"fallback_used":True,"quality_gate":{"passed":False,"reason":"장기 월별 YoY 이력 미확보"}}

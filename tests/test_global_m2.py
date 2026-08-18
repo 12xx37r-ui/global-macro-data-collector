@@ -62,6 +62,25 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertIsNone(out['value'])
         self.assertEqual(out['coverage_regions'], [])
 
+
+    def test_month_key_preserves_oct_nov_dec(self):
+        self.assertEqual(global_m2._month_key('2025-10-01'), '2025-10')
+        self.assertEqual(global_m2._month_key('2025-11-01'), '2025-11')
+        self.assertEqual(global_m2._month_key('2025-12-01'), '2025-12')
+        self.assertEqual(global_m2._pbc_report_month('2025年11月金融统计数据报告'), '2025-11')
+
+    def test_regional_forecast_uses_recent_contiguous_months_only(self):
+        hist=[]
+        y,m=2024,1
+        for i in range(24):
+            if not (y==2024 and m==10):
+                hist.append({'date':f'{y:04d}-{m:02d}-01','value':3.0+i*0.01})
+            m += 1
+            if m==13: y+=1; m=1
+        out=global_m2._regional_yoy_forecast(hist,3)
+        self.assertGreaterEqual(out['history_gaps_dropped'], 1)
+        self.assertLess(out['history_points_contiguous'], out['history_points_total'])
+
     def test_boj_main_table_parser_path(self):
         html = """<table><tr><td>2026/03</td><td>1.1</td>""" + "<td>0</td>"*7 + "<td>12000000</td></tr>" + \
                "<tr><td>2026/04</td><td>1.2</td>" + "<td>0</td>"*7 + "<td>12100000</td></tr>" + \
@@ -167,12 +186,15 @@ class GlobalM2Tests(unittest.TestCase):
         self.assertEqual(out['us_dxy']['forecast_3m'],98.0)
 
     def test_fetch_us_engine_maps_contract_without_requerying_m2_sources(self):
-        ctx={'available':True,'generated_at_utc':'2026-08-18T00:00:00+00:00','m2':{'available':True,'status':'LIVE','observation_date':'2026-06-01','current_yoy_pct':5.2,'prior_3m_yoy_pct':4.7,'forecast_3m_yoy_pct':5.5,'level_billions_usd':23100,'source':'Federal Reserve H.6'}}
+        ctx={'available':True,'generated_at_utc':'2026-08-18T00:00:00+00:00','m2':{'available':True,'status':'LIVE','observation_date':'2026-06-01','current_yoy_pct':5.2,'prior_3m_yoy_pct':4.7,'forecast_3m_yoy_pct':5.5,'level_billions_usd':23100,'source':'Federal Reserve H.6','backtest_3m':{'skill_pct':39.5,'rmse_pct':1.1,'baseline_rmse_pct':1.8,'backtests':72,'fallback_used':False},'forecast_quality_gate':{'passed':True},'yoy_history':[{'date':'2026-06-01','value':5.2}]}}
         with patch.object(global_m2, '_get_us_engine_context', return_value=ctx):
             out=global_m2._fetch_us_engine(global_m2.requests.Session())
         self.assertEqual(out['region'],'US')
         self.assertAlmostEqual(out['yoy_pct'],5.2)
         self.assertAlmostEqual(out['forecast_yoy_3m_pct'],5.5)
+        self.assertAlmostEqual(out['forecast_validation']['skill_pct'],39.5)
+        self.assertTrue(out['forecast_quality_gate']['passed'])
+        self.assertEqual(len(out['yoy_history']),1)
 
 
 
