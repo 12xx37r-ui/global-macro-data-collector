@@ -1,0 +1,139 @@
+diff --git a/global_m2.py b/global_m2.py
+--- a/global_m2.py
++++ b/global_m2.py
+@@
+ PBC_REPORTS_EN = "https://www.pbc.gov.cn/en/3688247/3688978/3709137/index.html"
++PBC_REPORTS_CN = "https://www.pbc.gov.cn/diaochatongjisi/116219/116225/index.html"
++PBC_REPORTS_CN_PAGE = "https://www.pbc.gov.cn/diaochatongjisi/116219/116225/11871-{page}.html"
+ PBC_SEARCH = "https://wzdig.pbc.gov.cn/search/pcRender?pNo={page}&pageId=c177a85bd02b4114bebebd210809f691&q={query}&sr=pubDate%20desc"
+@@
+ def _pbc_report_month(label: str) -> str | None:
+@@
+     year = int(y.group(1))
++    # Chinese PBC archive titles use period names rather than a calendar month
++    # for quarter/half-year/year reports. Map them to the observation month.
++    if "上半年" in text:
++        return f"{year:04d}-06"
++    if "前三季度" in text:
++        return f"{year:04d}-09"
++    if "一季度" in text:
++        return f"{year:04d}-03"
+     if re.search(r"\bH1\b|first half", text, re.I):
+         return f"{year:04d}-06"
+@@
+     if re.search(r"\bQ1\b|first quarter", text, re.I):
+         return f"{year:04d}-03"
++    if re.fullmatch(rf"{year}年金融统计数据报告", text):
++        return f"{year:04d}-12"
+     if re.search(r"\b202\d\b", text) and "Report (" in text:
+         return f"{year:04d}-12"
+     return None
+@@
+ def _pbc_listing_candidates(html: str, base_url: str) -> list[dict[str, str]]:
+@@
+     return sorted(out, key=lambda x: x["month"], reverse=True)
++
++
++def _pbc_cn_archive_candidates(
++    session: requests.Session,
++    headers: dict[str, str],
++    target_months: set[str] | None = None,
++) -> list[dict[str, str]]:
++    """Discover Financial Statistics Reports from the official Chinese archive.
++
++    The English index exposes only a relatively small recent window.  The
++    Chinese 数据解读 archive is paginated and retains the exact monthly/quarterly
++    Financial Statistics Report links needed for historical CN M2 bootstrap.
++    Fetch only the first three archive pages and stop as soon as all requested
++    months are discovered.  This is bootstrap-only and introduces no provider.
++    """
++    wanted = set(target_months or [])
++    found: dict[str, dict[str, str]] = {}
++    urls = [PBC_REPORTS_CN, PBC_REPORTS_CN_PAGE.format(page=2), PBC_REPORTS_CN_PAGE.format(page=3)]
++    for u in urls:
++        if wanted and wanted.issubset(found):
++            break
++        try:
++            r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
++            for c in _pbc_listing_candidates(r.text, u):
++                mk = c.get("month")
++                if not mk:
++                    continue
++                if wanted and mk not in wanted:
++                    continue
++                found.setdefault(mk, c)
++        except Exception:
++            continue
++    return [found[k] for k in sorted(found, reverse=True)]
+@@
+     provisional_after_tables = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
+     contiguous_after_tables, _ = _recent_contiguous_month_history(provisional_after_tables)
+     if len(contiguous_after_tables) < 18 and len(candidates) >= 6 and not _cn_bootstrap_complete():
+         seen_urls = {c["url"] for c in candidates}
+         latest_bootstrap_month = max(str(o.get("date"))[:7] for o in live_observations if o.get("date"))
+         provisional_for_gaps = list(cached_history) + [{"date": o.get("date"), "value": o.get("yoy_pct")} for o in (live_observations + bootstrap_observations)]
+         missing_targets = set(_missing_recent_months(provisional_for_gaps, latest_bootstrap_month, 18))
+-        older = [c for c in candidates[1:] if c.get("month") in missing_targets]
+-        older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls, missing_targets))
++        older = [c for c in candidates[1:] if c.get("month") in missing_targets]
++
++        # Preferred historical discovery: PBC's own Chinese 数据解读 archive.
++        # It contains pages such as 2025年上半年/5月/4月/3月/2月金融统计数据报告,
++        # which the compact English index does not expose.  Use search only for
++        # any exact months that remain undiscovered after these archive pages.
++        cn_archive = _pbc_cn_archive_candidates(session, headers, missing_targets)
++        older.extend(cn_archive)
++        discovered_months = {c.get("month") for c in older if c.get("month")}
++        unresolved = {mk for mk in missing_targets if mk not in discovered_months}
++        if unresolved:
++            older.extend(_pbc_history_bootstrap_candidates(session, headers, seen_urls, unresolved))
+         older = sorted({c["url"]: c for c in older}.values(), key=lambda x: (x.get("month") not in missing_targets, x.get("month") or ""), reverse=False)
+@@
+         "history_bootstrap": {
+@@
+-            "strategy": "exact missing months from official report index first; annual Money Supply tables second; target-aware bounded search/article fallback last",
++            "strategy": "exact missing months from official indexes first; official Chinese data-interpretation archive for historical gaps; annual Money Supply tables/search fallback only when still needed",
+         },
+     }
+diff --git a/tests/test_global_m2.py b/tests/test_global_m2.py
+--- a/tests/test_global_m2.py
++++ b/tests/test_global_m2.py
+@@
+     def test_month_key_preserves_oct_nov_dec(self):
+         self.assertEqual(global_m2._month_key('2025-10-01'), '2025-10')
+         self.assertEqual(global_m2._month_key('2025-11-01'), '2025-11')
+         self.assertEqual(global_m2._month_key('2025-12-01'), '2025-12')
+         self.assertEqual(global_m2._pbc_report_month('2025年11月金融统计数据报告'), '2025-11')
++        self.assertEqual(global_m2._pbc_report_month('2025年上半年金融统计数据报告'), '2025-06')
++        self.assertEqual(global_m2._pbc_report_month('2025年前三季度金融统计数据报告'), '2025-09')
++        self.assertEqual(global_m2._pbc_report_month('2025年一季度金融统计数据报告'), '2025-03')
++        self.assertEqual(global_m2._pbc_report_month('2025年金融统计数据报告'), '2025-12')
++
++    def test_pbc_chinese_archive_discovers_exact_missing_months(self):
++        page1 = """<html><body>
++        <a href="/diaochatongjisi/r/y2025.html">2025年金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/q3.html">2025年前三季度金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/aug.html">2025年8月金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/jul.html">2025年7月金融统计数据报告</a>
++        </body></html>"""
++        page2 = """<html><body>
++        <a href="/diaochatongjisi/r/h1.html">2025年上半年金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/may.html">2025年5月金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/apr.html">2025年4月金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/q1.html">2025年一季度金融统计数据报告</a>
++        <a href="/diaochatongjisi/r/feb.html">2025年2月金融统计数据报告</a>
++        </body></html>"""
++        class R:
++            def __init__(self, text):
++                self.text=text; self.content=text.encode(); self.status_code=200; self.headers={}
++            def raise_for_status(self): return None
++        def fake_get(url, **kwargs):
++            if url == global_m2.PBC_REPORTS_CN: return R(page1)
++            if url == global_m2.PBC_REPORTS_CN_PAGE.format(page=2): return R(page2)
++            return R("<html></html>")
++        wanted={'2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-12'}
++        session=global_m2.requests.Session()
++        with patch.object(session, 'get', side_effect=fake_get):
++            global_m2._REQUEST_MEMO.clear(); global_m2._API_HEALTH.clear(); global_m2._PROVIDER_LAST_CALL.clear()
++            rows=global_m2._pbc_cn_archive_candidates(session, {}, wanted)
++        self.assertEqual({x['month'] for x in rows}, wanted)
