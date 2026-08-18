@@ -2,7 +2,7 @@
   "schema_version": "1.1",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-18T03:07:20.064706+00:00",
+  "generated_at_utc": "2026-08-18T08:11:59.308459+00:00",
   "score": 13.3,
   "market_signal": "neutral",
   "current_regime": "혼합·중립",
@@ -57,7 +57,9 @@
       "validation": {
         "passed": true,
         "passed_horizons": [
-          "equity:3m"
+          "equity:3m",
+          "rates:1m",
+          "crypto:1m"
         ]
       }
     }
@@ -73,7 +75,7 @@
       "card8_data": true,
       "card9_data": true,
       "card10_data": true,
-      "card12_data": false
+      "card12_data": true
     }
   },
   "investment_conclusion": "검증을 통과한 하위 카드 신호와 최신성·완전성을 함께 반영해 자산군의 상대적 우호도를 판단합니다."
