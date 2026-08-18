@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at_utc": "2026-08-18T19:39:29.807758+00:00",
+  "generated_at_utc": "2026-08-18T19:47:07.411167+00:00",
   "global_m2": {
     "current": 5.385196,
     "forecast_3m": 5.433719,
@@ -103,24 +103,30 @@
         "method": "persistence safety fallback",
         "validation": {
           "forecast": 7.7,
-          "model": "persistence_insufficient_history",
-          "samples": 0,
+          "model": "persistence",
+          "samples": 3,
+          "rmse": 0.6377042156569662,
+          "baseline_rmse": 0.6377042156569662,
           "skill_pct": 0.0,
-          "direction_accuracy": null,
+          "direction_accuracy": 33.33333333333333,
           "fallback_used": true,
-          "history_points_total": 18,
-          "history_points_contiguous": 13,
-          "history_gaps_dropped": 5,
+          "history_points_total": 19,
+          "history_points_contiguous": 18,
+          "history_gaps_dropped": 1,
           "quality_gate": {
             "passed": false,
-            "reason": "연속 월별 YoY 이력 18개월 미만"
+            "requirements": {
+              "samples_min": 18,
+              "skill_pct_min": 3.0,
+              "direction_accuracy_min": 55.0
+            }
           }
         },
         "forecast_confidence": {
           "score": 35,
           "grade": "LOW",
           "passed": false,
-          "samples": 0,
+          "samples": 3,
           "skill_pct": 0.0
         }
       }
@@ -427,7 +433,7 @@
   },
   "engine_health": {
     "schema_version": "1.1",
-    "generated_at_utc": "2026-08-18T19:39:29.801689+00:00",
+    "generated_at_utc": "2026-08-18T19:47:07.406151+00:00",
     "status": "HEALTHY_WITH_FALLBACKS",
     "pipeline_health": "HEALTHY",
     "forecast_health": "PARTIAL",
@@ -462,7 +468,7 @@
           "http_5xx": 0,
           "timeouts": 0,
           "retries": 0,
-          "last_success_utc": "2026-08-18T19:39:26.845133+00:00",
+          "last_success_utc": "2026-08-18T19:47:03.182373+00:00",
           "last_failure_utc": null,
           "cooldown": false,
           "final_status": "LIVE"
@@ -476,35 +482,35 @@
           "http_5xx": 0,
           "timeouts": 0,
           "retries": 0,
-          "last_success_utc": "2026-08-18T19:39:27.159460+00:00",
+          "last_success_utc": "2026-08-18T19:47:03.654905+00:00",
           "last_failure_utc": null,
           "cooldown": false,
           "final_status": "LIVE"
         },
         "PBC": {
           "provider": "PBC",
-          "request_attempts": 3,
-          "network_calls": 3,
+          "request_attempts": 6,
+          "network_calls": 6,
           "memory_cache_hits": 0,
           "http_429": 0,
           "http_5xx": 0,
           "timeouts": 0,
           "retries": 0,
-          "last_success_utc": "2026-08-18T19:39:29.563238+00:00",
+          "last_success_utc": "2026-08-18T19:47:07.343632+00:00",
           "last_failure_utc": null,
           "cooldown": false,
           "final_status": "LIVE"
         }
       }
     },
-    "runtime_ms": 4129,
+    "runtime_ms": 5281,
     "model_degradation": [],
     "global_m2_composite_validation": {
       "available": false,
       "status": "INSUFFICIENT_HISTORY",
       "samples": 0,
       "required_common_months": 33,
-      "common_months": 17,
+      "common_months": 18,
       "benchmark": "global-composite persistence"
     },
     "composite_oos": {

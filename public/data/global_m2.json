@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-18T19:39:29.788918+00:00",
+  "generated_at_utc": "2026-08-18T19:47:07.395006+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -114,24 +114,30 @@
       "method": "persistence safety fallback",
       "validation": {
         "forecast": 7.7,
-        "model": "persistence_insufficient_history",
-        "samples": 0,
+        "model": "persistence",
+        "samples": 3,
+        "rmse": 0.6377042156569662,
+        "baseline_rmse": 0.6377042156569662,
         "skill_pct": 0.0,
-        "direction_accuracy": null,
+        "direction_accuracy": 33.33333333333333,
         "fallback_used": true,
-        "history_points_total": 18,
-        "history_points_contiguous": 13,
-        "history_gaps_dropped": 5,
+        "history_points_total": 19,
+        "history_points_contiguous": 18,
+        "history_gaps_dropped": 1,
         "quality_gate": {
           "passed": false,
-          "reason": "연속 월별 YoY 이력 18개월 미만"
+          "requirements": {
+            "samples_min": 18,
+            "skill_pct_min": 3.0,
+            "direction_accuracy_min": 55.0
+          }
         }
       },
       "forecast_confidence": {
         "score": 35,
         "grade": "LOW",
         "passed": false,
-        "samples": 0,
+        "samples": 3,
         "skill_pct": 0.0
       }
     }
@@ -141,7 +147,7 @@
     "status": "INSUFFICIENT_HISTORY",
     "samples": 0,
     "required_common_months": 33,
-    "common_months": 17,
+    "common_months": 18,
     "benchmark": "global-composite persistence"
   },
   "forecast_confidence_by_region": {
@@ -170,7 +176,7 @@
       "score": 35,
       "grade": "LOW",
       "passed": false,
-      "samples": 0,
+      "samples": 3,
       "skill_pct": 0.0
     }
   },
@@ -1909,7 +1915,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 78,
-      "fetch_ms": 1190
+      "fetch_ms": 1073
     },
     "JP": {
       "date": "2026-07-01",
@@ -3200,7 +3206,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 619
+      "fetch_ms": 727
     },
     "CN": {
       "region": "CN",
@@ -3211,7 +3217,7 @@
       "level": 355.51,
       "source": "People's Bank of China Financial Statistics Reports",
       "source_url": "https://www.pbc.gov.cn/en/3688247/3688978/3709137/2026081815052522832/index.html",
-      "history_points": 18,
+      "history_points": 19,
       "yoy_history": [
         {
           "date": "2023-01-01",
@@ -3232,6 +3238,10 @@
         {
           "date": "2025-05-01",
           "value": 7.9
+        },
+        {
+          "date": "2025-06-01",
+          "value": 8.3
         },
         {
           "date": "2025-07-01",
@@ -3289,20 +3299,20 @@
       "history_bootstrap": {
         "triggered": false,
         "targeted_listing_calls": 0,
-        "archive_listing_calls": 0,
-        "archive_article_calls": 0,
+        "archive_listing_calls": 2,
+        "archive_article_calls": 1,
         "table_calls": 0,
         "table_new_points": 0,
         "article_calls": 0,
-        "new_points": 0,
+        "new_points": 1,
         "target_contiguous_points": 18,
-        "contiguous_points": 13,
-        "complete": false,
+        "contiguous_points": 18,
+        "complete": true,
         "strategy": "exact missing months from official English index first; official PBC Chinese data-interpretation archive second; annual Money Supply/search fallback only for unresolved gaps"
       },
       "status": "LIVE",
       "age_days": 48,
-      "fetch_ms": 2318
+      "fetch_ms": 3479
     }
   },
   "statuses": {
@@ -3312,7 +3322,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 4129,
+  "runtime_ms": 5281,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3323,7 +3333,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:39:26.845133+00:00",
+      "last_success_utc": "2026-08-18T19:47:03.182373+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3337,21 +3347,21 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:39:27.159460+00:00",
+      "last_success_utc": "2026-08-18T19:47:03.654905+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
     },
     "PBC": {
       "provider": "PBC",
-      "request_attempts": 3,
-      "network_calls": 3,
+      "request_attempts": 6,
+      "network_calls": 6,
       "memory_cache_hits": 0,
       "http_429": 0,
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-18T19:39:29.563238+00:00",
+      "last_success_utc": "2026-08-18T19:47:07.343632+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
