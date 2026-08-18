@@ -1,8 +1,8 @@
 {
   "schema_version": "1.1.0",
   "patch_version": "V228-zero-call-freshness-unification",
-  "generated_at_utc": "2026-08-18T01:04:15.936294+00:00",
-  "bundle_generated_at_utc": "2026-08-18T01:01:54.853004+00:00",
+  "generated_at_utc": "2026-08-18T03:09:31.746123+00:00",
+  "bundle_generated_at_utc": "2026-08-18T03:07:20.066397+00:00",
   "compatibility": {
     "existing_keys_removed": false,
     "existing_field_semantics_changed": false,
@@ -24,10 +24,10 @@
       "source": "card12:ES=F",
       "status": "LIVE",
       "cadence": "intraday-market",
-      "observation_at": "2026-08-18T00:51:52+00:00",
-      "age_hours": 0.21,
+      "observation_at": "2026-08-18T02:57:14+00:00",
+      "age_hours": 0.2,
       "market_state": null,
-      "value": 7768.25,
+      "value": 7747.25,
       "provider": "Yahoo Finance chart metadata"
     },
     {
@@ -144,104 +144,113 @@
       "source": "file:asset_oos_validation.json",
       "status": "LIVE",
       "cadence": "market/trading-day",
-      "observation_at": "2026-08-18T01:04:15.751822+00:00",
+      "observation_at": "2026-08-18T03:09:31.601301+00:00",
       "age_hours": 0.0,
       "max_age_hours": 96.0,
-      "generated_at": "2026-08-18T01:04:15.751822+00:00"
+      "generated_at": "2026-08-18T03:09:31.601301+00:00"
     },
     {
       "source": "file:card10.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
       "observation_at": "2026-08-11",
-      "age_hours": 169.07,
+      "age_hours": 171.16,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:54.587421+00:00"
+      "generated_at": "2026-08-18T03:07:19.653753+00:00"
     },
     {
       "source": "file:card11.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-18T01:01:54.851932+00:00",
+      "observation_at": "2026-08-18T03:07:20.064706+00:00",
       "age_hours": 0.04,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:54.851932+00:00"
+      "generated_at": "2026-08-18T03:07:20.064706+00:00"
     },
     {
       "source": "file:card12.json",
       "status": "LIVE",
       "cadence": "market/trading-day",
-      "observation_at": "2026-08-18T00:51:52+00:00",
-      "age_hours": 0.21,
+      "observation_at": "2026-08-18T02:57:14+00:00",
+      "age_hours": 0.2,
       "max_age_hours": 96.0,
-      "generated_at": "2026-08-18T01:01:54.851320+00:00"
+      "generated_at": "2026-08-18T03:07:20.063801+00:00"
     },
     {
       "source": "file:card9.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
       "observation_at": "2026-08-08",
-      "age_hours": 241.07,
+      "age_hours": 243.16,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:46.815565+00:00"
+      "generated_at": "2026-08-18T03:07:11.065635+00:00"
     },
     {
       "source": "file:cards_8_12_bundle.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-18T00:51:52+00:00",
-      "age_hours": 0.21,
+      "observation_at": "2026-08-18T02:57:14+00:00",
+      "age_hours": 0.2,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:54.853004+00:00"
+      "generated_at": "2026-08-18T03:07:20.066397+00:00"
     },
     {
       "source": "file:equity_fundamentals.json",
       "status": "LIVE",
       "cadence": "market/trading-day",
-      "observation_at": "2026-08-18T01:01:57.157689+00:00",
+      "observation_at": "2026-08-18T03:07:21.369166+00:00",
       "age_hours": 0.04,
       "max_age_hours": 96.0,
-      "generated_at": "2026-08-18T01:01:57.157689+00:00"
+      "generated_at": "2026-08-18T03:07:21.369166+00:00"
+    },
+    {
+      "source": "file:fast_market_refresh_status.json",
+      "status": "LIVE",
+      "cadence": "mixed",
+      "observation_at": "2026-08-18T03:05:58.856896+00:00",
+      "age_hours": 0.06,
+      "max_age_hours": 1080.0,
+      "generated_at": "2026-08-18T03:05:58.856896+00:00"
     },
     {
       "source": "file:ism_manufacturing.json",
       "status": "CACHE",
       "cadence": "monthly/mixed-release",
       "observation_at": "2026-07",
-      "age_hours": 1153.07,
+      "age_hours": 1155.16,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:12.689093+00:00"
+      "generated_at": "2026-08-18T03:06:39.646030+00:00"
     },
     {
       "source": "file:source_status.json",
       "status": "CACHE",
       "cadence": "mixed",
       "observation_at": "2026-07",
-      "age_hours": 1153.07,
+      "age_hours": 1155.16,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:12.689093+00:00"
+      "generated_at": "2026-08-18T03:06:39.646030+00:00"
     },
     {
       "source": "file:us_treasury_card8.json",
       "status": "LIVE",
       "cadence": "mixed",
       "observation_at": "2026-08-18",
-      "age_hours": 1.07,
+      "age_hours": 3.16,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:36.190918+00:00"
+      "generated_at": "2026-08-18T03:07:01.213562+00:00"
     },
     {
       "source": "file:us_treasury_card8_status.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-18T01:01:36.190918+00:00",
+      "observation_at": "2026-08-18T03:07:01.213562+00:00",
       "age_hours": 0.04,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-18T01:01:36.190918+00:00"
+      "generated_at": "2026-08-18T03:07:01.213562+00:00"
     }
   ],
   "summary": {
-    "LIVE": 10,
+    "LIVE": 11,
     "CACHE": 3,
     "LKG": 0,
     "FALLBACK": 0,
