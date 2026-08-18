@@ -643,8 +643,25 @@ def _extract_pbc_article(text: str, url: str) -> dict[str, Any] | None:
         yoy_m = re.search(r"broad money.{0,260}?([0-9.]+)\s*percent\s+(?:year on year|yoy)", plain, re.I)
 
     # Chinese official wording, e.g. "广义货币(M2)余额...万亿元，同比增长8.8%".
+    # Accept ASCII/full-width parentheses and punctuation/layout variants.
     if not yoy_m:
-        yoy_m = re.search(r"(?:广义货币(?:供应量)?|M2)[^。；;]{0,260}?(?:同比增长|同比增速(?:为)?|增长)\s*([0-9.]+)\s*%", plain, re.I)
+        yoy_m = re.search(
+            r"(?:广义货币(?:供应量)?\s*[（(]?\s*M2\s*[）)]?|广义货币(?:供应量)?|M2)"
+            r"[^。；;]{0,320}?(?:同比增长|同比增速\s*(?:为)?|同比\s*(?:增长|增速)?|增长)"
+            r"\s*([0-9]+(?:\.[0-9]+)?)\s*%",
+            plain,
+            re.I,
+        )
+
+    # PBC reports also expose a stable section heading such as "一、广义货币增长8%".
+    # Keep this as a narrowly-scoped fallback only after the M2/body patterns above.
+    if not yoy_m:
+        yoy_m = re.search(
+            r"(?:^|\s)(?:[一二三四五六七八九十]+[、.]\s*)?广义货币(?:\s*[（(]?\s*M2\s*[）)]?)?"
+            r"\s*(?:增长|同比增长|同比增速(?:为)?)\s*([0-9]+(?:\.[0-9]+)?)\s*%",
+            plain,
+            re.I,
+        )
 
     if not yoy_m:
         return None
@@ -753,10 +770,8 @@ def _pbc_cn_archive_candidates(
             r = _get_retry(session, u, headers=headers, attempts=1, timeout=(5, 10))
             calls += 1
             # PBC's Chinese archive is sometimes served without a reliable charset
-            # header. requests.Response.text can then mojibake "金融统计数据报告",
-            # leaving the listing parser with zero candidates. BeautifulSoup on
-            # raw bytes performs encoding detection and preserves the Chinese titles.
-            archive_html = str(BeautifulSoup(r.content, "html.parser"))
+            # header. Decode from raw bytes so Chinese titles remain intact.
+            archive_html = _pbc_response_html(r)
             for c in _pbc_listing_candidates(archive_html, u):
                 mk = c.get("month")
                 if not mk:
@@ -776,6 +791,17 @@ def _pbc_parse_candidate(rr_text: str, c: dict[str, str]) -> dict[str, Any] | No
     if parsed and not parsed.get("date") and c.get("month"):
         parsed["date"] = str(c["month"]) + "-01"
     return parsed
+
+
+def _pbc_response_html(response: requests.Response) -> str:
+    """Decode PBC HTML from raw bytes first, avoiding mojibake from unreliable charset headers."""
+    content = getattr(response, "content", b"") or b""
+    if content:
+        try:
+            return str(BeautifulSoup(content, "html.parser"))
+        except Exception:
+            pass
+    return str(getattr(response, "text", "") or "")
 
 
 def _month_number(month: str) -> int:
@@ -995,7 +1021,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
                 break
         try:
             rr = _get_retry(session, c["url"], headers=headers, attempts=2, timeout=(5, 12))
-            parsed = _pbc_parse_candidate(rr.text, c)
+            parsed = _pbc_parse_candidate(_pbc_response_html(rr), c)
             if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                 live_observations.append(parsed)
         except Exception as exc:
@@ -1027,7 +1053,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
                 targeted_listing_calls += 1
-                parsed = _pbc_parse_candidate(rr.text, c)
+                parsed = _pbc_parse_candidate(_pbc_response_html(rr), c)
                 if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                     bootstrap_observations.append(parsed)
                     provisional.append({"date": parsed["date"], "value": parsed["yoy_pct"]})
@@ -1049,7 +1075,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
                 archive_article_calls += 1
-                parsed = _pbc_parse_candidate(rr.text, c)
+                parsed = _pbc_parse_candidate(_pbc_response_html(rr), c)
                 if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                     mk = str(parsed["date"])[:7]
                     if mk not in used:
@@ -1076,7 +1102,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
                 table_calls += 1
-                parsed_levels = _extract_pbc_money_supply_levels(rr.text)
+                parsed_levels = _extract_pbc_money_supply_levels(_pbc_response_html(rr))
                 existing = {str(x.get("date"))[:7] for x in table_level_rows if x.get("date")}
                 for row in parsed_levels:
                     if str(row.get("date"))[:7] not in existing:
@@ -1127,7 +1153,7 @@ def _fetch_pbc(session: requests.Session) -> dict[str, Any]:
             try:
                 rr = _get_retry(session, c["url"], headers=headers, attempts=1, timeout=(5, 10))
                 bootstrap_calls += 1
-                parsed = _pbc_parse_candidate(rr.text, c)
+                parsed = _pbc_parse_candidate(_pbc_response_html(rr), c)
                 if parsed and parsed.get("date") and _num(parsed.get("yoy_pct")) is not None:
                     mk = str(parsed["date"])[:7]
                     if mk not in used_months:
