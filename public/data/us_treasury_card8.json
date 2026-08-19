@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-18T21:05:36.675232+00:00",
+  "generated_at_utc": "2026-08-19T01:01:25.183872+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 103.05078125,
-        "date": "2026-08-18",
-        "return21d_pct": 0.11004857316332384,
-        "return63d_pct": -0.12493374725524031,
-        "realized_vol": 0.08149600960347285,
-        "score": 0.022342329032609822
+        "value": 103.0703125,
+        "date": "2026-08-19",
+        "return21d_pct": 0.1290224650880356,
+        "return63d_pct": -0.10600439161051467,
+        "realized_vol": 0.08159515603409477,
+        "score": 0.03756716835298119
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.4296875,
-        "date": "2026-08-18",
-        "return21d_pct": -0.04402377283733161,
-        "return63d_pct": -0.2781641168289273,
-        "realized_vol": 0.18420816210416666,
-        "score": -0.08113545441601085
+        "value": 106.46875,
+        "date": "2026-08-19",
+        "return21d_pct": -0.007337295472886751,
+        "return63d_pct": -0.24156357514091287,
+        "realized_vol": 0.18439785802981798,
+        "score": -0.057505062373862124
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.546875,
-        "date": "2026-08-18",
-        "return21d_pct": -0.2870676044208431,
-        "return63d_pct": -0.42998423391141793,
-        "realized_vol": 0.27369914011622676,
-        "score": -0.1851018078307985
+        "value": 108.59375,
+        "date": "2026-08-19",
+        "return21d_pct": -0.24400746375771165,
+        "return63d_pct": -0.38698581052027947,
+        "realized_vol": 0.2739898099391225,
+        "score": -0.16139122880568071
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 108.6875,
-        "date": "2026-08-18",
-        "return21d_pct": -1.7514124293785294,
-        "return63d_pct": -1.528878822197055,
-        "realized_vol": 0.4867916400726691,
-        "score": -0.680191320888902
+        "value": 108.71875,
+        "date": "2026-08-19",
+        "return21d_pct": -1.7231638418079065,
+        "return63d_pct": -1.5005662514156248,
+        "realized_vol": 0.48715830508647107,
+        "score": -0.6684019710991917
       }
     },
-    "composite_score": -0.23102156352577538,
+    "composite_score": -0.21243277348143835,
     "yield_direction": "flat",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-18T18:26:42.158945+00:00",
+    "generated_at_utc": "2026-08-18T21:58:35.967563+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1312,55 +1312,55 @@
       "status": "LIVE",
       "symbol": "DX-Y.NYB",
       "source": "Yahoo Finance DXY delayed market data",
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787077594",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787090307",
       "observation_date": "2026-08-18",
-      "market_time_utc": "2026-08-18T18:16:32+00:00",
-      "current": 99.64,
-      "forecast_1m": 99.64,
-      "forecast_3m": 99.64,
+      "market_time_utc": "2026-08-18T21:48:25+00:00",
+      "current": 99.653,
+      "forecast_1m": 99.653,
+      "forecast_3m": 99.653,
       "forecast_change_3m_pct": 0.0,
       "forecast_range_80": [
-        95.471097,
-        103.808903
+        95.486049,
+        103.819951
       ],
       "direction_3m": "flat",
       "confidence": 35,
       "selected_model_1m": "price_ensemble",
       "selected_model_3m": "price_ensemble",
       "backtest_1m": {
-        "rmse_pct": 1.7779853849703606,
-        "baseline_rmse_pct": 1.7779853849703606,
+        "rmse_pct": 1.7788532407421798,
+        "baseline_rmse_pct": 1.7788532407421798,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 47.94721407624634,
-        "direction_cases": 682,
+        "direction_accuracy": 47.95918367346938,
+        "direction_cases": 686,
         "fallback_used": true
       },
       "backtest_3m": {
-        "rmse_pct": 3.264642278180468,
-        "baseline_rmse_pct": 3.264642278180468,
+        "rmse_pct": 3.2626878535811876,
+        "baseline_rmse_pct": 3.2626878535811876,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 36.48255813953488,
+        "direction_accuracy": 36.04651162790697,
         "direction_cases": 688,
         "fallback_used": true
       },
       "price_model_audit": {
         "1m": {
-          "rmse_pct": 1.7779853849703606,
-          "baseline_rmse_pct": 1.7779853849703606,
+          "rmse_pct": 1.7788532407421798,
+          "baseline_rmse_pct": 1.7788532407421798,
           "skill_pct": 0.0,
           "backtests": 760,
-          "direction_accuracy": 47.94721407624634,
-          "direction_cases": 682,
+          "direction_accuracy": 47.95918367346938,
+          "direction_cases": 686,
           "fallback_used": true
         },
         "3m": {
-          "rmse_pct": 3.264642278180468,
-          "baseline_rmse_pct": 3.264642278180468,
+          "rmse_pct": 3.2626878535811876,
+          "baseline_rmse_pct": 3.2626878535811876,
           "skill_pct": 0.0,
           "backtests": 760,
-          "direction_accuracy": 36.48255813953488,
+          "direction_accuracy": 36.04651162790697,
           "direction_cases": 688,
           "fallback_used": true
         }
@@ -1368,14 +1368,14 @@
       "macro_model_audit": {
         "1m": {
           "available": true,
-          "forecast_return_pct": -1.643783470044642,
-          "rmse_pct": 1.604634662597944,
-          "baseline_rmse_pct": 1.4097792545506627,
+          "forecast_return_pct": -1.6148952084199146,
+          "rmse_pct": 1.60309997709622,
+          "baseline_rmse_pct": 1.422378621780216,
           "skill_pct": 0.0,
-          "raw_skill_pct": -13.82169636971906,
-          "direction_accuracy": 43.63636363636363,
-          "direction_cases": 55,
-          "backtests": 62,
+          "raw_skill_pct": -12.705573083615217,
+          "direction_accuracy": 43.39622641509434,
+          "direction_cases": 53,
+          "backtests": 61,
           "variant": "domestic_financial",
           "quality_gate": {
             "passed": false,
@@ -1400,15 +1400,15 @@
           "candidate_audit": {
             "domestic_financial": {
               "available": true,
-              "forecast": 98.01552217739588,
-              "forecast_return_pct": -1.643783470044642,
-              "rmse_pct": 1.604634662597944,
-              "baseline_rmse_pct": 1.4097792545506627,
+              "forecast": 98.05663299778305,
+              "forecast_return_pct": -1.6148952084199146,
+              "rmse_pct": 1.60309997709622,
+              "baseline_rmse_pct": 1.422378621780216,
               "skill_pct": 0.0,
-              "raw_skill_pct": -13.82169636971906,
-              "direction_accuracy": 43.63636363636363,
-              "direction_cases": 55,
-              "backtests": 62,
+              "raw_skill_pct": -12.705573083615217,
+              "direction_accuracy": 43.39622641509434,
+              "direction_cases": 53,
+              "backtests": 61,
               "variant": "domestic_financial",
               "quality_gate": {
                 "passed": false,
@@ -1433,15 +1433,15 @@
             },
             "relative_policy_rates": {
               "available": true,
-              "forecast": 98.08473343626625,
-              "forecast_return_pct": -1.5731958397250823,
-              "rmse_pct": 2.0022122904605113,
-              "baseline_rmse_pct": 1.4097792545506627,
+              "forecast": 98.04930673785196,
+              "forecast_return_pct": -1.622366945323318,
+              "rmse_pct": 1.971424924807239,
+              "baseline_rmse_pct": 1.422378621780216,
               "skill_pct": 0.0,
-              "raw_skill_pct": -42.02310638332341,
-              "direction_accuracy": 49.09090909090909,
-              "direction_cases": 55,
-              "backtests": 62,
+              "raw_skill_pct": -38.60057333678495,
+              "direction_accuracy": 50.943396226415096,
+              "direction_cases": 53,
+              "backtests": 61,
               "variant": "relative_policy_rates",
               "quality_gate": {
                 "passed": false,
@@ -1464,15 +1464,15 @@
             },
             "combined": {
               "available": true,
-              "forecast": 98.49780124978875,
-              "forecast_return_pct": -1.1529464802253604,
-              "rmse_pct": 1.9482569045092624,
-              "baseline_rmse_pct": 1.4097792545506627,
+              "forecast": 98.56186965160596,
+              "forecast_return_pct": -1.1009682289705933,
+              "rmse_pct": 1.9373836745856765,
+              "baseline_rmse_pct": 1.422378621780216,
               "skill_pct": 0.0,
-              "raw_skill_pct": -38.19588408755725,
-              "direction_accuracy": 49.09090909090909,
-              "direction_cases": 55,
-              "backtests": 62,
+              "raw_skill_pct": -36.207311113892615,
+              "direction_accuracy": 45.28301886792453,
+              "direction_cases": 53,
+              "backtests": 61,
               "variant": "combined",
               "quality_gate": {
                 "passed": false,
@@ -1504,11 +1504,11 @@
         },
         "3m": {
           "available": true,
-          "forecast_return_pct": -6.140955641848034,
-          "rmse_pct": 2.354337275961205,
-          "baseline_rmse_pct": 1.4754285574270285,
+          "forecast_return_pct": -6.193946860524312,
+          "rmse_pct": 2.3417544812011104,
+          "baseline_rmse_pct": 1.4665929211230537,
           "skill_pct": 0.0,
-          "raw_skill_pct": -59.56972393613478,
+          "raw_skill_pct": -59.673106795571854,
           "direction_accuracy": 21.052631578947366,
           "direction_cases": 38,
           "backtests": 45,
@@ -1536,12 +1536,12 @@
           "candidate_audit": {
             "domestic_financial": {
               "available": true,
-              "forecast": 93.70524216794068,
-              "forecast_return_pct": -6.140955641848034,
-              "rmse_pct": 2.354337275961205,
-              "baseline_rmse_pct": 1.4754285574270285,
+              "forecast": 93.66781898952135,
+              "forecast_return_pct": -6.193946860524312,
+              "rmse_pct": 2.3417544812011104,
+              "baseline_rmse_pct": 1.4665929211230537,
               "skill_pct": 0.0,
-              "raw_skill_pct": -59.56972393613478,
+              "raw_skill_pct": -59.673106795571854,
               "direction_accuracy": 21.052631578947366,
               "direction_cases": 38,
               "backtests": 45,
@@ -1569,12 +1569,12 @@
             },
             "relative_policy_rates": {
               "available": true,
-              "forecast": 95.2187320525902,
-              "forecast_return_pct": -4.538700269410416,
-              "rmse_pct": 5.002444641328493,
-              "baseline_rmse_pct": 1.4754285574270285,
+              "forecast": 94.78151716538501,
+              "forecast_return_pct": -5.011972793178388,
+              "rmse_pct": 4.991594029214919,
+              "baseline_rmse_pct": 1.4665929211230537,
               "skill_pct": 0.0,
-              "raw_skill_pct": -239.05027906279378,
+              "raw_skill_pct": -240.35306984794192,
               "direction_accuracy": 21.052631578947366,
               "direction_cases": 38,
               "backtests": 45,
@@ -1600,12 +1600,12 @@
             },
             "combined": {
               "available": true,
-              "forecast": 94.26804984227961,
-              "forecast_return_pct": -5.542137213869528,
-              "rmse_pct": 5.045667548903678,
-              "baseline_rmse_pct": 1.4754285574270285,
+              "forecast": 94.21176462329659,
+              "forecast_return_pct": -5.614908794629407,
+              "rmse_pct": 5.0353399818582165,
+              "baseline_rmse_pct": 1.4665929211230537,
               "skill_pct": 0.0,
-              "raw_skill_pct": -241.97979451493882,
+              "raw_skill_pct": -243.33589841701743,
               "direction_accuracy": 21.052631578947366,
               "direction_cases": 38,
               "backtests": 45,
@@ -1646,22 +1646,22 @@
       "available": true,
       "status": "LIVE",
       "source": "FRED DFII5/DFII10/DFII20 + T10YIE; Federal Reserve H.15",
-      "as_of": "2026-08-14",
-      "current_pct": 2.41,
+      "as_of": "2026-08-17",
+      "current_pct": 2.44,
       "current_curve": {
-        "real_5y_pct": 2.12,
-        "real_10y_pct": 2.41,
-        "real_20y_pct": 2.78,
-        "10y_minus_5y_pctp": 0.29,
-        "20y_minus_10y_pctp": 0.37
+        "real_5y_pct": 2.13,
+        "real_10y_pct": 2.44,
+        "real_20y_pct": 2.84,
+        "10y_minus_5y_pctp": 0.31,
+        "20y_minus_10y_pctp": 0.4
       },
       "recent_change": {
         "5d_pctp": 0.01,
-        "1m_pctp": 0.06,
-        "3m_pctp": 0.41
+        "1m_pctp": 0.13,
+        "3m_pctp": 0.34
       },
-      "forecast_1m_pct": 2.41,
-      "forecast_3m_pct": 2.41,
+      "forecast_1m_pct": 2.44,
+      "forecast_3m_pct": 2.44,
       "forecast_change_1m_pctp": 0.0,
       "forecast_change_3m_pctp": 0.0,
       "direction_1m": "flat",
@@ -1669,33 +1669,33 @@
       "forecast_usable_1m": false,
       "forecast_usable_3m": false,
       "forecast_3m_range_80_pct": [
-        1.9681,
-        2.8519
+        2.0003,
+        2.8797
       ],
       "confidence": 37,
       "selected_model_1m": "persistence",
       "selected_model_3m": "persistence",
-      "candidate_forecast_1m_pct": 2.386,
-      "candidate_forecast_3m_pct": 2.4385,
-      "candidate_direction_3m": "flat",
+      "candidate_forecast_1m_pct": 2.2989,
+      "candidate_forecast_3m_pct": 2.4729,
+      "candidate_direction_3m": "rising",
       "model": "validated selection among persistence, real-curve momentum/mean-reversion, and macro ridge using nominal yields + breakeven inflation + financial conditions",
       "components_1m": {
-        "trend": 2.4357,
-        "curve": 2.4107,
-        "mean_reversion": 2.3921
+        "trend": 2.469,
+        "curve": 2.441,
+        "mean_reversion": 2.421
       },
       "components_3m": {
-        "trend": 2.4871,
-        "curve": 2.4122,
-        "mean_reversion": 2.3563
+        "trend": 2.5269,
+        "curve": 2.443,
+        "mean_reversion": 2.3829
       },
       "backtest_1m": {
-        "mae": 0.1782,
-        "rmse": 0.2336,
-        "baseline_rmse": 0.233,
+        "mae": 0.1777,
+        "rmse": 0.2328,
+        "baseline_rmse": 0.2322,
         "skill_pct": 0.0,
-        "raw_skill_pct": -0.2684,
-        "direction_accuracy": 50.3,
+        "raw_skill_pct": -0.2522,
+        "direction_accuracy": 50.4,
         "direction_cases": 811,
         "samples": 979,
         "fallback_used": true,
@@ -1709,12 +1709,12 @@
         }
       },
       "backtest_3m": {
-        "mae": 0.2911,
-        "rmse": 0.3628,
-        "baseline_rmse": 0.3448,
+        "mae": 0.2902,
+        "rmse": 0.361,
+        "baseline_rmse": 0.3431,
         "skill_pct": 0.0,
-        "raw_skill_pct": -5.2179,
-        "direction_accuracy": 41.8,
+        "raw_skill_pct": -5.217,
+        "direction_accuracy": 41.9,
         "direction_cases": 823,
         "samples": 937,
         "fallback_used": true,
@@ -1729,12 +1729,12 @@
       },
       "structural_model_audit": {
         "1m": {
-          "mae": 0.1782,
-          "rmse": 0.2336,
-          "baseline_rmse": 0.233,
+          "mae": 0.1777,
+          "rmse": 0.2328,
+          "baseline_rmse": 0.2322,
           "skill_pct": 0.0,
-          "raw_skill_pct": -0.2684,
-          "direction_accuracy": 50.3,
+          "raw_skill_pct": -0.2522,
+          "direction_accuracy": 50.4,
           "direction_cases": 811,
           "samples": 979,
           "fallback_used": true,
@@ -1748,12 +1748,12 @@
           }
         },
         "3m": {
-          "mae": 0.2911,
-          "rmse": 0.3628,
-          "baseline_rmse": 0.3448,
+          "mae": 0.2902,
+          "rmse": 0.361,
+          "baseline_rmse": 0.3431,
           "skill_pct": 0.0,
-          "raw_skill_pct": -5.2179,
-          "direction_accuracy": 41.8,
+          "raw_skill_pct": -5.217,
+          "direction_accuracy": 41.9,
           "direction_cases": 823,
           "samples": 937,
           "fallback_used": true,
@@ -1770,26 +1770,28 @@
       "macro_model_audit": {
         "1m": {
           "available": true,
-          "variant": "financial_conditions",
-          "forecast": 2.3860151429691734,
-          "forecast_change_pctp": -0.023984857030826874,
+          "variant": "rates_inflation",
+          "forecast": 2.298903122210774,
+          "forecast_change_pctp": -0.14109687778922594,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
+            "US 10Y nominal yield",
+            "US 10Y nominal 21d change",
+            "10Y breakeven inflation",
+            "10Y breakeven 21d change",
             "10Y-2Y nominal curve",
-            "NFCI",
-            "HY OAS",
-            "VIX"
+            "EFFR"
           ],
           "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-          "mae": 0.1051,
-          "rmse": 0.1261,
-          "baseline_rmse": 0.1186,
+          "mae": 0.1055,
+          "rmse": 0.1337,
+          "baseline_rmse": 0.1282,
           "skill_pct": 0.0,
-          "raw_skill_pct": -6.2964,
-          "direction_accuracy": 44.2,
-          "direction_cases": 43,
-          "samples": 61,
+          "raw_skill_pct": -4.2788,
+          "direction_accuracy": 59.2,
+          "direction_cases": 49,
+          "samples": 62,
           "fallback_used": true,
           "quality_gate": {
             "passed": false,
@@ -1803,8 +1805,8 @@
             "rates_inflation": {
               "available": true,
               "variant": "rates_inflation",
-              "forecast": 2.26086525050155,
-              "forecast_change_pctp": -0.14913474949845,
+              "forecast": 2.298903122210774,
+              "forecast_change_pctp": -0.14109687778922594,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1816,14 +1818,14 @@
                 "EFFR"
               ],
               "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-              "mae": 0.1066,
-              "rmse": 0.1301,
-              "baseline_rmse": 0.1186,
+              "mae": 0.1055,
+              "rmse": 0.1337,
+              "baseline_rmse": 0.1282,
               "skill_pct": 0.0,
-              "raw_skill_pct": -9.71,
-              "direction_accuracy": 53.5,
-              "direction_cases": 43,
-              "samples": 61,
+              "raw_skill_pct": -4.2788,
+              "direction_accuracy": 59.2,
+              "direction_cases": 49,
+              "samples": 62,
               "fallback_used": true,
               "quality_gate": {
                 "passed": false,
@@ -1837,8 +1839,8 @@
             "financial_conditions": {
               "available": true,
               "variant": "financial_conditions",
-              "forecast": 2.3860151429691734,
-              "forecast_change_pctp": -0.023984857030826874,
+              "forecast": 2.4389019902052476,
+              "forecast_change_pctp": -0.0010980097947524779,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1848,14 +1850,14 @@
                 "VIX"
               ],
               "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-              "mae": 0.1051,
-              "rmse": 0.1261,
-              "baseline_rmse": 0.1186,
+              "mae": 0.115,
+              "rmse": 0.1361,
+              "baseline_rmse": 0.1282,
               "skill_pct": 0.0,
-              "raw_skill_pct": -6.2964,
-              "direction_accuracy": 44.2,
-              "direction_cases": 43,
-              "samples": 61,
+              "raw_skill_pct": -6.1336,
+              "direction_accuracy": 46.9,
+              "direction_cases": 49,
+              "samples": 62,
               "fallback_used": true,
               "quality_gate": {
                 "passed": false,
@@ -1869,8 +1871,8 @@
             "combined": {
               "available": true,
               "variant": "combined",
-              "forecast": 2.2633296332116464,
-              "forecast_change_pctp": -0.14667036678835396,
+              "forecast": 2.3020818861732137,
+              "forecast_change_pctp": -0.13791811382678604,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1885,14 +1887,14 @@
                 "VIX"
               ],
               "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-              "mae": 0.1135,
-              "rmse": 0.1374,
-              "baseline_rmse": 0.1186,
+              "mae": 0.1122,
+              "rmse": 0.1424,
+              "baseline_rmse": 0.1282,
               "skill_pct": 0.0,
-              "raw_skill_pct": -15.8481,
-              "direction_accuracy": 46.5,
-              "direction_cases": 43,
-              "samples": 61,
+              "raw_skill_pct": -11.0592,
+              "direction_accuracy": 51.0,
+              "direction_cases": 49,
+              "samples": 62,
               "fallback_used": true,
               "quality_gate": {
                 "passed": false,
@@ -1904,13 +1906,13 @@
               }
             }
           },
-          "selected_variant": "financial_conditions"
+          "selected_variant": "rates_inflation"
         },
         "3m": {
           "available": true,
-          "variant": "rates_inflation",
-          "forecast": 2.0883776740654465,
-          "forecast_change_pctp": -0.32162232593455364,
+          "variant": "combined",
+          "forecast": 2.0526288497186385,
+          "forecast_change_pctp": -0.3873711502813616,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -1919,16 +1921,19 @@
             "10Y breakeven inflation",
             "10Y breakeven 21d change",
             "10Y-2Y nominal curve",
-            "EFFR"
+            "EFFR",
+            "NFCI",
+            "HY OAS",
+            "VIX"
           ],
           "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-          "mae": 0.1961,
-          "rmse": 0.2473,
-          "baseline_rmse": 0.2318,
+          "mae": 0.1929,
+          "rmse": 0.2456,
+          "baseline_rmse": 0.2353,
           "skill_pct": 0.0,
-          "raw_skill_pct": -6.6588,
-          "direction_accuracy": 51.2,
-          "direction_cases": 41,
+          "raw_skill_pct": -4.3915,
+          "direction_accuracy": 55.9,
+          "direction_cases": 34,
           "samples": 45,
           "fallback_used": true,
           "quality_gate": {
@@ -1943,8 +1948,8 @@
             "rates_inflation": {
               "available": true,
               "variant": "rates_inflation",
-              "forecast": 2.0883776740654465,
-              "forecast_change_pctp": -0.32162232593455364,
+              "forecast": 2.1060076489999533,
+              "forecast_change_pctp": -0.33399235100004643,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1956,13 +1961,13 @@
                 "EFFR"
               ],
               "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-              "mae": 0.1961,
-              "rmse": 0.2473,
-              "baseline_rmse": 0.2318,
+              "mae": 0.195,
+              "rmse": 0.2458,
+              "baseline_rmse": 0.2353,
               "skill_pct": 0.0,
-              "raw_skill_pct": -6.6588,
-              "direction_accuracy": 51.2,
-              "direction_cases": 41,
+              "raw_skill_pct": -4.4776,
+              "direction_accuracy": 58.8,
+              "direction_cases": 34,
               "samples": 45,
               "fallback_used": true,
               "quality_gate": {
@@ -1977,8 +1982,8 @@
             "financial_conditions": {
               "available": true,
               "variant": "financial_conditions",
-              "forecast": 2.2516896495430583,
-              "forecast_change_pctp": -0.15831035045694167,
+              "forecast": 2.326219274193155,
+              "forecast_change_pctp": -0.11378072580684497,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1988,13 +1993,13 @@
                 "VIX"
               ],
               "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-              "mae": 0.2334,
-              "rmse": 0.2816,
-              "baseline_rmse": 0.2318,
+              "mae": 0.2381,
+              "rmse": 0.2831,
+              "baseline_rmse": 0.2353,
               "skill_pct": 0.0,
-              "raw_skill_pct": -21.4661,
-              "direction_accuracy": 36.6,
-              "direction_cases": 41,
+              "raw_skill_pct": -20.3277,
+              "direction_accuracy": 35.3,
+              "direction_cases": 34,
               "samples": 45,
               "fallback_used": true,
               "quality_gate": {
@@ -2009,8 +2014,8 @@
             "combined": {
               "available": true,
               "variant": "combined",
-              "forecast": 2.0349001252586056,
-              "forecast_change_pctp": -0.3750998747413946,
+              "forecast": 2.0526288497186385,
+              "forecast_change_pctp": -0.3873711502813616,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -2025,13 +2030,13 @@
                 "VIX"
               ],
               "model": "expanding walk-forward ridge on real-yield/nominal/breakeven/financial inputs",
-              "mae": 0.1953,
-              "rmse": 0.2483,
-              "baseline_rmse": 0.2318,
+              "mae": 0.1929,
+              "rmse": 0.2456,
+              "baseline_rmse": 0.2353,
               "skill_pct": 0.0,
-              "raw_skill_pct": -7.1049,
-              "direction_accuracy": 53.7,
-              "direction_cases": 41,
+              "raw_skill_pct": -4.3915,
+              "direction_accuracy": 55.9,
+              "direction_cases": 34,
               "samples": 45,
               "fallback_used": true,
               "quality_gate": {
@@ -2044,7 +2049,7 @@
               }
             }
           },
-          "selected_variant": "rates_inflation"
+          "selected_variant": "combined"
         }
       },
       "forecast_quality_gate": {
@@ -2100,7 +2105,7 @@
             4.04,
             4.340000000000001
           ],
-          "structural_overlay": 0.0030877419642576266,
+          "structural_overlay": 0.0031477419642576194,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -2167,7 +2172,7 @@
             4.569999999999999,
             4.87
           ],
-          "structural_overlay": 0.002488392228782911,
+          "structural_overlay": 0.002511725562116242,
           "current": 4.72,
           "direction": "flat",
           "investment_environment": {
@@ -2235,7 +2240,7 @@
             2.32,
             2.56
           ],
-          "structural_overlay": 0.0012188333333333363,
+          "structural_overlay": 0.001238833333333334,
           "current": 2.44,
           "direction": "flat",
           "investment_environment": {
@@ -2302,7 +2307,7 @@
             0.4208755857898715,
             0.6102113378684807
           ],
-          "structural_overlay": -0.0005086747024090541,
+          "structural_overlay": -0.0005453413690757167,
           "current": 0.52,
           "direction": "flat",
           "investment_environment": {
@@ -2373,7 +2378,7 @@
             3.8450000000000006,
             4.495000000000001
           ],
-          "structural_overlay": 0.012350967857030506,
+          "structural_overlay": 0.012590967857030478,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -2438,7 +2443,7 @@
             4.39,
             5.010000000000001
           ],
-          "structural_overlay": 0.009953568915131644,
+          "structural_overlay": 0.010046902248464967,
           "current": 4.72,
           "direction": "flat",
           "investment_environment": {
@@ -2502,7 +2507,7 @@
             2.1618749206349204,
             2.6781250793650795
           ],
-          "structural_overlay": 0.004875333333333345,
+          "structural_overlay": 0.004955333333333336,
           "current": 2.44,
           "direction": "flat",
           "investment_environment": {
@@ -2567,7 +2572,7 @@
             0.31222873015873015,
             0.6903363492063492
           ],
-          "structural_overlay": -0.0020346988096362163,
+          "structural_overlay": -0.0021813654763028667,
           "current": 0.52,
           "direction": "flat",
           "investment_environment": {
@@ -2636,7 +2641,7 @@
             3.580000000000001,
             4.680000000000001
           ],
-          "structural_overlay": 0.04317290357109148,
+          "structural_overlay": 0.041372903571091524,
           "current": 4.19,
           "direction": "down",
           "investment_environment": {
@@ -2696,7 +2701,7 @@
             4.146598095238095,
             5.1734019047619055
           ],
-          "structural_overlay": 0.03224070674539492,
+          "structural_overlay": 0.031540706745394935,
           "current": 4.72,
           "direction": "down",
           "investment_environment": {
@@ -2758,7 +2763,7 @@
             1.9681428571428567,
             2.7918571428571433
           ],
-          "structural_overlay": 0.016666000000000025,
+          "structural_overlay": 0.016066000000000035,
           "current": 2.44,
           "direction": "down",
           "investment_environment": {
@@ -2821,7 +2826,7 @@
             0.24,
             0.8
           ],
-          "structural_overlay": -0.00984409642890863,
+          "structural_overlay": -0.008744096428908653,
           "current": 0.52,
           "direction": "flat",
           "investment_environment": {
@@ -2891,7 +2896,7 @@
             3.4979999999999998,
             4.8820000000000014
           ],
-          "structural_overlay": 0.18714580714218304,
+          "structural_overlay": 0.19074580714218298,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -2955,7 +2960,7 @@
             4.140000000000001,
             5.1
           ],
-          "structural_overlay": 0.10368141349078988,
+          "structural_overlay": 0.10508141349078985,
           "current": 4.72,
           "direction": "down",
           "investment_environment": {
@@ -3018,7 +3023,7 @@
             2.02,
             2.86
           ],
-          "structural_overlay": 0.06693200000000009,
+          "structural_overlay": 0.06813200000000005,
           "current": 2.44,
           "direction": "flat",
           "investment_environment": {
@@ -3081,7 +3086,7 @@
             0.08000000000000002,
             0.96
           ],
-          "structural_overlay": -0.08128819285781733,
+          "structural_overlay": -0.08348819285781728,
           "current": 0.52,
           "direction": "flat",
           "investment_environment": {
@@ -3152,7 +3157,7 @@
             2.8600000000000008,
             5.52
           ],
-          "structural_overlay": 0.2915458071421827,
+          "structural_overlay": 0.29514580714218264,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -3216,7 +3221,7 @@
             3.8899999999999997,
             5.55
           ],
-          "structural_overlay": 0.14428141349078977,
+          "structural_overlay": 0.14568141349078975,
           "current": 4.72,
           "direction": "flat",
           "investment_environment": {
@@ -3281,7 +3286,7 @@
             1.4979999999999996,
             3.3820000000000006
           ],
-          "structural_overlay": 0.10173199999999999,
+          "structural_overlay": 0.10293199999999995,
           "current": 2.44,
           "direction": "flat",
           "investment_environment": {
@@ -3344,7 +3349,7 @@
             -0.26,
             1.3
           ],
-          "structural_overlay": -0.14508819285781713,
+          "structural_overlay": -0.14728819285781708,
           "current": 0.52,
           "direction": "flat",
           "investment_environment": {
