@@ -3,12 +3,12 @@
   "engine_version": "card11-2.1.0-same-scale-quality-separated",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-19T09:03:14.701089+00:00",
-  "score": -17.8,
+  "generated_at_utc": "2026-08-19T13:01:20.868462+00:00",
+  "score": -15.6,
   "market_signal": "neutral",
   "current_regime": "혼합·중립",
   "future_regime": "불리한 투자환경 예상 · 검증 제한",
-  "future_score": -28.5,
+  "future_score": -28.0,
   "future_market_signal": "bad",
   "future_validation_status": "REFERENCE_ONLY",
   "future_inputs": {
@@ -35,9 +35,9 @@
     },
     "card12": {
       "available": true,
-      "signal": 0.08,
-      "current_state": 35.8,
-      "future_state": 8.0,
+      "signal": 0.10400000000000001,
+      "current_state": 47.6,
+      "future_state": 10.4,
       "validation": "3m gate passed"
     }
   },
@@ -112,8 +112,8 @@
         "forecast_treatment": "validated_3m_forecast"
       },
       "card12": {
-        "current_state": 35.8,
-        "future_state": 8.0,
+        "current_state": 47.6,
+        "future_state": 10.4,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -135,7 +135,7 @@
     "card8": "neutral",
     "card9": "good",
     "card10": "bad",
-    "card12": "neutral"
+    "card12": "good"
   },
   "input_details": {
     "card8": {
@@ -237,7 +237,7 @@
     },
     "card12": {
       "label": "선물시장 현재신호·방향예측",
-      "signal": "neutral",
+      "signal": "good",
       "validation": {
         "passed": true,
         "passed_groups": [
@@ -252,8 +252,8 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": 35.8,
-        "future_state": 8.0,
+        "current_state": 47.6,
+        "future_state": 10.4,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
