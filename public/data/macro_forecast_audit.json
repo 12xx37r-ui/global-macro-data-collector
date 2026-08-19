@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at_utc": "2026-08-19T03:03:55.596521+00:00",
+  "generated_at_utc": "2026-08-19T03:22:41.158662+00:00",
   "global_m2": {
     "current": 5.385196,
     "forecast_3m": 5.433719,
@@ -204,16 +204,33 @@
     }
   },
   "card11": {
-    "current_score": -17.1,
-    "future_score": -22.5,
+    "current_score": -18.1,
+    "future_score": -28.3,
     "future_market_signal": "bad",
     "future_quality_gate": {
       "passed": false,
-      "validated_input_count": 1,
-      "validated_weight_coverage": 0.2381,
+      "status": "REFERENCE_ONLY",
+      "display_status": "검증 제한",
+      "validated_input_count": 2,
+      "validated_weight_coverage": 0.4286,
       "minimum_validated_inputs": 3,
       "minimum_weight_coverage": 0.7,
-      "rule": "4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격"
+      "validated_components": [
+        "card10",
+        "card12"
+      ],
+      "persistence_components": [
+        "card8",
+        "card9"
+      ],
+      "input_validation_checks": {
+        "card8_validation": false,
+        "card9_validation": false,
+        "card10_validation": true,
+        "card12_validation": true
+      },
+      "current_data_gate_passed": true,
+      "rule": "현재 데이터 품질을 충족하고, 4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격"
     }
   },
   "card12": {
@@ -222,12 +239,14 @@
       "passed_horizons": [
         "equity:3m",
         "rates:1m",
+        "rates:3m",
         "crypto:1m"
       ]
     },
     "passed_horizons": [
       "equity:3m",
       "rates:1m",
+      "rates:3m",
       "crypto:1m"
     ]
   },
@@ -430,13 +449,13 @@
     }
   },
   "registry_summary": {
-    "validated": 5,
+    "validated": 6,
     "reference_only": 7,
     "degraded": 0
   },
   "engine_health": {
     "schema_version": "1.1",
-    "generated_at_utc": "2026-08-19T03:03:55.589783+00:00",
+    "generated_at_utc": "2026-08-19T03:22:41.152254+00:00",
     "status": "HEALTHY_WITH_FALLBACKS",
     "pipeline_health": "HEALTHY",
     "forecast_health": "PARTIAL",
@@ -455,7 +474,7 @@
       "global_m2:CN"
     ],
     "forecast_counts": {
-      "validated": 5,
+      "validated": 6,
       "reference_only": 7,
       "degraded": 0
     },
@@ -471,7 +490,7 @@
           "http_5xx": 0,
           "timeouts": 0,
           "retries": 0,
-          "last_success_utc": "2026-08-19T03:03:50.918065+00:00",
+          "last_success_utc": "2026-08-19T03:22:38.070851+00:00",
           "last_failure_utc": null,
           "cooldown": false,
           "final_status": "LIVE"
@@ -485,7 +504,7 @@
           "http_5xx": 0,
           "timeouts": 0,
           "retries": 0,
-          "last_success_utc": "2026-08-19T03:03:51.379646+00:00",
+          "last_success_utc": "2026-08-19T03:22:38.389773+00:00",
           "last_failure_utc": null,
           "cooldown": false,
           "final_status": "LIVE"
@@ -499,14 +518,14 @@
           "http_5xx": 0,
           "timeouts": 0,
           "retries": 0,
-          "last_success_utc": "2026-08-19T03:03:55.398930+00:00",
+          "last_success_utc": "2026-08-19T03:22:40.913055+00:00",
           "last_failure_utc": null,
           "cooldown": false,
           "final_status": "LIVE"
         }
       }
     },
-    "runtime_ms": 5914,
+    "runtime_ms": 5823,
     "model_degradation": [],
     "global_m2_composite_validation": {
       "available": false,
