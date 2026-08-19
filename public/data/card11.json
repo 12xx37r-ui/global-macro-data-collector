@@ -3,20 +3,20 @@
   "engine_version": "card11-2.1.0-same-scale-quality-separated",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-19T16:53:07.351446+00:00",
-  "score": -15.5,
+  "generated_at_utc": "2026-08-19T21:05:56.992926+00:00",
+  "score": -17.6,
   "market_signal": "neutral",
   "current_regime": "혼합·중립",
   "future_regime": "불리한 투자환경 예상 · 검증 제한",
-  "future_score": -27.3,
+  "future_score": -28.4,
   "future_market_signal": "bad",
   "future_validation_status": "REFERENCE_ONLY",
   "future_inputs": {
     "card8": {
       "available": true,
-      "signal": -0.598,
-      "current_state": -59.8,
-      "future_state": -59.8,
+      "signal": -0.606,
+      "current_state": -60.6,
+      "future_state": -60.6,
       "validation": "3m gate failed; persistence used"
     },
     "card9": {
@@ -28,16 +28,16 @@
     },
     "card10": {
       "available": true,
-      "signal": 0.18,
-      "current_state": 40.4,
-      "future_state": 18.0,
+      "signal": 0.142,
+      "current_state": 33.0,
+      "future_state": 14.2,
       "validation": "3m gate passed"
     },
     "card12": {
       "available": true,
-      "signal": 0.141,
-      "current_state": 47.7,
-      "future_state": 14.1,
+      "signal": 0.142,
+      "current_state": 47.5,
+      "future_state": 14.2,
       "validation": "3m gate passed"
     }
   },
@@ -91,8 +91,8 @@
     },
     "components": {
       "card8": {
-        "current_state": -59.8,
-        "future_state": -59.8,
+        "current_state": -60.6,
+        "future_state": -60.6,
         "base_weight": 1.2,
         "forecast_validation_passed": false,
         "forecast_treatment": "persistence_on_failed_3m_gate"
@@ -105,15 +105,15 @@
         "forecast_treatment": "persistence_on_failed_3m_gate"
       },
       "card10": {
-        "current_state": 40.4,
-        "future_state": 18.0,
+        "current_state": 33.0,
+        "future_state": 14.2,
         "base_weight": 1.0,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
       },
       "card12": {
-        "current_state": 47.7,
-        "future_state": 14.1,
+        "current_state": 47.5,
+        "future_state": 14.2,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -154,8 +154,8 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": -59.8,
-        "future_state": -59.8,
+        "current_state": -60.6,
+        "future_state": -60.6,
         "base_weight": 1.2,
         "forecast_validation_passed": false,
         "forecast_treatment": "persistence_on_failed_3m_gate"
@@ -208,8 +208,8 @@
           "passed": true,
           "level": "독립검증 통과",
           "dm_test": {
-            "statistic": 3.2633647653709428,
-            "p_value": 0.0011009771476899743,
+            "statistic": 3.266296328085217,
+            "p_value": 0.0010896415981311858,
             "significant_5pct": true,
             "significant_10pct": true,
             "hac_lag": 2
@@ -223,13 +223,13 @@
             "recent_oos_nonnegative_skill": true
           }
         },
-        "skill_pct": 11.207143160172418,
+        "skill_pct": 11.193852172900076,
         "direction_accuracy": 0.7333333333333333,
         "samples": 180
       },
       "state": {
-        "current_state": 40.4,
-        "future_state": 18.0,
+        "current_state": 33.0,
+        "future_state": 14.2,
         "base_weight": 1.0,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -252,8 +252,8 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": 47.7,
-        "future_state": 14.1,
+        "current_state": 47.5,
+        "future_state": 14.2,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"

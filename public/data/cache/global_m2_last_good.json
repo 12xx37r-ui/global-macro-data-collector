@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-19T16:53:12.424228+00:00",
+  "generated_at_utc": "2026-08-19T21:06:01.539091+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -181,7 +181,7 @@
     }
   },
   "forward_liquidity_outlook": {
-    "score": 8.85,
+    "score": 8.47,
     "grade": "중립",
     "direction": "neutral",
     "inputs": [
@@ -196,9 +196,9 @@
       },
       {
         "name": "DXY 3개월 예상",
-        "current": 98.913,
-        "forecast": 99.059317,
-        "signal": -0.0493,
+        "current": 98.795,
+        "forecast": 98.985333,
+        "signal": -0.0642,
         "weight": 0.25,
         "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
         "source": "Yahoo Finance DXY delayed market data",
@@ -227,22 +227,22 @@
     "source": "Yahoo Finance DXY delayed market data",
     "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB",
     "observation_date": "2026-08-19",
-    "market_time_utc": "2026-08-19T15:50:24+00:00",
-    "current": 98.913,
-    "forecast_1m": 98.913,
-    "forecast_3m": 99.059317,
-    "forecast_change_3m_pct": 0.147925,
+    "market_time_utc": "2026-08-19T19:35:12+00:00",
+    "current": 98.795,
+    "forecast_1m": 98.795,
+    "forecast_3m": 98.985333,
+    "forecast_change_3m_pct": 0.192654,
     "forecast_range_80": [
-      95.2671,
-      102.851534
+      95.195926,
+      102.77474
     ],
     "direction_3m": "up",
     "confidence": 72,
     "selected_model_1m": "price_ensemble",
     "selected_model_3m": "price_mean_reversion",
     "backtest_1m": {
-      "rmse_pct": 1.7785106035509626,
-      "baseline_rmse_pct": 1.7785106035509626,
+      "rmse_pct": 1.7787232776379112,
+      "baseline_rmse_pct": 1.7787232776379112,
       "skill_pct": 0.0,
       "backtests": 760,
       "direction_accuracy": 47.94721407624634,
@@ -251,11 +251,11 @@
     },
     "backtest_3m": {
       "available": true,
-      "forecast_return_pct": 0.14792508544052563,
-      "rmse_pct": 2.987069626134104,
-      "baseline_rmse_pct": 3.264468465514083,
-      "skill_pct": 8.497519345352133,
-      "raw_skill_pct": 8.497519345352133,
+      "forecast_return_pct": 0.19265449949659175,
+      "rmse_pct": 2.9870870329720924,
+      "baseline_rmse_pct": 3.2644902723891067,
+      "skill_pct": 8.497597366525389,
+      "raw_skill_pct": 8.497597366525389,
       "direction_accuracy": 73.54651162790698,
       "direction_cases": 688,
       "backtests": 760,
@@ -273,37 +273,37 @@
           "lookback_days": 120.0,
           "strength": 0.4,
           "weight": 0.25,
-          "anchor": 99.6471919845581,
-          "forecast": 99.20667679382323
+          "anchor": 99.64620865122477,
+          "forecast": 99.13548346048991
         },
         {
           "lookback_days": 180.0,
           "strength": 0.4,
           "weight": 0.25,
-          "anchor": 99.13235014750163,
-          "forecast": 99.00074005900065
+          "anchor": 99.13169459194606,
+          "forecast": 98.92967783677842
         },
         {
           "lookback_days": 252.0,
           "strength": 0.4,
           "weight": 0.25,
-          "anchor": 98.9893772105868,
-          "forecast": 98.94355088423471
+          "anchor": 98.98890895661853,
+          "forecast": 98.87256358264742
         },
         {
           "lookback_days": 378.0,
           "strength": 0.3,
           "weight": 0.25,
-          "anchor": 99.49066940662848,
-          "forecast": 99.08630082198854
+          "anchor": 99.4903572373163,
+          "forecast": 99.00360717119489
         }
       ],
       "model": "fixed multi-window mean reversion with persistence benchmark"
     },
     "price_model_audit": {
       "1m": {
-        "rmse_pct": 1.7785106035509626,
-        "baseline_rmse_pct": 1.7785106035509626,
+        "rmse_pct": 1.7787232776379112,
+        "baseline_rmse_pct": 1.7787232776379112,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 47.94721407624634,
@@ -311,8 +311,8 @@
         "fallback_used": true
       },
       "3m": {
-        "rmse_pct": 3.264468465514083,
-        "baseline_rmse_pct": 3.264468465514083,
+        "rmse_pct": 3.2644902723891067,
+        "baseline_rmse_pct": 3.2644902723891067,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 36.48255813953488,
@@ -323,11 +323,11 @@
     "mean_reversion_model_audit": {
       "1m": {
         "available": true,
-        "forecast_return_pct": 0.049308361813515944,
-        "rmse_pct": 1.746686629702193,
-        "baseline_rmse_pct": 1.7785106035509626,
-        "skill_pct": 1.789360928477457,
-        "raw_skill_pct": 1.789360928477457,
+        "forecast_return_pct": 0.06421816649886392,
+        "rmse_pct": 1.7468796496082575,
+        "baseline_rmse_pct": 1.7787232776379112,
+        "skill_pct": 1.790251942502319,
+        "raw_skill_pct": 1.790251942502319,
         "direction_accuracy": 59.384164222873906,
         "direction_cases": 682,
         "backtests": 760,
@@ -345,40 +345,40 @@
             "lookback_days": 120.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.6471919845581,
-            "forecast": 99.01089226460775
+            "anchor": 99.64620865122477,
+            "forecast": 98.90849448682997
           },
           {
             "lookback_days": 180.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.13235014750163,
-            "forecast": 98.94224668633355
+            "anchor": 99.13169459194606,
+            "forecast": 98.83989261225948
           },
           {
             "lookback_days": 252.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 98.9893772105868,
-            "forecast": 98.92318362807823
+            "anchor": 98.98890895661853,
+            "forecast": 98.82085452754914
           },
           {
             "lookback_days": 378.0,
             "strength": 0.3,
             "weight": 0.25,
-            "anchor": 99.49066940662848,
-            "forecast": 98.97076694066284
+            "anchor": 99.4903572373163,
+            "forecast": 98.86453572373163
           }
         ],
         "model": "fixed multi-window mean reversion with persistence benchmark"
       },
       "3m": {
         "available": true,
-        "forecast_return_pct": 0.14792508544052563,
-        "rmse_pct": 2.987069626134104,
-        "baseline_rmse_pct": 3.264468465514083,
-        "skill_pct": 8.497519345352133,
-        "raw_skill_pct": 8.497519345352133,
+        "forecast_return_pct": 0.19265449949659175,
+        "rmse_pct": 2.9870870329720924,
+        "baseline_rmse_pct": 3.2644902723891067,
+        "skill_pct": 8.497597366525389,
+        "raw_skill_pct": 8.497597366525389,
         "direction_accuracy": 73.54651162790698,
         "direction_cases": 688,
         "backtests": 760,
@@ -396,29 +396,29 @@
             "lookback_days": 120.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.6471919845581,
-            "forecast": 99.20667679382323
+            "anchor": 99.64620865122477,
+            "forecast": 99.13548346048991
           },
           {
             "lookback_days": 180.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.13235014750163,
-            "forecast": 99.00074005900065
+            "anchor": 99.13169459194606,
+            "forecast": 98.92967783677842
           },
           {
             "lookback_days": 252.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 98.9893772105868,
-            "forecast": 98.94355088423471
+            "anchor": 98.98890895661853,
+            "forecast": 98.87256358264742
           },
           {
             "lookback_days": 378.0,
             "strength": 0.3,
             "weight": 0.25,
-            "anchor": 99.49066940662848,
-            "forecast": 99.08630082198854
+            "anchor": 99.4903572373163,
+            "forecast": 99.00360717119489
           }
         ],
         "model": "fixed multi-window mean reversion with persistence benchmark"
@@ -1473,7 +1473,7 @@
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-19T16:00:28.730860+00:00",
+      "upstream_generated_at_utc": "2026-08-19T19:45:17.416904+00:00",
       "age_days": 79,
       "fetch_ms": 0
     },
@@ -1897,7 +1897,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 79,
-      "fetch_ms": 1031
+      "fetch_ms": 959
     },
     "JP": {
       "date": "2026-07-01",
@@ -3188,7 +3188,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 49,
-      "fetch_ms": 534
+      "fetch_ms": 693
     },
     "CN": {
       "region": "CN",
@@ -3294,7 +3294,7 @@
       },
       "status": "LIVE",
       "age_days": 49,
-      "fetch_ms": 3499
+      "fetch_ms": 2886
     }
   },
   "statuses": {
@@ -3304,7 +3304,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 5067,
+  "runtime_ms": 4540,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3315,7 +3315,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-19T16:53:08.383273+00:00",
+      "last_success_utc": "2026-08-19T21:05:57.952301+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3329,7 +3329,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-19T16:53:08.670945+00:00",
+      "last_success_utc": "2026-08-19T21:05:58.347392+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3343,7 +3343,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-19T16:53:12.252312+00:00",
+      "last_success_utc": "2026-08-19T21:06:01.316745+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
