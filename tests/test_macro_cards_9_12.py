@@ -24,6 +24,22 @@ class TestCards(unittest.TestCase):
         self.assertAlmostEqual(r['score'],r['future_score'],places=6)
         self.assertEqual(r['score_methodology']['principle'],'현재와 향후를 동일한 연속형 상태함수·동일 기본가중치·동일 분모로 계산')
 
+    def test_card11_failed_future_gate_is_explicitly_reference_only(self):
+        q={'passed':True}
+        qf={'passed':False}
+        c8={'market_signal':'neutral','current':{'DGS10':{'value':4.0},'DFII10':{'value':1.6},'T10Y2Y':{'value':0.0}},'forecasts':{'3m':{'targets':{}}},'data_quality':{'core_completeness':100}}
+        c9={'market_signal':'good','current':44,'forecasts':{'3m':{'forecast':48,'quality_gate':qf}},'data_quality':{'core_completeness':100}}
+        c10={'market_signal':'bad','current':46,'forecasts':{'3m':{'forecast':48,'quality_gate':q}},'data_quality':{'core_completeness':100}}
+        c12={'market_signal':'good','predictive_validation':{'groups':{}},'data_quality':{'completeness':100}}
+        out=build_card11(c8,c9,c10,c12)
+        self.assertFalse(out['future_quality_gate']['passed'])
+        self.assertEqual(out['future_validation_status'],'REFERENCE_ONLY')
+        self.assertIn('검증 제한',out['future_regime'])
+        self.assertIn('(검증 제한)',out['asset_environment']['global_equities'])
+        self.assertTrue(out['current_quality_gate']['passed'])
+        self.assertEqual(out['current_quality_gate']['scope'],'current_state_data_quality')
+        self.assertFalse(out['quality_gate']['passed'])
+
     def test_card11_future_gate_requires_three_inputs_and_70pct_weight(self):
         q={'passed':True}
         c8={'market_signal':'neutral','current':{'DGS10':{'value':4.0},'DFII10':{'value':1.6},'T10Y2Y':{'value':0.0}},'forecasts':{'3m':{'targets':{}}},'data_quality':{'core_completeness':100}}

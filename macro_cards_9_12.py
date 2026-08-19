@@ -1261,19 +1261,42 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
     signal=('good' if score is not None and score>=20 else 'bad' if score is not None and score<=-20 else 'neutral') if score is not None else 'unavailable'
     future_signal=('good' if future_score is not None and future_score>=20 else 'bad' if future_score is not None and future_score<=-20 else 'neutral') if future_score is not None else 'unavailable'
 
-    quality_checks={
-        'card8_validation':validations['card8']['passed'],
-        'card9_validation':validations['card9']['passed'],
-        'card10_validation':validations['card10']['passed'],
-        'card12_validation':validations['card12']['passed'],
+    # Current-state quality and forward-forecast validation are different questions.
+    # Do not downgrade the *current* regime merely because a 3m forecasting model
+    # failed OOS validation.  Current quality is data-coverage only; the forward
+    # leg has its own strict horizon-matched gate below.
+    current_data_checks={
         'card8_data':card8.get('data_quality',{}).get('core_completeness',0)>=85,
         'card9_data':card9.get('data_quality',{}).get('core_completeness',0)>=85,
         'card10_data':card10.get('data_quality',{}).get('core_completeness',0)>=85,
         'card12_data':card12.get('data_quality',{}).get('completeness',0)>=80,
     }
-    quality_passed=all(quality_checks.values())
-    quality_level='3개월 검증통과 신호 통합' if quality_passed else '조건부 통합판정'
-    future_gate_passed=validated_count>=3 and coverage>=0.70
+    forecast_validation_checks={
+        'card8_validation':validations['card8']['passed'],
+        'card9_validation':validations['card9']['passed'],
+        'card10_validation':validations['card10']['passed'],
+        'card12_validation':validations['card12']['passed'],
+    }
+    current_quality_passed=all(current_data_checks.values())
+    current_quality_level='현재상태 데이터 검증 통과' if current_quality_passed else '현재상태 데이터 제한'
+    future_gate_passed=bool(current_quality_passed and validated_count>=3 and coverage>=0.70)
+    future_validation_status='VALIDATED' if future_gate_passed else 'REFERENCE_ONLY'
+    # Backward-compatible aggregate quality gate: keep the historical meaning used
+    # by dashboards/tests (all four data checks + all four forecast validations).
+    aggregate_quality_checks={**forecast_validation_checks,**current_data_checks}
+    aggregate_quality_passed=all(aggregate_quality_checks.values())
+    aggregate_quality_level='3개월 검증통과 신호 통합' if aggregate_quality_passed else '조건부 통합판정'
+
+    def qualified_future_regime(sig: str) -> str:
+        base='우호적 투자환경' if sig=='good' else '불리한 투자환경' if sig=='bad' else '중립적 투자환경' if sig=='neutral' else '향후신호 부족'
+        return base if future_gate_passed else base+' 예상 · 검증 제한'
+
+    def asset_label(base: str, required_keys: tuple[str, ...]) -> str:
+        # An asset call is fully validated only when every Card11 leg used for that
+        # call has a valid 3m forecast.  Otherwise preserve the directional estimate
+        # but label it as reference-only instead of presenting it as a validated call.
+        full=bool(required_keys) and all(bool(validations.get(k,{}).get('passed')) for k in required_keys)
+        return base if full else base+'(검증 제한)'
 
     input_details={
         'card8':{'label':'미국채 금리·실질금리','signal':card8.get('market_signal'),'validation':validations['card8'],'state':components.get('card8')},
@@ -1288,37 +1311,53 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
                    for k in ('card8','card9','card10','card12')}
 
     return {
-        'schema_version':'1.2','engine_version':'card11-2.0.0-same-scale-continuous-state','card':11,
+        'schema_version':'1.2','engine_version':'card11-2.1.0-same-scale-quality-separated','card':11,
         'title':'글로벌 경기국면 최종판정·투자환경','generated_at_utc':now_iso(),
         'score':round(score,1) if score is not None else None,'market_signal':signal,
         'current_regime':'확장·위험선호' if signal=='good' else '수축·위험회피' if signal=='bad' else '혼합·중립' if signal=='neutral' else '판정불가',
-        'future_regime':'우호적 투자환경' if future_signal=='good' else '불리한 투자환경' if future_signal=='bad' else '중립적 투자환경' if future_signal=='neutral' else '검증된 향후신호 부족',
+        'future_regime':qualified_future_regime(future_signal),
         'future_score':round(future_score,1) if future_score is not None else None,'future_market_signal':future_signal,
+        'future_validation_status':future_validation_status,
         'future_inputs':future_inputs,
         'future_quality_gate':{
-            'passed':future_gate_passed,'validated_input_count':validated_count,
+            'passed':future_gate_passed,'status':future_validation_status,
+            'display_status':'검증 통과' if future_gate_passed else '검증 제한',
+            'validated_input_count':validated_count,
             'validated_weight_coverage':round(coverage,4),
             'minimum_validated_inputs':3,'minimum_weight_coverage':0.70,
-            'rule':'4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격',
+            'validated_components':[k for k in ('card8','card9','card10','card12') if validations[k].get('passed')],
+            'persistence_components':[k for k in ('card8','card9','card10','card12') if not validations[k].get('passed')],
+            'input_validation_checks':forecast_validation_checks,
+            'current_data_gate_passed':current_quality_passed,
+            'rule':'현재 데이터 품질을 충족하고, 4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격',
         },
         'score_methodology':{
-            'version':'card11-2.0.0','scale':[-100,100],
+            'version':'card11-2.1.0','scale':[-100,100],
             'principle':'현재와 향후를 동일한 연속형 상태함수·동일 기본가중치·동일 분모로 계산',
+            'signal_thresholds':{'good_min':20,'bad_max':-20,'neutral_between':[-20,20]},
             'failed_forecast_policy':'3개월 검증 미통과 축은 향후 상태를 현재 상태 유지로 처리하여 과도한 방향 추정을 방지',
+            'quality_separation':'현재상태 품질은 데이터 완전성으로, 향후 전망 품질은 3개월 OOS 검증커버리지로 별도 판정',
             'weights':weights,
             'components':components,
         },
         'asset_environment':{
-            'global_equities':'우호' if future_signal=='good' else '불리' if future_signal=='bad' else '중립',
-            'long_treasuries':'우호' if (components.get('card8') or {}).get('future_state',0)>20 else '중립',
-            'gold':'우호' if ((components.get('card8') or {}).get('future_state',0)>20 or (components.get('card10') or {}).get('future_state',0)>20) else '중립',
-            'commodities':'우호' if ((components.get('card10') or {}).get('future_state',0)>20 and (components.get('card9') or {}).get('future_state',0)>0) else '중립',
-            'cash_short_duration':'우호' if future_signal=='bad' else '중립',
+            'global_equities':asset_label('우호' if future_signal=='good' else '불리' if future_signal=='bad' else '중립',('card8','card9','card10','card12')),
+            'long_treasuries':asset_label('우호' if (components.get('card8') or {}).get('future_state',0)>20 else '중립',('card8',)),
+            'gold':asset_label('우호' if ((components.get('card8') or {}).get('future_state',0)>20 or (components.get('card10') or {}).get('future_state',0)>20) else '중립',('card8','card10')),
+            'commodities':asset_label('우호' if ((components.get('card10') or {}).get('future_state',0)>20 and (components.get('card9') or {}).get('future_state',0)>0) else '중립',('card9','card10')),
+            'cash_short_duration':asset_label('우호' if future_signal=='bad' else '중립',('card8','card9','card10','card12')),
+        },
+        'asset_environment_validation':{
+            'status':'VALIDATED' if future_gate_passed else 'REFERENCE_ONLY',
+            'note':'자산환경 문구는 관련 3개월 입력축이 모두 검증통과한 경우에만 확정형으로 표시하며, 그 외에는 검증 제한을 명시합니다.',
         },
         'inputs':{k:v.get('market_signal') for k,v in cards.items()},
         'input_details':input_details,
-        'quality_gate':{'passed':quality_passed,'level':quality_level,'checks':quality_checks},
-        'investment_conclusion':'현재와 3개월 향후를 같은 연속형 상태척도로 비교하며, 검증 미통과 축은 현재상태 유지로 보수 처리합니다. 실제 발표자료 기반 OOS 검증은 별도 레지스트리 게이트를 추가로 통과해야 합니다.',
+        'current_quality_gate':{'passed':current_quality_passed,'level':current_quality_level,'checks':current_data_checks,'scope':'current_state_data_quality'},
+        'quality_gate':{'passed':aggregate_quality_passed,'level':aggregate_quality_level,'checks':aggregate_quality_checks,'scope':'backward_compatible_aggregate'},
+        'investment_conclusion':('현재와 3개월 향후를 같은 연속형 상태척도로 비교합니다. '
+                                 +('향후 종합판정은 입력 검증커버리지 기준을 통과했습니다.' if future_gate_passed else '향후 수치는 검증 미통과 축을 현재상태 유지로 처리한 참고 예상치이며, 검증커버리지 기준을 통과하지 못했습니다.')
+                                 +' 실제 발표자료 기반 OOS 검증은 별도 레지스트리 게이트를 추가로 통과해야 합니다.'),
     }
 
 
