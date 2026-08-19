@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-19T01:01:52.632335+00:00",
+  "generated_at_utc": "2026-08-19T03:03:55.574246+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -181,9 +181,9 @@
     }
   },
   "forward_liquidity_outlook": {
-    "score": 9.7,
-    "grade": "중립",
-    "direction": "neutral",
+    "score": 10.92,
+    "grade": "약유리",
+    "direction": "improving",
     "inputs": [
       {
         "name": "Global M2 3개월 예상 변화",
@@ -196,27 +196,27 @@
       },
       {
         "name": "DXY 3개월 예상",
-        "current": 99.653,
-        "forecast": 99.653,
-        "signal": 0.0,
-        "weight": 0.0,
+        "current": 99.574,
+        "forecast": 99.473754,
+        "signal": 0.0336,
+        "weight": 0.25,
         "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
         "source": "Yahoo Finance DXY delayed market data",
-        "validation": "미통과·상위합성 제외"
+        "validation": "통과"
       },
       {
         "name": "미국 10년 실질금리 3개월 예상",
         "current": 2.44,
-        "forecast": 2.44,
-        "signal": 0.0,
-        "weight": 0.0,
+        "forecast": 2.3406,
+        "signal": 0.284,
+        "weight": 0.15,
         "meaning": "실질금리 하락은 위험자산 유동성 환경에 우호적",
-        "validation": "미통과·상위합성 제외",
+        "validation": "통과",
         "source": "FRED DFII5/DFII10/DFII20 + T10YIE; Federal Reserve H.15",
         "origin": "US Fed engine"
       }
     ],
-    "validated_input_count": 1,
+    "validated_input_count": 3,
     "validation_status": "PARTIALLY_VALIDATED_INPUTS",
     "note": "M2 전망과 분리된 보조 유동성 환경지표입니다. DXY·실질금리는 자체 forecast gate를 통과한 경우에만 합성점수에 들어가며, 실패 시 weight=0입니다. 합성점수 자체의 자산수익률 OOS 검증은 별도 과제입니다."
   },
@@ -225,70 +225,216 @@
     "status": "LIVE",
     "symbol": "DX-Y.NYB",
     "source": "Yahoo Finance DXY delayed market data",
-    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787090307",
-    "observation_date": "2026-08-18",
-    "market_time_utc": "2026-08-18T21:48:25+00:00",
-    "current": 99.653,
-    "forecast_1m": 99.653,
-    "forecast_3m": 99.653,
-    "forecast_change_3m_pct": 0.0,
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787106398",
+    "observation_date": "2026-08-19",
+    "market_time_utc": "2026-08-19T02:16:36+00:00",
+    "current": 99.574,
+    "forecast_1m": 99.574,
+    "forecast_3m": 99.473754,
+    "forecast_change_3m_pct": -0.100675,
     "forecast_range_80": [
-      95.486049,
-      103.819951
+      95.665648,
+      103.28186
     ],
-    "direction_3m": "flat",
-    "confidence": 35,
+    "direction_3m": "down",
+    "confidence": 72,
     "selected_model_1m": "price_ensemble",
-    "selected_model_3m": "price_ensemble",
+    "selected_model_3m": "price_mean_reversion",
     "backtest_1m": {
-      "rmse_pct": 1.7788532407421798,
-      "baseline_rmse_pct": 1.7788532407421798,
+      "rmse_pct": 1.7775295027265157,
+      "baseline_rmse_pct": 1.7775295027265157,
       "skill_pct": 0.0,
       "backtests": 760,
-      "direction_accuracy": 47.95918367346938,
-      "direction_cases": 686,
+      "direction_accuracy": 47.94721407624634,
+      "direction_cases": 682,
       "fallback_used": true
     },
     "backtest_3m": {
-      "rmse_pct": 3.2626878535811876,
-      "baseline_rmse_pct": 3.2626878535811876,
-      "skill_pct": 0.0,
+      "available": true,
+      "forecast_return_pct": -0.10067522877628132,
+      "rmse_pct": 2.9870880189733,
+      "baseline_rmse_pct": 3.2644528743214223,
+      "skill_pct": 8.496518896930871,
+      "raw_skill_pct": 8.496518896930871,
+      "direction_accuracy": 73.5080058224163,
+      "direction_cases": 687,
       "backtests": 760,
-      "direction_accuracy": 36.04651162790697,
-      "direction_cases": 688,
-      "fallback_used": true
+      "fallback_used": false,
+      "quality_gate": {
+        "passed": true,
+        "requirements": {
+          "skill_pct_min": 2.0,
+          "direction_accuracy_min": 52.0,
+          "samples_min": 60
+        }
+      },
+      "components": [
+        {
+          "lookback_days": 120.0,
+          "strength": 0.4,
+          "weight": 0.25,
+          "anchor": 99.65270031789144,
+          "forecast": 99.60548012715658
+        },
+        {
+          "lookback_days": 180.0,
+          "strength": 0.4,
+          "weight": 0.25,
+          "anchor": 99.13602236972385,
+          "forecast": 99.39880894788953
+        },
+        {
+          "lookback_days": 252.0,
+          "strength": 0.4,
+          "weight": 0.25,
+          "anchor": 98.99200022645981,
+          "forecast": 99.34120009058392
+        },
+        {
+          "lookback_days": 378.0,
+          "strength": 0.3,
+          "weight": 0.25,
+          "anchor": 99.49241808387715,
+          "forecast": 99.54952542516314
+        }
+      ],
+      "model": "fixed multi-window mean reversion with persistence benchmark"
     },
     "price_model_audit": {
       "1m": {
-        "rmse_pct": 1.7788532407421798,
-        "baseline_rmse_pct": 1.7788532407421798,
+        "rmse_pct": 1.7775295027265157,
+        "baseline_rmse_pct": 1.7775295027265157,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 47.95918367346938,
-        "direction_cases": 686,
+        "direction_accuracy": 47.94721407624634,
+        "direction_cases": 682,
         "fallback_used": true
       },
       "3m": {
-        "rmse_pct": 3.2626878535811876,
-        "baseline_rmse_pct": 3.2626878535811876,
+        "rmse_pct": 3.2644528743214223,
+        "baseline_rmse_pct": 3.2644528743214223,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 36.04651162790697,
-        "direction_cases": 688,
+        "direction_accuracy": 36.53566229985444,
+        "direction_cases": 687,
         "fallback_used": true
+      }
+    },
+    "mean_reversion_model_audit": {
+      "1m": {
+        "available": true,
+        "forecast_return_pct": -0.033558409592093774,
+        "rmse_pct": 1.7458174949090193,
+        "baseline_rmse_pct": 1.7775295027265157,
+        "skill_pct": 1.7840495906736864,
+        "raw_skill_pct": 1.7840495906736864,
+        "direction_accuracy": 59.384164222873906,
+        "direction_cases": 682,
+        "backtests": 760,
+        "fallback_used": true,
+        "quality_gate": {
+          "passed": false,
+          "requirements": {
+            "skill_pct_min": 2.0,
+            "direction_accuracy_min": 52.0,
+            "samples_min": 60
+          }
+        },
+        "components": [
+          {
+            "lookback_days": 120.0,
+            "strength": 0.4,
+            "weight": 0.25,
+            "anchor": 99.65270031789144,
+            "forecast": 99.58449337571886
+          },
+          {
+            "lookback_days": 180.0,
+            "strength": 0.4,
+            "weight": 0.25,
+            "anchor": 99.13602236972385,
+            "forecast": 99.51560298262984
+          },
+          {
+            "lookback_days": 252.0,
+            "strength": 0.4,
+            "weight": 0.25,
+            "anchor": 98.99200022645981,
+            "forecast": 99.49640003019464
+          },
+          {
+            "lookback_days": 378.0,
+            "strength": 0.3,
+            "weight": 0.25,
+            "anchor": 99.49241808387715,
+            "forecast": 99.56584180838772
+          }
+        ],
+        "model": "fixed multi-window mean reversion with persistence benchmark"
+      },
+      "3m": {
+        "available": true,
+        "forecast_return_pct": -0.10067522877628132,
+        "rmse_pct": 2.9870880189733,
+        "baseline_rmse_pct": 3.2644528743214223,
+        "skill_pct": 8.496518896930871,
+        "raw_skill_pct": 8.496518896930871,
+        "direction_accuracy": 73.5080058224163,
+        "direction_cases": 687,
+        "backtests": 760,
+        "fallback_used": false,
+        "quality_gate": {
+          "passed": true,
+          "requirements": {
+            "skill_pct_min": 2.0,
+            "direction_accuracy_min": 52.0,
+            "samples_min": 60
+          }
+        },
+        "components": [
+          {
+            "lookback_days": 120.0,
+            "strength": 0.4,
+            "weight": 0.25,
+            "anchor": 99.65270031789144,
+            "forecast": 99.60548012715658
+          },
+          {
+            "lookback_days": 180.0,
+            "strength": 0.4,
+            "weight": 0.25,
+            "anchor": 99.13602236972385,
+            "forecast": 99.39880894788953
+          },
+          {
+            "lookback_days": 252.0,
+            "strength": 0.4,
+            "weight": 0.25,
+            "anchor": 98.99200022645981,
+            "forecast": 99.34120009058392
+          },
+          {
+            "lookback_days": 378.0,
+            "strength": 0.3,
+            "weight": 0.25,
+            "anchor": 99.49241808387715,
+            "forecast": 99.54952542516314
+          }
+        ],
+        "model": "fixed multi-window mean reversion with persistence benchmark"
       }
     },
     "macro_model_audit": {
       "1m": {
         "available": true,
-        "forecast_return_pct": -1.6148952084199146,
-        "rmse_pct": 1.60309997709622,
-        "baseline_rmse_pct": 1.422378621780216,
+        "forecast_return_pct": -1.8158661778746839,
+        "rmse_pct": 1.6066482270264164,
+        "baseline_rmse_pct": 1.3882513706733661,
         "skill_pct": 0.0,
-        "raw_skill_pct": -12.705573083615217,
-        "direction_accuracy": 43.39622641509434,
+        "raw_skill_pct": -15.731794757538587,
+        "direction_accuracy": 41.509433962264154,
         "direction_cases": 53,
-        "backtests": 61,
+        "backtests": 62,
         "variant": "domestic_financial",
         "quality_gate": {
           "passed": false,
@@ -313,15 +459,15 @@
         "candidate_audit": {
           "domestic_financial": {
             "available": true,
-            "forecast": 98.05663299778305,
-            "forecast_return_pct": -1.6148952084199146,
-            "rmse_pct": 1.60309997709622,
-            "baseline_rmse_pct": 1.422378621780216,
+            "forecast": 97.78218710948092,
+            "forecast_return_pct": -1.8158661778746839,
+            "rmse_pct": 1.6066482270264164,
+            "baseline_rmse_pct": 1.3882513706733661,
             "skill_pct": 0.0,
-            "raw_skill_pct": -12.705573083615217,
-            "direction_accuracy": 43.39622641509434,
+            "raw_skill_pct": -15.731794757538587,
+            "direction_accuracy": 41.509433962264154,
             "direction_cases": 53,
-            "backtests": 61,
+            "backtests": 62,
             "variant": "domestic_financial",
             "quality_gate": {
               "passed": false,
@@ -346,15 +492,15 @@
           },
           "relative_policy_rates": {
             "available": true,
-            "forecast": 98.04930673785196,
-            "forecast_return_pct": -1.622366945323318,
-            "rmse_pct": 1.971424924807239,
-            "baseline_rmse_pct": 1.422378621780216,
+            "forecast": 97.88682303028874,
+            "forecast_return_pct": -1.708914207598692,
+            "rmse_pct": 2.0486536554656207,
+            "baseline_rmse_pct": 1.3882513706733661,
             "skill_pct": 0.0,
-            "raw_skill_pct": -38.60057333678495,
-            "direction_accuracy": 50.943396226415096,
+            "raw_skill_pct": -47.5708001261997,
+            "direction_accuracy": 47.16981132075472,
             "direction_cases": 53,
-            "backtests": 61,
+            "backtests": 62,
             "variant": "relative_policy_rates",
             "quality_gate": {
               "passed": false,
@@ -377,15 +523,15 @@
           },
           "combined": {
             "available": true,
-            "forecast": 98.56186965160596,
-            "forecast_return_pct": -1.1009682289705933,
-            "rmse_pct": 1.9373836745856765,
-            "baseline_rmse_pct": 1.422378621780216,
+            "forecast": 98.28778334273872,
+            "forecast_return_pct": -1.3001346227148853,
+            "rmse_pct": 1.993118880107761,
+            "baseline_rmse_pct": 1.3882513706733661,
             "skill_pct": 0.0,
-            "raw_skill_pct": -36.207311113892615,
-            "direction_accuracy": 45.28301886792453,
+            "raw_skill_pct": -43.57046009189289,
+            "direction_accuracy": 47.16981132075472,
             "direction_cases": 53,
-            "backtests": 61,
+            "backtests": 62,
             "variant": "combined",
             "quality_gate": {
               "passed": false,
@@ -417,11 +563,11 @@
       },
       "3m": {
         "available": true,
-        "forecast_return_pct": -6.193946860524312,
-        "rmse_pct": 2.3417544812011104,
-        "baseline_rmse_pct": 1.4665929211230537,
+        "forecast_return_pct": -6.518589024823435,
+        "rmse_pct": 2.354337275961205,
+        "baseline_rmse_pct": 1.4754285574270285,
         "skill_pct": 0.0,
-        "raw_skill_pct": -59.673106795571854,
+        "raw_skill_pct": -59.56972393613478,
         "direction_accuracy": 21.052631578947366,
         "direction_cases": 38,
         "backtests": 45,
@@ -449,12 +595,12 @@
         "candidate_audit": {
           "domestic_financial": {
             "available": true,
-            "forecast": 93.66781898952135,
-            "forecast_return_pct": -6.193946860524312,
-            "rmse_pct": 2.3417544812011104,
-            "baseline_rmse_pct": 1.4665929211230537,
+            "forecast": 93.29021224569925,
+            "forecast_return_pct": -6.518589024823435,
+            "rmse_pct": 2.354337275961205,
+            "baseline_rmse_pct": 1.4754285574270285,
             "skill_pct": 0.0,
-            "raw_skill_pct": -59.673106795571854,
+            "raw_skill_pct": -59.56972393613478,
             "direction_accuracy": 21.052631578947366,
             "direction_cases": 38,
             "backtests": 45,
@@ -482,12 +628,12 @@
           },
           "relative_policy_rates": {
             "available": true,
-            "forecast": 94.78151716538501,
-            "forecast_return_pct": -5.011972793178388,
-            "rmse_pct": 4.991594029214919,
-            "baseline_rmse_pct": 1.4665929211230537,
+            "forecast": 94.969800330325,
+            "forecast_return_pct": -4.734213653321724,
+            "rmse_pct": 5.002444641328493,
+            "baseline_rmse_pct": 1.4754285574270285,
             "skill_pct": 0.0,
-            "raw_skill_pct": -240.35306984794192,
+            "raw_skill_pct": -239.05027906279378,
             "direction_accuracy": 21.052631578947366,
             "direction_cases": 38,
             "backtests": 45,
@@ -513,12 +659,12 @@
           },
           "combined": {
             "available": true,
-            "forecast": 94.21176462329659,
-            "forecast_return_pct": -5.614908794629407,
-            "rmse_pct": 5.0353399818582165,
-            "baseline_rmse_pct": 1.4665929211230537,
+            "forecast": 93.86349567320993,
+            "forecast_return_pct": -5.905953318124648,
+            "rmse_pct": 5.045667548903678,
+            "baseline_rmse_pct": 1.4754285574270285,
             "skill_pct": 0.0,
-            "raw_skill_pct": -243.33589841701743,
+            "raw_skill_pct": -241.97979451493882,
             "direction_accuracy": 21.052631578947366,
             "direction_cases": 38,
             "backtests": 45,
@@ -552,7 +698,7 @@
         "selected_variant": "domestic_financial"
       }
     },
-    "model": "validated selection between price-only ensemble and macro-aware ridge model; persistence remains the hard safety benchmark",
+    "model": "validated selection across price ensemble, fixed multi-window mean reversion, and macro-aware ridge; persistence remains the hard safety benchmark",
     "limitation": "DXY price is Yahoo Finance delayed data. Macro candidates use the existing FRED/Yahoo collection path, including ECB/Japan rate differentials added to the same FRED batch; no new provider is introduced. Forecast is not a guaranteed target."
   },
   "us_real_rate": {
@@ -574,24 +720,24 @@
       "3m_pctp": 0.34
     },
     "forecast_1m_pct": 2.44,
-    "forecast_3m_pct": 2.44,
+    "forecast_3m_pct": 2.3406,
     "forecast_change_1m_pctp": 0.0,
-    "forecast_change_3m_pctp": 0.0,
+    "forecast_change_3m_pctp": -0.0994,
     "direction_1m": "flat",
-    "direction_3m": "flat",
+    "direction_3m": "falling",
     "forecast_usable_1m": false,
-    "forecast_usable_3m": false,
+    "forecast_usable_3m": true,
     "forecast_3m_range_80_pct": [
-      2.0003,
-      2.8797
+      1.9195,
+      2.7618
     ],
-    "confidence": 37,
+    "confidence": 55,
     "selected_model_1m": "persistence",
-    "selected_model_3m": "persistence",
+    "selected_model_3m": "validated_mean_reversion",
     "candidate_forecast_1m_pct": 2.2989,
     "candidate_forecast_3m_pct": 2.4729,
     "candidate_direction_3m": "rising",
-    "model": "validated selection among persistence, real-curve momentum/mean-reversion, and macro ridge using nominal yields + breakeven inflation + financial conditions",
+    "model": "validated selection among persistence, fixed mean-reversion, real-curve momentum, and macro ridge using nominal yields + breakeven inflation + financial conditions",
     "components_1m": {
       "trend": 2.469,
       "curve": 2.441,
@@ -622,23 +768,24 @@
       }
     },
     "backtest_3m": {
-      "mae": 0.2902,
-      "rmse": 0.361,
+      "mae": 0.2537,
+      "rmse": 0.3286,
       "baseline_rmse": 0.3431,
-      "skill_pct": 0.0,
-      "raw_skill_pct": -5.217,
-      "direction_accuracy": 41.9,
+      "skill_pct": 4.2299,
+      "raw_skill_pct": 4.2299,
+      "direction_accuracy": 62.3,
       "direction_cases": 823,
       "samples": 937,
-      "fallback_used": true,
+      "fallback_used": false,
       "quality_gate": {
-        "passed": false,
+        "passed": true,
         "requirements": {
           "samples_min": 60,
           "skill_pct_min": 2.0,
           "direction_accuracy_min": 52.0
         }
-      }
+      },
+      "model": "fixed 84-trading-day mean reversion"
     },
     "structural_model_audit": {
       "1m": {
@@ -677,6 +824,60 @@
             "skill_pct_min": 2.0,
             "direction_accuracy_min": 52.0
           }
+        }
+      }
+    },
+    "mean_reversion_model_audit": {
+      "1m": {
+        "mae": 0.1726,
+        "rmse": 0.233,
+        "baseline_rmse": 0.2322,
+        "skill_pct": 0.0,
+        "raw_skill_pct": -0.3474,
+        "direction_accuracy": 55.5,
+        "direction_cases": 811,
+        "samples": 979,
+        "fallback_used": true,
+        "quality_gate": {
+          "passed": false,
+          "requirements": {
+            "samples_min": 60,
+            "skill_pct_min": 2.0,
+            "direction_accuracy_min": 52.0
+          }
+        },
+        "model": "fixed 84-trading-day mean reversion",
+        "forecast": 2.4069,
+        "parameters": {
+          "anchor": 2.191547619047619,
+          "strength": 0.13333333333333333,
+          "lookback_days": 84.0
+        }
+      },
+      "3m": {
+        "mae": 0.2537,
+        "rmse": 0.3286,
+        "baseline_rmse": 0.3431,
+        "skill_pct": 4.2299,
+        "raw_skill_pct": 4.2299,
+        "direction_accuracy": 62.3,
+        "direction_cases": 823,
+        "samples": 937,
+        "fallback_used": false,
+        "quality_gate": {
+          "passed": true,
+          "requirements": {
+            "samples_min": 60,
+            "skill_pct_min": 2.0,
+            "direction_accuracy_min": 52.0
+          }
+        },
+        "model": "fixed 84-trading-day mean reversion",
+        "forecast": 2.3406,
+        "parameters": {
+          "anchor": 2.191547619047619,
+          "strength": 0.4,
+          "lookback_days": 84.0
         }
       }
     },
@@ -966,12 +1167,12 @@
       }
     },
     "forecast_quality_gate": {
-      "passed": false,
+      "passed": true,
       "benchmark": "persistence",
       "horizon": "3m"
     },
-    "limitation": "Final forward movement is promoted only when walk-forward skill beats persistence. candidate_forecast_* remains audit-only when the gate fails.",
-    "schema_version": "1.2.0"
+    "limitation": "Final forward movement is promoted only when a fixed, past-only walk-forward model beats persistence and clears the direction gate. Unvalidated candidates remain audit-only.",
+    "schema_version": "1.3.0"
   },
   "coverage_weight": 1.0,
   "coverage_regions": [
@@ -1496,9 +1697,9 @@
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-18T21:58:35.967563+00:00",
+      "upstream_generated_at_utc": "2026-08-19T02:26:47.068954+00:00",
       "age_days": 79,
-      "fetch_ms": 0
+      "fetch_ms": 1
     },
     "EA": {
       "region": "EA",
@@ -1920,7 +2121,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 79,
-      "fetch_ms": 965
+      "fetch_ms": 1263
     },
     "JP": {
       "date": "2026-07-01",
@@ -3211,7 +3412,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 49,
-      "fetch_ms": 1008
+      "fetch_ms": 712
     },
     "CN": {
       "region": "CN",
@@ -3317,7 +3518,7 @@
       },
       "status": "LIVE",
       "age_days": 49,
-      "fetch_ms": 3152
+      "fetch_ms": 3936
     }
   },
   "statuses": {
@@ -3327,7 +3528,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 5128,
+  "runtime_ms": 5914,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3338,7 +3539,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-19T01:01:48.464798+00:00",
+      "last_success_utc": "2026-08-19T03:03:50.918065+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3352,7 +3553,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-19T01:01:49.222537+00:00",
+      "last_success_utc": "2026-08-19T03:03:51.379646+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3366,7 +3567,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-19T01:01:52.458670+00:00",
+      "last_success_utc": "2026-08-19T03:03:55.398930+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"

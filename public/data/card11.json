@@ -1,65 +1,104 @@
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
+  "engine_version": "card11-2.0.0-same-scale-continuous-state",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-19T01:01:47.499007+00:00",
-  "score": 13.3,
+  "generated_at_utc": "2026-08-19T03:03:49.654323+00:00",
+  "score": -17.1,
   "market_signal": "neutral",
   "current_regime": "혼합·중립",
   "future_regime": "불리한 투자환경",
-  "future_score": -20.0,
+  "future_score": -22.5,
   "future_market_signal": "bad",
   "future_inputs": {
     "card8": {
       "available": true,
-      "signal": 1.0,
-      "details": [
-        {
-          "series": "DGS2",
-          "current": 4.19,
-          "forecast": 4.130000000000001,
-          "signal": 1
-        }
-      ],
-      "validation": "3m target-level gates"
+      "signal": -0.598,
+      "current_state": -59.8,
+      "future_state": -59.8,
+      "validation": "3m gate failed; persistence used"
     },
     "card9": {
-      "available": false,
-      "signal": null,
-      "validation": "3m gate not passed"
+      "available": true,
+      "signal": -0.601,
+      "current_state": -60.1,
+      "future_state": -60.1,
+      "validation": "3m gate failed; persistence used"
     },
     "card10": {
       "available": true,
-      "signal": -1,
-      "current": 45.95688679577424,
-      "forecast": 48.20122110421089,
+      "signal": 0.18,
+      "current_state": 40.4,
+      "future_state": 18.0,
       "validation": "3m gate passed"
     },
     "card12": {
       "available": true,
-      "signal": -1.0,
-      "details": [
-        {
-          "group": "equity",
-          "current": 58.23605137808628,
-          "forecast": 55.01641506001842,
-          "signal": -1
-        }
-      ],
-      "validation": "validated 3m groups only"
+      "signal": 0.39299999999999996,
+      "current_state": 39.3,
+      "future_state": 39.3,
+      "validation": "3m gate failed; persistence used"
     }
   },
   "future_quality_gate": {
-    "passed": true,
-    "validated_input_count": 3,
-    "rule": "검증된 3개월 하위신호 2개 이상일 때만 향후 종합판정 사용"
+    "passed": false,
+    "validated_input_count": 1,
+    "validated_weight_coverage": 0.2381,
+    "minimum_validated_inputs": 3,
+    "minimum_weight_coverage": 0.7,
+    "rule": "4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격"
+  },
+  "score_methodology": {
+    "version": "card11-2.0.0",
+    "scale": [
+      -100,
+      100
+    ],
+    "principle": "현재와 향후를 동일한 연속형 상태함수·동일 기본가중치·동일 분모로 계산",
+    "failed_forecast_policy": "3개월 검증 미통과 축은 향후 상태를 현재 상태 유지로 처리하여 과도한 방향 추정을 방지",
+    "weights": {
+      "card8": 1.2,
+      "card9": 1.2,
+      "card10": 1.0,
+      "card12": 0.8
+    },
+    "components": {
+      "card8": {
+        "current_state": -59.8,
+        "future_state": -59.8,
+        "base_weight": 1.2,
+        "forecast_validation_passed": false,
+        "forecast_treatment": "persistence_on_failed_3m_gate"
+      },
+      "card9": {
+        "current_state": -60.1,
+        "future_state": -60.1,
+        "base_weight": 1.2,
+        "forecast_validation_passed": false,
+        "forecast_treatment": "persistence_on_failed_3m_gate"
+      },
+      "card10": {
+        "current_state": 40.4,
+        "future_state": 18.0,
+        "base_weight": 1.0,
+        "forecast_validation_passed": true,
+        "forecast_treatment": "validated_3m_forecast"
+      },
+      "card12": {
+        "current_state": 39.3,
+        "future_state": 39.3,
+        "base_weight": 0.8,
+        "forecast_validation_passed": false,
+        "forecast_treatment": "persistence_on_failed_3m_gate"
+      }
+    }
   },
   "asset_environment": {
-    "global_equities": "중립",
+    "global_equities": "불리",
     "long_treasuries": "중립",
-    "gold": "우호",
+    "gold": "중립",
     "commodities": "중립",
-    "cash_short_duration": "중립"
+    "cash_short_duration": "우호"
   },
   "inputs": {
     "card8": "neutral",
@@ -73,8 +112,22 @@
       "signal": "neutral",
       "validation": {
         "passed": false,
-        "passed_horizons": [],
-        "reason": "3·6개월 핵심금리 검증 통과 여부"
+        "passed_targets": [
+          "DGS2"
+        ],
+        "required_targets": [
+          "DGS2",
+          "DGS10",
+          "DFII10"
+        ],
+        "horizon": "3m"
+      },
+      "state": {
+        "current_state": -59.8,
+        "future_state": -59.8,
+        "base_weight": 1.2,
+        "forecast_validation_passed": false,
+        "forecast_treatment": "persistence_on_failed_3m_gate"
       }
     },
     "card9": {
@@ -82,7 +135,36 @@
       "signal": "good",
       "validation": {
         "passed": false,
-        "passed_horizons": []
+        "horizon": "3m",
+        "quality_gate": {
+          "passed": false,
+          "level": "참고용/관망",
+          "dm_test": {
+            "statistic": 1.5994137739461032,
+            "p_value": 0.10972869376781502,
+            "significant_5pct": false,
+            "significant_10pct": false,
+            "hac_lag": 2
+          },
+          "degradation_blocked": false,
+          "requirements": {
+            "skill_pct_min": 3.0,
+            "direction_accuracy_min": 0.55,
+            "dm_p_value_max": 0.05,
+            "hac_lag": 2,
+            "recent_oos_nonnegative_skill": true
+          }
+        },
+        "skill_pct": 5.319279680535994,
+        "direction_accuracy": 0.6923076923076923,
+        "samples": 180
+      },
+      "state": {
+        "current_state": -60.1,
+        "future_state": -60.1,
+        "base_weight": 1.2,
+        "forecast_validation_passed": false,
+        "forecast_treatment": "persistence_on_failed_3m_gate"
       }
     },
     "card10": {
@@ -90,24 +172,59 @@
       "signal": "bad",
       "validation": {
         "passed": true,
-        "passed_horizons": [
-          "1m",
-          "3m",
-          "6m",
-          "12m"
-        ]
+        "horizon": "3m",
+        "quality_gate": {
+          "passed": true,
+          "level": "독립검증 통과",
+          "dm_test": {
+            "statistic": 3.2633647653709428,
+            "p_value": 0.0011009771476899743,
+            "significant_5pct": true,
+            "significant_10pct": true,
+            "hac_lag": 2
+          },
+          "degradation_blocked": false,
+          "requirements": {
+            "skill_pct_min": 3.0,
+            "direction_accuracy_min": 0.55,
+            "dm_p_value_max": 0.05,
+            "hac_lag": 2,
+            "recent_oos_nonnegative_skill": true
+          }
+        },
+        "skill_pct": 11.207143160172418,
+        "direction_accuracy": 0.7333333333333333,
+        "samples": 180
+      },
+      "state": {
+        "current_state": 40.4,
+        "future_state": 18.0,
+        "base_weight": 1.0,
+        "forecast_validation_passed": true,
+        "forecast_treatment": "validated_3m_forecast"
       }
     },
     "card12": {
       "label": "선물시장 현재신호·방향예측",
       "signal": "good",
       "validation": {
-        "passed": true,
-        "passed_horizons": [
-          "equity:3m",
-          "rates:1m",
-          "crypto:1m"
-        ]
+        "passed": false,
+        "passed_groups": [
+          "equity"
+        ],
+        "required_groups": [
+          "equity",
+          "rates",
+          "commodities"
+        ],
+        "horizon": "3m"
+      },
+      "state": {
+        "current_state": 39.3,
+        "future_state": 39.3,
+        "base_weight": 0.8,
+        "forecast_validation_passed": false,
+        "forecast_treatment": "persistence_on_failed_3m_gate"
       }
     }
   },
@@ -118,12 +235,12 @@
       "card8_validation": false,
       "card9_validation": false,
       "card10_validation": true,
-      "card12_validation": true,
+      "card12_validation": false,
       "card8_data": true,
       "card9_data": true,
       "card10_data": true,
       "card12_data": true
     }
   },
-  "investment_conclusion": "검증을 통과한 하위 카드 신호와 최신성·완전성을 함께 반영해 자산군의 상대적 우호도를 판단합니다."
+  "investment_conclusion": "현재와 3개월 향후를 같은 연속형 상태척도로 비교하며, 검증 미통과 축은 현재상태 유지로 보수 처리합니다. 실제 발표자료 기반 OOS 검증은 별도 레지스트리 게이트를 추가로 통과해야 합니다."
 }
