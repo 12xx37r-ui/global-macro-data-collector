@@ -1,11 +1,33 @@
 {
   "schema_version": "1.0",
-  "generated_at_utc": "2026-08-19T21:53:47.537079+00:00",
-  "status": "SKIP_RECENT_FULL",
+  "generated_at_utc": "2026-08-19T23:46:04.324676+00:00",
+  "status": "UPDATED",
   "reason": "full output is recent",
   "full_generated_at_utc": "2026-08-19T21:06:01.563507+00:00",
   "full_age_minutes": 47.77,
   "guard_minutes": 120,
-  "market_network_calls": 0,
-  "fred_network_calls_this_run": 0
+  "market_network_calls": 7,
+  "fred_network_calls_this_run": 3,
+  "market_symbols_attempted": [
+    "DX-Y.NYB",
+    "^VIX",
+    "ES=F",
+    "NQ=F",
+    "CL=F",
+    "GC=F",
+    "HG=F"
+  ],
+  "market_symbols_updated": [
+    "CL=F",
+    "DX-Y.NYB",
+    "ES=F",
+    "GC=F",
+    "HG=F",
+    "NQ=F",
+    "^VIX"
+  ],
+  "market_success_count": 7,
+  "fred_checked_utc_date": "2026-08-19",
+  "max_market_calls_per_run": 7,
+  "model_formulas_changed": false
 }
