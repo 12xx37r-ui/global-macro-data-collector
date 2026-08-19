@@ -39,8 +39,9 @@ class TestV23Integrity(unittest.TestCase):
             'data_quality': {'completeness': 90},
         }
         result = build_card11(card8, card9, card10, card12)
-        self.assertTrue(result['quality_gate']['passed'])
-        self.assertEqual(result['quality_gate']['level'], '검증통과 신호 통합')
+        self.assertFalse(result['quality_gate']['passed'])
+        self.assertEqual(result['quality_gate']['level'], '조건부 통합판정')
+        self.assertFalse(result['future_quality_gate']['passed'])
 
 
 if __name__ == '__main__':

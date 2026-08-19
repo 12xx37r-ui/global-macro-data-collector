@@ -1,0 +1,71 @@
+{
+  "engine_version": "card11-2.0.0-same-scale-continuous-state",
+  "score": -17.2,
+  "future_score": -22.6,
+  "market_signal": "neutral",
+  "future_market_signal": "bad",
+  "future_quality_gate": {
+    "passed": false,
+    "validated_input_count": 1,
+    "validated_weight_coverage": 0.2381,
+    "minimum_validated_inputs": 3,
+    "minimum_weight_coverage": 0.7,
+    "rule": "4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격"
+  },
+  "components": {
+    "card8": {
+      "current_state": -59.8,
+      "future_state": -59.8,
+      "base_weight": 1.2,
+      "forecast_validation_passed": false,
+      "forecast_treatment": "persistence_on_failed_3m_gate"
+    },
+    "card9": {
+      "current_state": -60.1,
+      "future_state": -60.1,
+      "base_weight": 1.2,
+      "forecast_validation_passed": false,
+      "forecast_treatment": "persistence_on_failed_3m_gate"
+    },
+    "card10": {
+      "current_state": 40.4,
+      "future_state": 18.0,
+      "base_weight": 1.0,
+      "forecast_validation_passed": true,
+      "forecast_treatment": "validated_3m_forecast"
+    },
+    "card12": {
+      "current_state": 38.9,
+      "future_state": 38.9,
+      "base_weight": 0.8,
+      "forecast_validation_passed": false,
+      "forecast_treatment": "persistence_on_failed_3m_gate"
+    }
+  },
+  "card9_validation": {
+    "passed": false,
+    "horizon": "3m",
+    "quality_gate": {
+      "passed": false,
+      "level": "참고용/관망",
+      "dm_test": {
+        "statistic": 1.5994137739461032,
+        "p_value": 0.10972869376781502,
+        "significant_5pct": false,
+        "significant_10pct": false,
+        "hac_lag": 2
+      },
+      "degradation_blocked": false,
+      "requirements": {
+        "skill_pct_min": 3.0,
+        "direction_accuracy_min": 0.55,
+        "dm_p_value_max": 0.05,
+        "hac_lag": 2,
+        "recent_oos_nonnegative_skill": true
+      }
+    },
+    "skill_pct": 5.319279680535994,
+    "direction_accuracy": 0.6923076923076923,
+    "samples": 180
+  }
+}

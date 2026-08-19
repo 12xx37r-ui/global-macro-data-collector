@@ -1126,77 +1126,199 @@ def _global_registry(global_m2:dict[str,Any], card8:dict[str,Any], card9:dict[st
     entries.append(finalize({'id':'card11_future_3m','label':'Card11 future composite 3m','horizon':'3m','current':card11.get('future_score'),'forecast':None,'status':'VALIDATED' if c11_pass else 'REFERENCE_ONLY','usable':c11_pass,'input_gate':card11.get('future_quality_gate'),'oos':c11_oos,'reason':'input gate + real OOS passed' if c11_pass else 'input gate and/or real published-snapshot OOS incomplete'},samples=max([int((x or {}).get('samples') or 0) for x in c11_oos.values()] or [0])))
     return {'schema_version':'1.1','generated_at_utc':generated,'engine':'Global macro engine','entries':entries,'summary':{'validated':sum(1 for x in entries if x.get('status')=='VALIDATED'),'reference_only':sum(1 for x in entries if x.get('status')=='REFERENCE_ONLY'),'degraded':sum(1 for x in entries if x.get('degradation_status')=='DEGRADED')},'policy':'Only horizon-specific forecasts that pass their own gate are promoted; rolling OOS deterioration automatically downgrades eligible forecast blocks. Composite signals additionally require realized published-snapshot OOS validation.'}
 
-def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
-    validations = {
-        'card8': _card8_validation(card8),
-        'card9': _generic_forecast_validation(card9),
-        'card10': _generic_forecast_validation(card10),
-        'card12': _card12_validation(card12),
-    }
-    signals = []
-    weights = {'card8': 1.2, 'card9': 1.2, 'card10': 1.0, 'card12': 0.8}
-    cards = {'card8': card8, 'card9': card9, 'card10': card10, 'card12': card12}
-    for key, c in cards.items():
-        s = c.get('market_signal')
-        direction = 1 if s == 'good' else -1 if s == 'bad' else 0
-        # A card contributes at full weight only when it has at least one validated horizon.
-        confidence = 1.0 if validations[key]['passed'] else 0.5
-        signals.append((direction, weights[key] * confidence))
-    denom = sum(w for _, w in signals) or 1.0
-    score = sum(s * w for s, w in signals) / denom * 100
-    signal = 'good' if score >= 20 else 'bad' if score <= -20 else 'neutral'
+def _card11_horizon3_validation(card8: dict[str, Any], card9: dict[str, Any], card10: dict[str, Any], card12: dict[str, Any]) -> dict[str, Any]:
+    """Return horizon-matched validation for the four Card11 inputs.
 
-    future_inputs={
-        'card8':_future_signal_card8(card8),
-        'card9':_future_signal_composite(card9,False),
-        'card10':_future_signal_composite(card10,True),
-        'card12':_future_signal_card12(card12),
-    }
-    future_parts=[]
-    for key,obj in future_inputs.items():
-        if obj.get('available') and finite(obj.get('signal')):
-            future_parts.append((float(obj['signal']),weights[key]))
-    future_denom=sum(w for _,w in future_parts) or 1.0
-    future_score=(sum(v*w for v,w in future_parts)/future_denom*100) if future_parts else None
+    Card11 is a 3-month forward allocation regime.  Using "any passed horizon"
+    for one leg and a strict 3-month gate for another creates non-comparable
+    confidence weights, so every leg is evaluated on the same 3-month horizon.
+    """
+    t8=((((card8.get('forecasts') or {}).get('3m') or {}).get('targets')) or {})
+    core8=['DGS2','DGS10','DFII10']
+    c8_passed=[sid for sid in core8 if bool(((t8.get(sid) or {}).get('quality_gate') or {}).get('passed'))]
+    c8={'passed':len(c8_passed)>=2,'passed_targets':c8_passed,'required_targets':core8,'horizon':'3m'}
+
+    def generic3(card: dict[str, Any]) -> dict[str, Any]:
+        fc=((card.get('forecasts') or {}).get('3m') or {})
+        q=fc.get('quality_gate') or {}
+        return {'passed':bool(q.get('passed')),'horizon':'3m','quality_gate':q,
+                'skill_pct':fc.get('skill_pct'),'direction_accuracy':fc.get('direction_accuracy'),
+                'samples':fc.get('samples')}
+
+    pv=card12.get('predictive_validation') or {}
+    groups=pv.get('groups') or {}
+    passed_groups=[]
+    for g in ('equity','rates','commodities'):
+        fc=(((groups.get(g) or {}).get('forecasts') or {}).get('3m') or {})
+        if bool((fc.get('quality_gate') or {}).get('passed')):
+            passed_groups.append(g)
+    c12={'passed':len(passed_groups)>=2,'passed_groups':passed_groups,
+         'required_groups':['equity','rates','commodities'],'horizon':'3m'}
+    return {'card8':c8,'card9':generic3(card9),'card10':generic3(card10),'card12':c12}
+
+
+def _card11_card8_state(card8: dict[str, Any], use_forecast: bool=False) -> float | None:
+    """Continuous risk-environment state from US rates, same transform now/future.
+
+    Anchors are inherited from Card8's own published regime boundaries where
+    possible: real 10y 1.2% is accommodative and 2.0% is burdensome; 10y nominal
+    4.5% is burdensome.  The curve contribution rewards a normally positive
+    10y-2y slope.  Output is clipped to [-1, 1].
+    """
+    cur=card8.get('current') or {}
+    t3=((((card8.get('forecasts') or {}).get('3m') or {}).get('targets')) or {})
+    def val(sid):
+        if use_forecast:
+            x=(t3.get(sid) or {}).get('forecast')
+            if finite(x): return float(x)
+        x=(cur.get(sid) or {}).get('value')
+        return float(x) if finite(x) else None
+    d10,real,curve=val('DGS10'),val('DFII10'),val('T10Y2Y')
+    parts=[]
+    if finite(real): parts.append(clamp((1.6-float(real))/0.8,-1,1)*0.45)
+    if finite(d10): parts.append(clamp((4.0-float(d10))/1.0,-1,1)*0.35)
+    if finite(curve): parts.append(clamp(float(curve)/1.0,-1,1)*0.20)
+    if not parts: return None
+    # weights above sum to 1 when all components are available; rescale when one is missing.
+    available_weight=(0.45 if finite(real) else 0)+(0.35 if finite(d10) else 0)+(0.20 if finite(curve) else 0)
+    return clamp(sum(parts)/(available_weight or 1),-1,1)
+
+
+def _card11_card9_state(card9: dict[str, Any], use_forecast: bool=False) -> float | None:
+    # Card9 composite is explicitly centered at 50 and scaled by 10 points per z-unit.
+    x=(((card9.get('forecasts') or {}).get('3m') or {}).get('forecast')) if use_forecast else card9.get('current')
+    return clamp((float(x)-50.0)/10.0,-1,1) if finite(x) else None
+
+
+def _card11_card10_state(card10: dict[str, Any], use_forecast: bool=False) -> float | None:
+    # Card10 public semantics are pressure: lower pressure is favorable, hence inverse sign.
+    x=(((card10.get('forecasts') or {}).get('3m') or {}).get('forecast')) if use_forecast else card10.get('current')
+    return clamp((50.0-float(x))/10.0,-1,1) if finite(x) else None
+
+
+def _card11_card12_state(card12: dict[str, Any], use_forecast: bool=False) -> float | None:
+    """Continuous futures-market state on the native Card12 50+10*z scale.
+
+    `aligned_group_index()` already defines every predictive group as 50 +
+    10 * normalized momentum.  Therefore current_index and its 3m forecast can
+    be transformed identically with (index-50)/10, with no extra threshold or
+    unit conversion.  This is the cleanest same-scale mapping in Card11.
+    """
+    pv=card12.get('predictive_validation') or {}; groups=pv.get('groups') or {}
+    weights={'equity':0.50,'rates':0.30,'commodities':0.20}
+    vals=[]; ws=[]
+    for g,w in weights.items():
+        obj=groups.get(g) or {}; cur=obj.get('current_index')
+        if not finite(cur): continue
+        x=float(cur)
+        if use_forecast:
+            fc=((obj.get('forecasts') or {}).get('3m') or {})
+            if (fc.get('quality_gate') or {}).get('passed') and finite(fc.get('forecast')):
+                x=float(fc['forecast'])
+        vals.append(clamp((x-50.0)/10.0,-1,1)); ws.append(w)
+    return sum(v*w for v,w in zip(vals,ws))/sum(ws) if ws else None
+
+
+def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
+    """Card11 V2: same-scale current/future regime aggregation.
+
+    The old implementation compared a current +/-1 market-signal average with a
+    future +/-1 *change-direction* average.  Those values shared a numeric range
+    but not a definition.  This version computes current and 3m future states
+    using the same continuous transformation for every component, the same base
+    weights, and the same denominator.  Failed 3m forecasts are not dropped; the
+    future leg conservatively keeps that component at its current state.
+    """
+    validations=_card11_horizon3_validation(card8,card9,card10,card12)
+    weights={'card8':1.2,'card9':1.2,'card10':1.0,'card12':0.8}
+    cards={'card8':card8,'card9':card9,'card10':card10,'card12':card12}
+    state_fns={'card8':_card11_card8_state,'card9':_card11_card9_state,
+               'card10':_card11_card10_state,'card12':_card11_card12_state}
+
+    components={}
+    current_num=future_num=denom=0.0
+    validated_weight=0.0; validated_count=0
+    for key in ('card8','card9','card10','card12'):
+        fn=state_fns[key]
+        cur=fn(cards[key],False)
+        if cur is None: continue
+        passed=bool(validations[key].get('passed'))
+        fut=fn(cards[key],True) if passed else cur
+        if fut is None: fut=cur
+        w=weights[key]
+        current_num+=cur*w; future_num+=fut*w; denom+=w
+        if passed:
+            validated_weight+=w; validated_count+=1
+        components[key]={
+            'current_state':round(cur*100,1),'future_state':round(fut*100,1),
+            'base_weight':w,'forecast_validation_passed':passed,
+            'forecast_treatment':'validated_3m_forecast' if passed else 'persistence_on_failed_3m_gate',
+        }
+
+    score=(current_num/denom*100) if denom else None
+    future_score=(future_num/denom*100) if denom else None
+    coverage=(validated_weight/denom) if denom else 0.0
+    signal=('good' if score is not None and score>=20 else 'bad' if score is not None and score<=-20 else 'neutral') if score is not None else 'unavailable'
     future_signal=('good' if future_score is not None and future_score>=20 else 'bad' if future_score is not None and future_score<=-20 else 'neutral') if future_score is not None else 'unavailable'
 
-    quality_checks = {
-        'card8_validation': validations['card8']['passed'],
-        'card9_validation': validations['card9']['passed'],
-        'card10_validation': validations['card10']['passed'],
-        'card12_validation': validations['card12']['passed'],
-        'card8_data': card8.get('data_quality', {}).get('core_completeness', 0) >= 85,
-        'card9_data': card9.get('data_quality', {}).get('core_completeness', 0) >= 85,
-        'card10_data': card10.get('data_quality', {}).get('core_completeness', 0) >= 85,
-        'card12_data': card12.get('data_quality', {}).get('completeness', 0) >= 80,
+    quality_checks={
+        'card8_validation':validations['card8']['passed'],
+        'card9_validation':validations['card9']['passed'],
+        'card10_validation':validations['card10']['passed'],
+        'card12_validation':validations['card12']['passed'],
+        'card8_data':card8.get('data_quality',{}).get('core_completeness',0)>=85,
+        'card9_data':card9.get('data_quality',{}).get('core_completeness',0)>=85,
+        'card10_data':card10.get('data_quality',{}).get('core_completeness',0)>=85,
+        'card12_data':card12.get('data_quality',{}).get('completeness',0)>=80,
     }
-    quality_passed = all(quality_checks.values())
-    quality_level = '검증통과 신호 통합' if quality_passed else '조건부 통합판정'
+    quality_passed=all(quality_checks.values())
+    quality_level='3개월 검증통과 신호 통합' if quality_passed else '조건부 통합판정'
+    future_gate_passed=validated_count>=3 and coverage>=0.70
 
-    input_details = {
-        'card8': {'label': '미국채 금리·실질금리', 'signal': card8.get('market_signal'), 'validation': validations['card8']},
-        'card9': {'label': '글로벌 고용·소비', 'signal': card9.get('market_signal'), 'validation': validations['card9']},
-        'card10': {'label': '원자재·에너지·공급망 압력', 'signal': card10.get('market_signal'), 'validation': validations['card10']},
-        'card12': {'label': '선물시장 현재신호·방향예측', 'signal': card12.get('market_signal'), 'validation': validations['card12']},
+    input_details={
+        'card8':{'label':'미국채 금리·실질금리','signal':card8.get('market_signal'),'validation':validations['card8'],'state':components.get('card8')},
+        'card9':{'label':'글로벌 고용·소비','signal':card9.get('market_signal'),'validation':validations['card9'],'state':components.get('card9')},
+        'card10':{'label':'원자재·에너지·공급망 압력','signal':card10.get('market_signal'),'validation':validations['card10'],'state':components.get('card10')},
+        'card12':{'label':'선물시장 현재신호·방향예측','signal':card12.get('market_signal'),'validation':validations['card12'],'state':components.get('card12')},
     }
+    future_inputs={k:{'available':k in components,'signal':(components[k]['future_state']/100 if k in components else None),
+                      'current_state':components[k]['current_state'] if k in components else None,
+                      'future_state':components[k]['future_state'] if k in components else None,
+                      'validation':'3m gate passed' if validations[k].get('passed') else '3m gate failed; persistence used'}
+                   for k in ('card8','card9','card10','card12')}
+
     return {
-        'schema_version': '1.1', 'card': 11, 'title': '글로벌 경기국면 최종판정·투자환경', 'generated_at_utc': now_iso(),
-        'score': round(score, 1), 'market_signal': signal,
-        'current_regime': '확장·위험선호' if signal == 'good' else '수축·위험회피' if signal == 'bad' else '혼합·중립',
-        'future_regime': ('우호적 투자환경' if future_signal == 'good' else '불리한 투자환경' if future_signal == 'bad' else '중립적 투자환경' if future_signal == 'neutral' else '검증된 향후신호 부족'),
-        'future_score': round(future_score,1) if future_score is not None else None, 'future_market_signal': future_signal, 'future_inputs': future_inputs,
-        'future_quality_gate': {'passed': len(future_parts)>=2, 'validated_input_count':len(future_parts), 'rule':'검증된 3개월 하위신호 2개 이상일 때만 향후 종합판정 사용'},
-        'asset_environment': {
-            'global_equities': '우호' if signal == 'good' else '불리' if signal == 'bad' else '중립',
-            'long_treasuries': '우호' if card8.get('market_signal') == 'good' else '중립',
-            'gold': '우호' if card8.get('market_signal') == 'good' or card10.get('market_signal') == 'bad' else '중립',
-            'commodities': '우호' if card10.get('market_signal') == 'good' and card9.get('market_signal') == 'good' else '중립',
-            'cash_short_duration': '우호' if signal == 'bad' else '중립',
+        'schema_version':'1.2','engine_version':'card11-2.0.0-same-scale-continuous-state','card':11,
+        'title':'글로벌 경기국면 최종판정·투자환경','generated_at_utc':now_iso(),
+        'score':round(score,1) if score is not None else None,'market_signal':signal,
+        'current_regime':'확장·위험선호' if signal=='good' else '수축·위험회피' if signal=='bad' else '혼합·중립' if signal=='neutral' else '판정불가',
+        'future_regime':'우호적 투자환경' if future_signal=='good' else '불리한 투자환경' if future_signal=='bad' else '중립적 투자환경' if future_signal=='neutral' else '검증된 향후신호 부족',
+        'future_score':round(future_score,1) if future_score is not None else None,'future_market_signal':future_signal,
+        'future_inputs':future_inputs,
+        'future_quality_gate':{
+            'passed':future_gate_passed,'validated_input_count':validated_count,
+            'validated_weight_coverage':round(coverage,4),
+            'minimum_validated_inputs':3,'minimum_weight_coverage':0.70,
+            'rule':'4개 축 중 최소 3개 및 기본가중치 70% 이상이 3개월 자체검증을 통과해야 향후 종합판정을 검증통과로 승격',
         },
-        'inputs': {k: v.get('market_signal') for k, v in cards.items()},
-        'input_details': input_details,
-        'quality_gate': {'passed': quality_passed, 'level': quality_level, 'checks': quality_checks},
-        'investment_conclusion': '검증을 통과한 하위 카드 신호와 최신성·완전성을 함께 반영해 자산군의 상대적 우호도를 판단합니다.',
+        'score_methodology':{
+            'version':'card11-2.0.0','scale':[-100,100],
+            'principle':'현재와 향후를 동일한 연속형 상태함수·동일 기본가중치·동일 분모로 계산',
+            'failed_forecast_policy':'3개월 검증 미통과 축은 향후 상태를 현재 상태 유지로 처리하여 과도한 방향 추정을 방지',
+            'weights':weights,
+            'components':components,
+        },
+        'asset_environment':{
+            'global_equities':'우호' if future_signal=='good' else '불리' if future_signal=='bad' else '중립',
+            'long_treasuries':'우호' if (components.get('card8') or {}).get('future_state',0)>20 else '중립',
+            'gold':'우호' if ((components.get('card8') or {}).get('future_state',0)>20 or (components.get('card10') or {}).get('future_state',0)>20) else '중립',
+            'commodities':'우호' if ((components.get('card10') or {}).get('future_state',0)>20 and (components.get('card9') or {}).get('future_state',0)>0) else '중립',
+            'cash_short_duration':'우호' if future_signal=='bad' else '중립',
+        },
+        'inputs':{k:v.get('market_signal') for k,v in cards.items()},
+        'input_details':input_details,
+        'quality_gate':{'passed':quality_passed,'level':quality_level,'checks':quality_checks},
+        'investment_conclusion':'현재와 3개월 향후를 같은 연속형 상태척도로 비교하며, 검증 미통과 축은 현재상태 유지로 보수 처리합니다. 실제 발표자료 기반 OOS 검증은 별도 레지스트리 게이트를 추가로 통과해야 합니다.',
     }
 
 
