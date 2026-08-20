@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import bisect
+import calendar
 import csv
 import io
 import json
@@ -396,7 +398,119 @@ def _liquidity_grade(score: float) -> str:
     return "매우 불리"
 
 
-def _forward_liquidity_outlook(current: float, forecast: float, context: dict[str, Any]) -> dict[str, Any]:
+
+def _forward_liquidity_reconstructed_validation(components: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+    """Past-only 3M validation for the forward-liquidity score.
+
+    The production point score keeps the existing 60/25/15 definition.  This
+    audit reconstructs historical signals using only information available at
+    each origin: US/EA/JP M2 YoY histories, the fixed DXY mean-reversion
+    candidate, and the fixed 3M real-yield mean-reversion candidate.  China is
+    excluded from the historical audit until its official history is long
+    enough, so the result is explicitly a 70%-M2-coverage validation bridge.
+    """
+    region_weights = {"US": 4.0/7.0, "EA": 2.0/7.0, "JP": 1.0/7.0}
+    region_hist: dict[str, list[dict[str, Any]]] = {}
+    region_maps: dict[str, dict[str, float]] = {}
+    for code in region_weights:
+        rows = [x for x in ((components.get(code) or {}).get("yoy_history") or []) if _month_key(x.get("date")) and _num(x.get("value")) is not None]
+        if len(rows) < 30:
+            return {"available": False, "status": "INSUFFICIENT_M2_HISTORY", "region": code}
+        region_hist[code] = rows
+        region_maps[code] = {_month_key(x.get("date")): float(x["value"]) for x in rows}
+
+    usctx = context.get("us_engine") or {}
+    dxy_rows = [(str(x.get("date")), float(x.get("value"))) for x in ((usctx.get("dxy") or {}).get("history") or []) if x.get("date") and _num(x.get("value")) is not None]
+    rr_rows = [(str(x.get("date")), float(x.get("value"))) for x in ((usctx.get("real_rate") or {}).get("history") or []) if x.get("date") and _num(x.get("value")) is not None]
+    dxy_rows.sort(); rr_rows.sort()
+    if len(dxy_rows) < 420 or len(rr_rows) < 300:
+        return {"available": False, "status": "INSUFFICIENT_MARKET_HISTORY", "dxy_points": len(dxy_rows), "real_rate_points": len(rr_rows)}
+
+    dxy_dates=[d for d,_ in dxy_rows]; dxy_vals=[v for _,v in dxy_rows]
+    rr_dates=[d for d,_ in rr_rows]; rr_vals=[v for _,v in rr_rows]
+    months=sorted(set.intersection(*[set(m) for m in region_maps.values()]))
+    if len(months) < 36:
+        return {"available": False, "status": "INSUFFICIENT_COMMON_MONTHS", "common_months": len(months)}
+
+    def month_end(m: str) -> str:
+        y, mo = [int(z) for z in m.split("-")]
+        return f"{y:04d}-{mo:02d}-{calendar.monthrange(y, mo)[1]:02d}"
+
+    def asof_idx(dates: list[str], d: str) -> int:
+        return bisect.bisect_right(dates, d)-1
+
+    def clip1(x: float) -> float:
+        return max(-1.0, min(1.0, x))
+
+    def dxy_fixed_forecast(values: list[float]) -> float:
+        cur=values[-1]; specs=((120,.40,.25),(180,.40,.25),(252,.40,.25),(378,.30,.25)); out=0.0
+        for lookback,strength,weight in specs:
+            window=values[-min(lookback,len(values)):]; anchor=sum(window)/len(window)
+            out += weight*(cur+(anchor-cur)*strength)
+        return out
+
+    def rr_fixed_forecast(values: list[float]) -> float:
+        cur=values[-1]; window=values[-min(105,len(values)):]; anchor=sum(window)/len(window)
+        return cur + max(-.45,min(.45,(anchor-cur)*.35))
+
+    preds: list[float]=[]; actuals: list[float]=[]
+    component_errors={"m2":[],"dxy":[],"real_rate":[]}
+    for i in range(24, len(months)-3):
+        origin=months[i]; target=months[i+3]
+        try:
+            m2_now=sum(region_weights[c]*region_maps[c][origin] for c in region_weights)
+            m2_actual=sum(region_weights[c]*region_maps[c][target] for c in region_weights)
+        except KeyError:
+            continue
+        m2_forecasts={}
+        valid=True
+        for code in region_weights:
+            hist=[x for x in region_hist[code] if (_month_key(x.get("date")) or "") <= origin]
+            audit=_regional_yoy_forecast(hist,3)
+            if _num(audit.get("forecast")) is None:
+                valid=False; break
+            m2_forecasts[code]=float(audit["forecast"])
+        if not valid:
+            continue
+        m2_forecast=sum(region_weights[c]*m2_forecasts[c] for c in region_weights)
+
+        di=asof_idx(dxy_dates,month_end(origin)); dj=asof_idx(dxy_dates,month_end(target))
+        ri=asof_idx(rr_dates,month_end(origin)); rj=asof_idx(rr_dates,month_end(target))
+        if di < 378 or dj <= di or ri < 105 or rj <= ri:
+            continue
+        dcur=dxy_vals[di]; dact=dxy_vals[dj]; rcur=rr_vals[ri]; ract=rr_vals[rj]
+        if dcur <= 0:
+            continue
+        dfc=dxy_fixed_forecast(dxy_vals[:di+1]); rfc=rr_fixed_forecast(rr_vals[:ri+1])
+        pred_m2=clip1((m2_forecast-m2_now)/.50); actual_m2=clip1((m2_actual-m2_now)/.50)
+        pred_dxy=-clip1(((dfc/dcur)-1.0)*100.0/3.0); actual_dxy=-clip1(((dact/dcur)-1.0)*100.0/3.0)
+        pred_rr=-clip1((rfc-rcur)/.35); actual_rr=-clip1((ract-rcur)/.35)
+        pred=(.60*pred_m2+.25*pred_dxy+.15*pred_rr)*100.0
+        actual=(.60*actual_m2+.25*actual_dxy+.15*actual_rr)*100.0
+        preds.append(pred); actuals.append(actual)
+        component_errors["m2"].append(pred_m2-actual_m2); component_errors["dxy"].append(pred_dxy-actual_dxy); component_errors["real_rate"].append(pred_rr-actual_rr)
+
+    if len(preds) < 24:
+        return {"available": False, "status": "INSUFFICIENT_RECONSTRUCTED_ORIGINS", "samples": len(preds)}
+    rmse=math.sqrt(sum((p-a)**2 for p,a in zip(preds,actuals))/len(preds))
+    baseline=math.sqrt(sum(a*a for a in actuals)/len(actuals))
+    skill=(1-rmse/baseline)*100.0 if baseline>0 else 0.0
+    cases=[(p,a) for p,a in zip(preds,actuals) if abs(a)>=10.0]
+    da=(sum(1 for p,a in cases if (p>=0)==(a>=0))/len(cases)*100.0) if cases else None
+    passed=bool(len(preds)>=30 and skill>=3.0 and da is not None and da>=55.0)
+    return {
+        "available": True, "status": "VALIDATED" if passed else "REFERENCE_ONLY", "samples": len(preds),
+        "rmse_score": round(rmse,4), "zero_change_baseline_rmse_score": round(baseline,4), "skill_pct": round(skill,4),
+        "direction_accuracy": round(da,4) if da is not None else None, "direction_cases": len(cases),
+        "m2_history_coverage_weight": .70, "m2_regions": list(region_weights),
+        "selection_no_lookahead": True, "production_weights_changed": False,
+        "quality_gate": {"passed": passed, "requirements": {"samples_min":30,"skill_pct_min":3.0,"direction_accuracy_min":55.0,"m2_history_coverage_weight_min":.70}},
+        "target_definition": "realized 3M liquidity environment using same 60% M2 / 25% inverse DXY / 15% inverse real-rate transforms",
+        "note": "Reconstructed past-only validation. M2 history uses the fixed US/EA/JP 70% subset until China official history matures; live point score remains the full production definition.",
+    }
+
+
+def _forward_liquidity_outlook(current: float, forecast: float, context: dict[str, Any], components: dict[str, Any] | None = None) -> dict[str, Any]:
     inputs: list[dict[str, Any]] = []
     m2_change = forecast - current
     m2_signal = max(-1.0, min(1.0, m2_change / 0.50))
@@ -434,12 +548,15 @@ def _forward_liquidity_outlook(current: float, forecast: float, context: dict[st
     active = [x for x in inputs if float(x.get("weight") or 0.0) > 0]
     sw = sum(float(x["weight"]) for x in active) or 1.0
     score = sum(float(x["signal"]) * float(x["weight"]) for x in active) / sw * 100.0
+    reconstructed = _forward_liquidity_reconstructed_validation(components or {}, context) if components else {"available":False,"status":"COMPONENT_HISTORY_UNAVAILABLE"}
     return {
         "score": round(score, 2), "grade": _liquidity_grade(score),
         "direction": "improving" if score >= 10 else "deteriorating" if score <= -10 else "neutral",
         "inputs": inputs, "validated_input_count": len(active),
         "validation_status": "PARTIALLY_VALIDATED_INPUTS",
-        "note": "M2 전망과 분리된 보조 유동성 환경지표입니다. DXY·실질금리는 자체 forecast gate를 통과한 경우에만 합성점수에 들어가며, 실패 시 weight=0입니다. 합성점수 자체의 자산수익률 OOS 검증은 별도 과제입니다.",
+        "reconstructed_oos_validation_3m": reconstructed,
+        "reconstructed_oos_passed": bool((reconstructed.get("quality_gate") or {}).get("passed")),
+        "note": "M2 전망과 분리된 보조 유동성 환경지표입니다. DXY·실질금리는 자체 forecast gate를 통과한 경우에만 합성점수에 들어갑니다. 합성신호는 과거시점 재구성 OOS를 별도로 검증하며, 실제 발행 스냅숏 OOS는 계속 누적합니다.",
     }
 
 # ---------- United States ----------
@@ -1541,7 +1658,7 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
     direction_score = max(-70.0, min(70.0, current * 4.0 + (forecast-current) * 20.0))
     change_pct = ((forecast / current) - 1.0) * 100.0 if abs(current) > 0.25 else (forecast - current) * 10.0
     forward_context = _load_forward_context(session)
-    forward_liquidity = _forward_liquidity_outlook(current, forecast, forward_context)
+    forward_liquidity = _forward_liquidity_outlook(current, forecast, forward_context, components)
 
     latest_dates = [c.get("date") for c in usable.values() if c.get("date")]
     out = {
