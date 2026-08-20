@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "generated_at_utc": "2026-08-20T17:48:02.380792+00:00",
+  "generated_at_utc": "2026-08-20T18:06:30.022564+00:00",
   "engine": "Global macro engine",
   "entries": [
     {
@@ -103,7 +103,7 @@
       },
       "reason": "3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T17:48:02.380792+00:00",
+      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
       "degradation_status": "STABLE",
       "confidence": 67.4
     },
@@ -117,7 +117,7 @@
       "usable": true,
       "reason": "target gate passed",
       "sample_count": 900,
-      "last_validated_at": "2026-08-20T17:48:02.380792+00:00",
+      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
       "degradation_status": "NOT_APPLICABLE",
       "confidence": 75.0
     },
@@ -171,7 +171,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T17:48:02.380792+00:00",
+      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -183,7 +183,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T17:48:02.380792+00:00",
+      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -195,7 +195,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T17:48:02.380792+00:00",
+      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -207,7 +207,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T17:48:02.380792+00:00",
+      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -215,9 +215,9 @@
       "id": "forward_liquidity_3m",
       "label": "Forward liquidity composite 3m",
       "horizon": "3m",
-      "current": 8.39,
+      "current": 8.38,
       "forecast": null,
-      "status": "REFERENCE_ONLY",
+      "status": "RECONSTRUCTED_VALIDATED",
       "usable": false,
       "input_validation": "PARTIALLY_VALIDATED_INPUTS",
       "oos": {
@@ -267,17 +267,46 @@
           }
         }
       },
-      "reason": "awaiting/failed real published-snapshot OOS validation",
-      "sample_count": 0,
+      "reconstructed_oos": {
+        "available": true,
+        "status": "VALIDATED",
+        "samples": 38,
+        "rmse_score": 41.3074,
+        "zero_change_baseline_rmse_score": 55.5802,
+        "skill_pct": 25.6797,
+        "direction_accuracy": 74.2857,
+        "direction_cases": 35,
+        "m2_history_coverage_weight": 0.7,
+        "m2_regions": [
+          "US",
+          "EA",
+          "JP"
+        ],
+        "selection_no_lookahead": true,
+        "production_weights_changed": false,
+        "quality_gate": {
+          "passed": true,
+          "requirements": {
+            "samples_min": 30,
+            "skill_pct_min": 3.0,
+            "direction_accuracy_min": 55.0,
+            "m2_history_coverage_weight_min": 0.7
+          }
+        },
+        "target_definition": "realized 3M liquidity environment using same 60% M2 / 25% inverse DXY / 15% inverse real-rate transforms",
+        "note": "Reconstructed past-only validation. M2 history uses the fixed US/EA/JP 70% subset until China official history matures; live point score remains the full production definition."
+      },
+      "reason": "past-only reconstructed OOS passed; awaiting real published-snapshot promotion",
+      "sample_count": 38,
       "last_validated_at": null,
       "degradation_status": "NOT_APPLICABLE",
-      "confidence": 45.0
+      "confidence": 78.9
     },
     {
       "id": "card11_future_3m",
       "label": "Card11 future composite 3m",
       "horizon": "3m",
-      "current": -28.6,
+      "current": -28.5,
       "forecast": null,
       "status": "REFERENCE_ONLY",
       "usable": false,
@@ -362,8 +391,9 @@
   ],
   "summary": {
     "validated": 6,
-    "reference_only": 7,
+    "reconstructed_validated": 1,
+    "reference_only": 6,
     "degraded": 0
   },
-  "policy": "Only horizon-specific forecasts that pass their own gate are promoted; rolling OOS deterioration automatically downgrades eligible forecast blocks. Composite signals additionally require realized published-snapshot OOS validation."
+  "policy": "Only horizon-specific forecasts that pass their own gate are promoted; rolling OOS deterioration automatically downgrades eligible forecast blocks. Composite signals may show reconstructed validation evidence, but production usability still requires realized published-snapshot OOS validation."
 }
