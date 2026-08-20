@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-20T09:02:02.280318+00:00",
+  "generated_at_utc": "2026-08-20T13:01:26.696661+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -181,7 +181,7 @@
     }
   },
   "forward_liquidity_outlook": {
-    "score": 7.71,
+    "score": 7.66,
     "grade": "중립",
     "direction": "neutral",
     "inputs": [
@@ -196,9 +196,9 @@
       },
       {
         "name": "DXY 3개월 예상",
-        "current": 98.722,
-        "forecast": 98.929878,
-        "signal": -0.0702,
+        "current": 98.729,
+        "forecast": 98.943214,
+        "signal": -0.0723,
         "weight": 0.25,
         "meaning": "달러 약세는 글로벌 달러유동성에 상대적으로 우호적",
         "source": "Yahoo Finance DXY delayed market data",
@@ -227,37 +227,37 @@
     "source": "Yahoo Finance DXY delayed market data",
     "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB",
     "observation_date": "2026-08-20",
-    "market_time_utc": "2026-08-20T08:08:57+00:00",
-    "current": 98.722,
-    "forecast_1m": 98.722,
-    "forecast_3m": 98.929878,
-    "forecast_change_3m_pct": 0.210569,
+    "market_time_utc": "2026-08-20T11:41:54+00:00",
+    "current": 98.729,
+    "forecast_1m": 98.729,
+    "forecast_3m": 98.943214,
+    "forecast_change_3m_pct": 0.216972,
     "forecast_range_80": [
-      95.145683,
-      102.714072
+      95.155403,
+      102.731025
     ],
     "direction_3m": "up",
     "confidence": 72,
     "selected_model_1m": "price_ensemble",
     "selected_model_3m": "price_mean_reversion",
     "backtest_1m": {
-      "rmse_pct": 1.7816530814086464,
-      "baseline_rmse_pct": 1.7816530814086464,
+      "rmse_pct": 1.7775682468225045,
+      "baseline_rmse_pct": 1.7775682468225045,
       "skill_pct": 0.0,
       "backtests": 760,
-      "direction_accuracy": 47.88937409024746,
-      "direction_cases": 687,
+      "direction_accuracy": 47.94721407624634,
+      "direction_cases": 682,
       "fallback_used": true
     },
     "backtest_3m": {
       "available": true,
-      "forecast_return_pct": 0.21056891909330133,
-      "rmse_pct": 2.984650422843329,
-      "baseline_rmse_pct": 3.262354350458729,
-      "skill_pct": 8.512377803973104,
-      "raw_skill_pct": 8.512377803973104,
-      "direction_accuracy": 73.65356622998544,
-      "direction_cases": 687,
+      "forecast_return_pct": 0.2169716779709674,
+      "rmse_pct": 2.987100061360733,
+      "baseline_rmse_pct": 3.2643972725092603,
+      "skill_pct": 8.494591436028742,
+      "raw_skill_pct": 8.494591436028742,
+      "direction_accuracy": 73.54651162790698,
+      "direction_cases": 688,
       "backtests": 760,
       "fallback_used": false,
       "quality_gate": {
@@ -273,63 +273,63 @@
           "lookback_days": 120.0,
           "strength": 0.4,
           "weight": 0.25,
-          "anchor": 99.58060029246012,
-          "forecast": 99.06544011698405
+          "anchor": 99.65582532806395,
+          "forecast": 99.09973013122558
         },
         {
           "lookback_days": 180.0,
           "strength": 0.4,
           "weight": 0.25,
-          "anchor": 99.1077890177409,
-          "forecast": 98.87631560709636
+          "anchor": 99.12810569288466,
+          "forecast": 98.88864227715386
         },
         {
           "lookback_days": 252.0,
           "strength": 0.4,
           "weight": 0.25,
-          "anchor": 98.95977005077545,
-          "forecast": 98.81710802031017
+          "anchor": 98.99086929466611,
+          "forecast": 98.83374771786644
         },
         {
           "lookback_days": 378.0,
           "strength": 0.3,
           "weight": 0.25,
-          "anchor": 99.51749216279529,
-          "forecast": 98.96064764883859
+          "anchor": 99.46811915176633,
+          "forecast": 98.9507357455299
         }
       ],
       "model": "fixed multi-window mean reversion with persistence benchmark"
     },
     "price_model_audit": {
       "1m": {
-        "rmse_pct": 1.7816530814086464,
-        "baseline_rmse_pct": 1.7816530814086464,
+        "rmse_pct": 1.7775682468225045,
+        "baseline_rmse_pct": 1.7775682468225045,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 47.88937409024746,
-        "direction_cases": 687,
+        "direction_accuracy": 47.94721407624634,
+        "direction_cases": 682,
         "fallback_used": true
       },
       "3m": {
-        "rmse_pct": 3.262354350458729,
-        "baseline_rmse_pct": 3.262354350458729,
+        "rmse_pct": 3.2643972725092603,
+        "baseline_rmse_pct": 3.2643972725092603,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 36.098981077147016,
-        "direction_cases": 687,
+        "direction_accuracy": 36.337209302325576,
+        "direction_cases": 688,
         "fallback_used": true
       }
     },
     "mean_reversion_model_audit": {
       "1m": {
         "available": true,
-        "forecast_return_pct": 0.07018963969775971,
-        "rmse_pct": 1.7488893180865528,
-        "baseline_rmse_pct": 1.7816530814086464,
-        "skill_pct": 1.8389530298563717,
-        "raw_skill_pct": 1.8389530298563717,
-        "direction_accuracy": 59.388646288209614,
-        "direction_cases": 687,
+        "forecast_return_pct": 0.07232389265698913,
+        "rmse_pct": 1.7463503937818492,
+        "baseline_rmse_pct": 1.7775682468225045,
+        "skill_pct": 1.7562112226328752,
+        "raw_skill_pct": 1.7562112226328752,
+        "direction_accuracy": 59.384164222873906,
+        "direction_cases": 682,
         "backtests": 760,
         "fallback_used": true,
         "quality_gate": {
@@ -345,42 +345,42 @@
             "lookback_days": 120.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.58060029246012,
-            "forecast": 98.83648003899468
+            "anchor": 99.65582532806395,
+            "forecast": 98.85257671040853
           },
           {
             "lookback_days": 180.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.1077890177409,
-            "forecast": 98.77343853569879
+            "anchor": 99.12810569288466,
+            "forecast": 98.78221409238462
           },
           {
             "lookback_days": 252.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 98.95977005077545,
-            "forecast": 98.75370267343672
+            "anchor": 98.99086929466611,
+            "forecast": 98.76391590595549
           },
           {
             "lookback_days": 378.0,
             "strength": 0.3,
             "weight": 0.25,
-            "anchor": 99.51749216279529,
-            "forecast": 98.80154921627953
+            "anchor": 99.46811915176633,
+            "forecast": 98.80291191517664
           }
         ],
         "model": "fixed multi-window mean reversion with persistence benchmark"
       },
       "3m": {
         "available": true,
-        "forecast_return_pct": 0.21056891909330133,
-        "rmse_pct": 2.984650422843329,
-        "baseline_rmse_pct": 3.262354350458729,
-        "skill_pct": 8.512377803973104,
-        "raw_skill_pct": 8.512377803973104,
-        "direction_accuracy": 73.65356622998544,
-        "direction_cases": 687,
+        "forecast_return_pct": 0.2169716779709674,
+        "rmse_pct": 2.987100061360733,
+        "baseline_rmse_pct": 3.2643972725092603,
+        "skill_pct": 8.494591436028742,
+        "raw_skill_pct": 8.494591436028742,
+        "direction_accuracy": 73.54651162790698,
+        "direction_cases": 688,
         "backtests": 760,
         "fallback_used": false,
         "quality_gate": {
@@ -396,29 +396,29 @@
             "lookback_days": 120.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.58060029246012,
-            "forecast": 99.06544011698405
+            "anchor": 99.65582532806395,
+            "forecast": 99.09973013122558
           },
           {
             "lookback_days": 180.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.1077890177409,
-            "forecast": 98.87631560709636
+            "anchor": 99.12810569288466,
+            "forecast": 98.88864227715386
           },
           {
             "lookback_days": 252.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 98.95977005077545,
-            "forecast": 98.81710802031017
+            "anchor": 98.99086929466611,
+            "forecast": 98.83374771786644
           },
           {
             "lookback_days": 378.0,
             "strength": 0.3,
             "weight": 0.25,
-            "anchor": 99.51749216279529,
-            "forecast": 98.96064764883859
+            "anchor": 99.46811915176633,
+            "forecast": 98.9507357455299
           }
         ],
         "model": "fixed multi-window mean reversion with persistence benchmark"
@@ -1473,9 +1473,9 @@
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-20T08:19:02.226074+00:00",
+      "upstream_generated_at_utc": "2026-08-20T11:52:00.193073+00:00",
       "age_days": 80,
-      "fetch_ms": 0
+      "fetch_ms": 1
     },
     "EA": {
       "region": "EA",
@@ -1897,7 +1897,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 80,
-      "fetch_ms": 1104
+      "fetch_ms": 722
     },
     "JP": {
       "date": "2026-07-01",
@@ -3188,7 +3188,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 50,
-      "fetch_ms": 774
+      "fetch_ms": 883
     },
     "CN": {
       "region": "CN",
@@ -3294,7 +3294,7 @@
       },
       "status": "LIVE",
       "age_days": 50,
-      "fetch_ms": 3545
+      "fetch_ms": 2944
     }
   },
   "statuses": {
@@ -3304,7 +3304,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 5426,
+  "runtime_ms": 4553,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -3315,7 +3315,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-20T09:01:57.953076+00:00",
+      "last_success_utc": "2026-08-20T13:01:22.861266+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3329,7 +3329,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-20T09:01:58.477596+00:00",
+      "last_success_utc": "2026-08-20T13:01:23.444835+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -3343,7 +3343,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-20T09:02:02.106421+00:00",
+      "last_success_utc": "2026-08-20T13:01:26.478235+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
