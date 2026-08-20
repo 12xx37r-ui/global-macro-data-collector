@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-20T13:00:58.314024+00:00",
+  "generated_at_utc": "2026-08-20T17:02:37.248924+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -100,12 +100,12 @@
       "date": "2026-08-14"
     },
     "BAMLH0A0HYM2": {
-      "value": 2.75,
-      "date": "2026-08-18"
+      "value": 2.73,
+      "date": "2026-08-19"
     },
     "VIXCLS": {
-      "value": 15.84,
-      "date": "2026-08-18"
+      "value": 14.89,
+      "date": "2026-08-19"
     },
     "WALCL": {
       "value": 6759955.0,
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 103.0390625,
+        "value": 103.03125,
         "date": "2026-08-20",
-        "return21d_pct": 0.24702618477558946,
-        "return63d_pct": -0.22694606248581106,
-        "realized_vol": 0.07894547594510325,
-        "score": 0.06559953798911143
+        "return21d_pct": 0.23942537909018569,
+        "return63d_pct": -0.23451093123534328,
+        "realized_vol": 0.07895745831499833,
+        "score": 0.059462618752012544
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.3671875,
+        "value": 106.328125,
         "date": "2026-08-20",
-        "return21d_pct": 0.21345502723391085,
-        "return63d_pct": -0.5696341196231636,
-        "realized_vol": 0.17508362738581718,
-        "score": -0.03974832919310304
+        "return21d_pct": 0.17665243633151473,
+        "return63d_pct": -0.6061491272913222,
+        "realized_vol": 0.17541186364990005,
+        "score": -0.06377004409647909
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.53125,
+        "value": 108.46875,
         "date": "2026-08-20",
-        "return21d_pct": 0.1008790892059297,
-        "return63d_pct": -0.7997714938589029,
-        "realized_vol": 0.26129291928681075,
-        "score": -0.12015873496013231
+        "return21d_pct": 0.04323389537397304,
+        "return63d_pct": -0.8568980291345341,
+        "realized_vol": 0.26216279370650747,
+        "score": -0.15214892023740467
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 109.3125,
+        "value": 109.34375,
         "date": "2026-08-20",
-        "return21d_pct": -0.6532235160465749,
-        "return63d_pct": -1.4092446448703444,
-        "realized_vol": 0.49672555657979867,
-        "score": -0.3685806401964836
+        "return21d_pct": -0.6248224936097668,
+        "return63d_pct": -1.3810597519729462,
+        "realized_vol": 0.4962072078821662,
+        "score": -0.35742899827958385
       }
     },
-    "composite_score": -0.11572204159015188,
+    "composite_score": -0.12847133596536375,
     "yield_direction": "flat",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-20T11:52:00.193073+00:00",
+    "generated_at_utc": "2026-08-20T16:03:03.001036+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1314,37 +1314,37 @@
       "source": "Yahoo Finance DXY delayed market data",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB",
       "observation_date": "2026-08-20",
-      "market_time_utc": "2026-08-20T11:41:54+00:00",
-      "current": 98.729,
-      "forecast_1m": 98.729,
-      "forecast_3m": 98.943214,
-      "forecast_change_3m_pct": 0.216972,
+      "market_time_utc": "2026-08-20T15:52:57+00:00",
+      "current": 98.862,
+      "forecast_1m": 98.862,
+      "forecast_3m": 99.017656,
+      "forecast_change_3m_pct": 0.157447,
       "forecast_range_80": [
-        95.155403,
-        102.731025
+        95.230134,
+        102.805178
       ],
       "direction_3m": "up",
       "confidence": 72,
       "selected_model_1m": "price_ensemble",
       "selected_model_3m": "price_mean_reversion",
       "backtest_1m": {
-        "rmse_pct": 1.7775682468225045,
-        "baseline_rmse_pct": 1.7775682468225045,
+        "rmse_pct": 1.7814415275594473,
+        "baseline_rmse_pct": 1.7814415275594473,
         "skill_pct": 0.0,
         "backtests": 760,
-        "direction_accuracy": 47.94721407624634,
-        "direction_cases": 682,
+        "direction_accuracy": 47.88937409024746,
+        "direction_cases": 687,
         "fallback_used": true
       },
       "backtest_3m": {
         "available": true,
-        "forecast_return_pct": 0.2169716779709674,
-        "rmse_pct": 2.987100061360733,
-        "baseline_rmse_pct": 3.2643972725092603,
-        "skill_pct": 8.494591436028742,
-        "raw_skill_pct": 8.494591436028742,
-        "direction_accuracy": 73.54651162790698,
-        "direction_cases": 688,
+        "forecast_return_pct": 0.15744737723804025,
+        "rmse_pct": 2.9846266889075594,
+        "baseline_rmse_pct": 3.262326559202338,
+        "skill_pct": 8.51232595067608,
+        "raw_skill_pct": 8.51232595067608,
+        "direction_accuracy": 73.65356622998544,
+        "direction_cases": 687,
         "backtests": 760,
         "fallback_used": false,
         "quality_gate": {
@@ -1360,63 +1360,63 @@
             "lookback_days": 120.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.65582532806395,
-            "forecast": 99.09973013122558
+            "anchor": 99.58176695912678,
+            "forecast": 99.1499067836507
           },
           {
             "lookback_days": 180.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.12810569288466,
-            "forecast": 98.88864227715386
+            "anchor": 99.10856679551867,
+            "forecast": 98.96062671820746
           },
           {
             "lookback_days": 252.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 98.99086929466611,
-            "forecast": 98.83374771786644
+            "anchor": 98.960325606331,
+            "forecast": 98.9013302425324
           },
           {
             "lookback_days": 378.0,
             "strength": 0.3,
             "weight": 0.25,
-            "anchor": 99.46811915176633,
-            "forecast": 98.9507357455299
+            "anchor": 99.51786253316567,
+            "forecast": 99.0587587599497
           }
         ],
         "model": "fixed multi-window mean reversion with persistence benchmark"
       },
       "price_model_audit": {
         "1m": {
-          "rmse_pct": 1.7775682468225045,
-          "baseline_rmse_pct": 1.7775682468225045,
+          "rmse_pct": 1.7814415275594473,
+          "baseline_rmse_pct": 1.7814415275594473,
           "skill_pct": 0.0,
           "backtests": 760,
-          "direction_accuracy": 47.94721407624634,
-          "direction_cases": 682,
+          "direction_accuracy": 47.88937409024746,
+          "direction_cases": 687,
           "fallback_used": true
         },
         "3m": {
-          "rmse_pct": 3.2643972725092603,
-          "baseline_rmse_pct": 3.2643972725092603,
+          "rmse_pct": 3.262326559202338,
+          "baseline_rmse_pct": 3.262326559202338,
           "skill_pct": 0.0,
           "backtests": 760,
-          "direction_accuracy": 36.337209302325576,
-          "direction_cases": 688,
+          "direction_accuracy": 36.098981077147016,
+          "direction_cases": 687,
           "fallback_used": true
         }
       },
       "mean_reversion_model_audit": {
         "1m": {
           "available": true,
-          "forecast_return_pct": 0.07232389265698913,
-          "rmse_pct": 1.7463503937818492,
-          "baseline_rmse_pct": 1.7775682468225045,
-          "skill_pct": 1.7562112226328752,
-          "raw_skill_pct": 1.7562112226328752,
-          "direction_accuracy": 59.384164222873906,
-          "direction_cases": 682,
+          "forecast_return_pct": 0.05248245907933935,
+          "rmse_pct": 1.7486958389999172,
+          "baseline_rmse_pct": 1.7814415275594473,
+          "skill_pct": 1.8381567990273129,
+          "raw_skill_pct": 1.8381567990273129,
+          "direction_accuracy": 59.388646288209614,
+          "direction_cases": 687,
           "backtests": 760,
           "fallback_used": true,
           "quality_gate": {
@@ -1432,42 +1432,42 @@
               "lookback_days": 120.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.65582532806395,
-              "forecast": 98.85257671040853
+              "anchor": 99.58176695912678,
+              "forecast": 98.95796892788357
             },
             {
               "lookback_days": 180.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.12810569288466,
-              "forecast": 98.78221409238462
+              "anchor": 99.10856679551867,
+              "forecast": 98.89487557273581
             },
             {
               "lookback_days": 252.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 98.99086929466611,
-              "forecast": 98.76391590595549
+              "anchor": 98.960325606331,
+              "forecast": 98.87511008084412
             },
             {
               "lookback_days": 378.0,
               "strength": 0.3,
               "weight": 0.25,
-              "anchor": 99.46811915176633,
-              "forecast": 98.80291191517664
+              "anchor": 99.51786253316567,
+              "forecast": 98.92758625331656
             }
           ],
           "model": "fixed multi-window mean reversion with persistence benchmark"
         },
         "3m": {
           "available": true,
-          "forecast_return_pct": 0.2169716779709674,
-          "rmse_pct": 2.987100061360733,
-          "baseline_rmse_pct": 3.2643972725092603,
-          "skill_pct": 8.494591436028742,
-          "raw_skill_pct": 8.494591436028742,
-          "direction_accuracy": 73.54651162790698,
-          "direction_cases": 688,
+          "forecast_return_pct": 0.15744737723804025,
+          "rmse_pct": 2.9846266889075594,
+          "baseline_rmse_pct": 3.262326559202338,
+          "skill_pct": 8.51232595067608,
+          "raw_skill_pct": 8.51232595067608,
+          "direction_accuracy": 73.65356622998544,
+          "direction_cases": 687,
           "backtests": 760,
           "fallback_used": false,
           "quality_gate": {
@@ -1483,29 +1483,29 @@
               "lookback_days": 120.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.65582532806395,
-              "forecast": 99.09973013122558
+              "anchor": 99.58176695912678,
+              "forecast": 99.1499067836507
             },
             {
               "lookback_days": 180.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.12810569288466,
-              "forecast": 98.88864227715386
+              "anchor": 99.10856679551867,
+              "forecast": 98.96062671820746
             },
             {
               "lookback_days": 252.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 98.99086929466611,
-              "forecast": 98.83374771786644
+              "anchor": 98.960325606331,
+              "forecast": 98.9013302425324
             },
             {
               "lookback_days": 378.0,
               "strength": 0.3,
               "weight": 0.25,
-              "anchor": 99.46811915176633,
-              "forecast": 98.9507357455299
+              "anchor": 99.51786253316567,
+              "forecast": 99.0587587599497
             }
           ],
           "model": "fixed multi-window mean reversion with persistence benchmark"
@@ -1749,7 +1749,7 @@
           "available": true,
           "variant": "rates_inflation",
           "forecast": 2.264156052920118,
-          "forecast_change_pctp": -0.14584394707988227,
+          "forecast_change_pctp": -0.1458439470798823,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -1783,7 +1783,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.264156052920118,
-              "forecast_change_pctp": -0.14584394707988227,
+              "forecast_change_pctp": -0.1458439470798823,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1817,7 +1817,7 @@
               "available": true,
               "variant": "financial_conditions",
               "forecast": 2.4185079087907044,
-              "forecast_change_pctp": 0.008507908790704441,
+              "forecast_change_pctp": 0.00850790879070444,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1849,7 +1849,7 @@
               "available": true,
               "variant": "combined",
               "forecast": 2.271340408130298,
-              "forecast_change_pctp": -0.1386595918697021,
+              "forecast_change_pctp": -0.13865959186970206,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1888,8 +1888,8 @@
         "3m": {
           "available": true,
           "variant": "combined",
-          "forecast": 2.057266917523683,
-          "forecast_change_pctp": -0.35273308247631685,
+          "forecast": 2.0572669175236835,
+          "forecast_change_pctp": -0.3527330824763168,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -1960,7 +1960,7 @@
               "available": true,
               "variant": "financial_conditions",
               "forecast": 2.3274413554027604,
-              "forecast_change_pctp": -0.08255864459723991,
+              "forecast_change_pctp": -0.08255864459723992,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -1991,8 +1991,8 @@
             "combined": {
               "available": true,
               "variant": "combined",
-              "forecast": 2.057266917523683,
-              "forecast_change_pctp": -0.35273308247631685,
+              "forecast": 2.0572669175236835,
+              "forecast_change_pctp": -0.3527330824763168,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -2082,7 +2082,7 @@
             4.04,
             4.340000000000001
           ],
-          "structural_overlay": 0.00310274196425762,
+          "structural_overlay": 0.0031077419642576197,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -2149,7 +2149,7 @@
             4.56,
             4.86
           ],
-          "structural_overlay": 0.0024471422287829095,
+          "structural_overlay": 0.0024511422287829096,
           "current": 4.71,
           "direction": "flat",
           "investment_environment": {
@@ -2217,7 +2217,7 @@
             2.29,
             2.5300000000000002
           ],
-          "structural_overlay": 0.0012088333333333341,
+          "structural_overlay": 0.001216833333333334,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -2356,7 +2356,7 @@
             3.8450000000000006,
             4.495000000000001
           ],
-          "structural_overlay": 0.01241096785703048,
+          "structural_overlay": 0.012430967857030479,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -2421,7 +2421,7 @@
             4.38,
             5.000000000000001
           ],
-          "structural_overlay": 0.009788568915131638,
+          "structural_overlay": 0.009804568915131638,
           "current": 4.71,
           "direction": "flat",
           "investment_environment": {
@@ -2485,7 +2485,7 @@
             2.1318749206349206,
             2.6481250793650797
           ],
-          "structural_overlay": 0.0048353333333333364,
+          "structural_overlay": 0.004867333333333336,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -2620,7 +2620,7 @@
             3.580000000000001,
             4.680000000000001
           ],
-          "structural_overlay": 0.04083290357109153,
+          "structural_overlay": 0.04089290357109153,
           "current": 4.19,
           "direction": "down",
           "investment_environment": {
@@ -2680,7 +2680,7 @@
             4.136598095238095,
             5.163401904761906
           ],
-          "structural_overlay": 0.03076570674539495,
+          "structural_overlay": 0.03081370674539495,
           "current": 4.71,
           "direction": "down",
           "investment_environment": {
@@ -2742,7 +2742,7 @@
             1.938142857142857,
             2.761857142857143
           ],
-          "structural_overlay": 0.015706000000000036,
+          "structural_overlay": 0.015802000000000038,
           "current": 2.41,
           "direction": "down",
           "investment_environment": {
@@ -2875,7 +2875,7 @@
             3.4979999999999998,
             4.8820000000000014
           ],
-          "structural_overlay": 0.1824658071421828,
+          "structural_overlay": 0.18618580714218305,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -2939,7 +2939,7 @@
             4.135828571428571,
             5.09582857142857
           ],
-          "structural_overlay": 0.10073141349078982,
+          "structural_overlay": 0.10222741349078991,
           "current": 4.71,
           "direction": "down",
           "investment_environment": {
@@ -3002,7 +3002,7 @@
             1.9900000000000002,
             2.83
           ],
-          "structural_overlay": 0.065012,
+          "structural_overlay": 0.06640400000000009,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -3065,7 +3065,7 @@
             0.020000000000000073,
             0.8999999999999999
           ],
-          "structural_overlay": -0.07971819285781716,
+          "structural_overlay": -0.0819181928578173,
           "current": 0.46,
           "direction": "flat",
           "investment_environment": {
@@ -3135,7 +3135,7 @@
             2.8839999999999995,
             5.496000000000001
           ],
-          "structural_overlay": 0.29046580714218273,
+          "structural_overlay": 0.2977858071421826,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -3199,7 +3199,7 @@
             3.8800000000000003,
             5.54
           ],
-          "structural_overlay": 0.1427314134907898,
+          "structural_overlay": 0.14562741349078973,
           "current": 4.71,
           "direction": "flat",
           "investment_environment": {
@@ -3264,7 +3264,7 @@
             1.4700000000000002,
             3.35
           ],
-          "structural_overlay": 0.10101199999999999,
+          "structural_overlay": 0.10360399999999993,
           "current": 2.41,
           "direction": "flat",
           "investment_environment": {
@@ -3327,7 +3327,7 @@
             -0.32,
             1.24
           ],
-          "structural_overlay": -0.14571819285781712,
+          "structural_overlay": -0.15011819285781702,
           "current": 0.46,
           "direction": "flat",
           "investment_environment": {
@@ -3670,8 +3670,8 @@
       "ok": true,
       "label": "미국 하이일드 OAS",
       "latest": {
-        "value": 2.75,
-        "date": "2026-08-18"
+        "value": 2.73,
+        "date": "2026-08-19"
       },
       "url": "https://fred.stlouisfed.org/series/BAMLH0A0HYM2"
     },
@@ -3679,8 +3679,8 @@
       "ok": true,
       "label": "VIX",
       "latest": {
-        "value": 15.84,
-        "date": "2026-08-18"
+        "value": 14.89,
+        "date": "2026-08-19"
       },
       "url": "https://fred.stlouisfed.org/series/VIXCLS"
     },
