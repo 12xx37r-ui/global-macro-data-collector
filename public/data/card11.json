@@ -3,20 +3,20 @@
   "engine_version": "card11-2.2.0-component-gated-card8-forward",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-20T18:15:52.941456+00:00",
-  "score": -21.9,
+  "generated_at_utc": "2026-08-20T21:06:03.042721+00:00",
+  "score": -20.3,
   "market_signal": "bad",
   "current_regime": "수축·위험회피",
   "future_regime": "불리한 투자환경",
-  "future_score": -27.3,
+  "future_score": -26.5,
   "future_market_signal": "bad",
   "future_validation_status": "VALIDATED",
   "future_inputs": {
     "card8": {
       "available": true,
-      "signal": -0.562,
-      "current_state": -60.6,
-      "future_state": -56.2,
+      "signal": -0.5329999999999999,
+      "current_state": -54.9,
+      "future_state": -53.3,
       "validation": "3m gate passed"
     },
     "card9": {
@@ -35,9 +35,9 @@
     },
     "card12": {
       "available": true,
-      "signal": 0.135,
-      "current_state": 25.0,
-      "future_state": 13.5,
+      "signal": 0.133,
+      "current_state": 24.4,
+      "future_state": 13.3,
       "validation": "3m gate passed"
     }
   },
@@ -91,8 +91,8 @@
     },
     "components": {
       "card8": {
-        "current_state": -60.6,
-        "future_state": -56.2,
+        "current_state": -54.9,
+        "future_state": -53.3,
         "base_weight": 1.2,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -112,8 +112,8 @@
         "forecast_treatment": "validated_3m_forecast"
       },
       "card12": {
-        "current_state": 25.0,
-        "future_state": 13.5,
+        "current_state": 24.4,
+        "future_state": 13.3,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -155,8 +155,8 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": -60.6,
-        "future_state": -56.2,
+        "current_state": -54.9,
+        "future_state": -53.3,
         "base_weight": 1.2,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -253,8 +253,8 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": 25.0,
-        "future_state": 13.5,
+        "current_state": 24.4,
+        "future_state": 13.3,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
