@@ -1375,6 +1375,60 @@ def _global_m2_composite_validation(components: dict[str, Any], horizon: int = 3
     return {"available":True,"status":"VALIDATED" if passed else "REFERENCE_ONLY","samples":len(model_err),"rmse":r,"baseline_rmse":br,"skill_pct":skill,"direction_accuracy":da,"direction_cases":cases,"quality_gate":{"passed":passed,"requirements":{"samples_min":18,"skill_pct_min":3.0,"direction_accuracy_min":55.0}},"benchmark":"global-composite persistence","common_months":len(common)}
 
 
+
+def _global_m2_validated_subcomposite(components: dict[str, Any], horizon: int = 3) -> dict[str, Any]:
+    """Validate the largest fixed-weight regional subset with adequate history.
+
+    This does *not* replace the production US/CN/EA/JP 40/30/20/10 composite.
+    It provides an honest OOS bridge while China's official-history archive is
+    still too short for a four-region composite backtest. Original strategic
+    weights are retained and renormalized only inside this explicitly labelled
+    validation subset.
+    """
+    histories: dict[str, dict[str, float]] = {}
+    eligible: list[str] = []
+    for code in WEIGHTS:
+        hist = (components.get(code) or {}).get("yoy_history") or []
+        mapped = {str(r.get("date"))[:7]: float(r.get("value")) for r in hist if r.get("date") and _num(r.get("value")) is not None}
+        histories[code] = mapped
+        if len(mapped) >= 36:
+            eligible.append(code)
+    coverage = sum(WEIGHTS[c] for c in eligible)
+    if coverage < 0.60 or len(eligible) < 2:
+        return {"available": False, "status": "INSUFFICIENT_HISTORY", "samples": 0, "coverage_weight": round(coverage, 4), "regions": eligible, "benchmark": "validated-subcomposite persistence"}
+    common = sorted(set.intersection(*(set(histories[c]) for c in eligible)))
+    if len(common) < 30 + horizon:
+        return {"available": False, "status": "INSUFFICIENT_HISTORY", "samples": 0, "coverage_weight": round(coverage, 4), "regions": eligible, "common_months": len(common), "benchmark": "validated-subcomposite persistence"}
+    w = {c: WEIGHTS[c] / coverage for c in eligible}
+    series = [sum(w[c] * histories[c][m] for c in eligible) for m in common]
+    model_err: list[float] = []
+    base_err: list[float] = []
+    hits = cases = 0
+    for i in range(24, len(series) - horizon):
+        hist = [{"date": common[j] + "-01", "value": series[j]} for j in range(i + 1)]
+        audit = _regional_yoy_forecast(hist, horizon)
+        pred = float(audit.get("forecast") if _num(audit.get("forecast")) is not None else series[i])
+        actual, base = series[i + horizon], series[i]
+        model_err.append(pred - actual); base_err.append(base - actual)
+        if abs(actual - base) >= 0.05:
+            cases += 1; hits += int((pred - base >= 0) == (actual - base >= 0))
+    if not model_err:
+        return {"available": False, "status": "INSUFFICIENT_HISTORY", "samples": 0, "coverage_weight": round(coverage, 4), "regions": eligible}
+    rmse = (sum(e * e for e in model_err) / len(model_err)) ** 0.5
+    baseline = (sum(e * e for e in base_err) / len(base_err)) ** 0.5
+    skill = (1 - rmse / baseline) * 100 if baseline > 0 else None
+    da = hits / cases * 100 if cases else None
+    passed = bool(len(model_err) >= 18 and skill is not None and skill >= 3 and da is not None and da >= 55)
+    return {
+        "available": True, "status": "VALIDATED" if passed else "REFERENCE_ONLY", "samples": len(model_err),
+        "rmse": rmse, "baseline_rmse": baseline, "skill_pct": skill, "direction_accuracy": da, "direction_cases": cases,
+        "coverage_weight": round(coverage, 4), "regions": eligible, "weights_used": {c: round(w[c], 6) for c in eligible},
+        "common_months": len(common), "benchmark": "validated-subcomposite persistence",
+        "quality_gate": {"passed": passed, "requirements": {"samples_min": 18, "skill_pct_min": 3.0, "direction_accuracy_min": 55.0, "coverage_weight_min": 0.60}},
+        "production_definition_changed": False,
+        "note": "Validation-only subset; the live Global M2 point forecast remains the full 40/30/20/10 strategic composite with benchmark-safe regional fallbacks.",
+    }
+
 def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
     started = time.monotonic()
     _REQUEST_MEMO.clear()
@@ -1477,6 +1531,13 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         component_forecasts[k] = {"current_yoy_pct": round(cur,6), "forecast_3m_yoy_pct": round(fc,6), "method": method, "validation": audit, "forecast_confidence": _regional_confidence(k, audit)}
     forecast = sum(norm_weights[k] * float(component_forecasts[k]["forecast_3m_yoy_pct"]) for k in usable) if has_direct_us else legacy_forecast
     composite_validation = _global_m2_composite_validation(components, 3)
+    validated_subcomposite = _global_m2_validated_subcomposite(components, 3)
+    regional_conf = {k: v.get("forecast_confidence") for k, v in component_forecasts.items()}
+    weighted_region_conf = sum(norm_weights[k] * float((regional_conf.get(k) or {}).get("score") or 35) for k in usable)
+    validation_bonus = 0.0
+    if (validated_subcomposite.get("quality_gate") or {}).get("passed"):
+        validation_bonus = min(8.0, 3.0 + max(0.0, float(validated_subcomposite.get("skill_pct") or 0.0)))
+    aggregate_forecast_confidence = round(min(85.0, weighted_region_conf + validation_bonus))
     direction_score = max(-70.0, min(70.0, current * 4.0 + (forecast-current) * 20.0))
     change_pct = ((forecast / current) - 1.0) * 100.0 if abs(current) > 0.25 else (forecast - current) * 10.0
     forward_context = _load_forward_context(session)
@@ -1503,7 +1564,16 @@ def build_global_m2(session: requests.Session | None = None) -> dict[str, Any]:
         "forecast_model_detail": "US uses the Fed-engine history model; CN/EA/JP use benchmark-safe regional YoY forecasts and automatically fall back to persistence when skill is not positive.",
         "forecast_components": component_forecasts,
         "composite_forecast_validation_3m": composite_validation,
-        "forecast_confidence_by_region": {k:v.get("forecast_confidence") for k,v in component_forecasts.items()},
+        "validated_subcomposite_forecast_validation_3m": validated_subcomposite,
+        "forecast_confidence": {
+            "score": aggregate_forecast_confidence,
+            "grade": "HIGH" if aggregate_forecast_confidence >= 75 else ("MEDIUM" if aggregate_forecast_confidence >= 55 else "LOW"),
+            "full_composite_oos_passed": bool((composite_validation.get("quality_gate") or {}).get("passed")),
+            "validated_subcomposite_oos_passed": bool((validated_subcomposite.get("quality_gate") or {}).get("passed")),
+            "validated_coverage_weight": validated_subcomposite.get("coverage_weight"),
+            "score_semantics": "regional benchmark-safe confidence plus capped OOS evidence bonus; not a hit probability",
+        },
+        "forecast_confidence_by_region": regional_conf,
         "forward_liquidity_outlook": forward_liquidity,
         "us_dxy": ((forward_context.get("us_engine") or {}).get("dxy") or {}),
         "us_real_rate": ((forward_context.get("us_engine") or {}).get("real_rate") or {}),
