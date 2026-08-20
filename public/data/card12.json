@@ -5,11 +5,11 @@
   "generated_at_utc": "2026-08-20T01:01:47.608325+00:00",
   "current": {
     "ES=F": {
-      "value": 7741.25,
+      "value": 7740.75,
       "date": "2026-08-20"
     },
     "NQ=F": {
-      "value": 29656.75,
+      "value": 29642.5,
       "date": "2026-08-20"
     },
     "RTY=F": {
@@ -33,19 +33,19 @@
       "date": "2026-08-20"
     },
     "CL=F": {
-      "value": 84.62,
+      "value": 84.41,
       "date": "2026-08-20"
     },
     "GC=F": {
-      "value": 4563.3,
+      "value": 4551.3,
       "date": "2026-08-20"
     },
     "HG=F": {
-      "value": 6.502,
+      "value": 6.484,
       "date": "2026-08-20"
     },
     "DX-Y.NYB": {
-      "value": 98.86,
+      "value": 98.816,
       "date": "2026-08-20"
     },
     "BTC=F": {
@@ -899,25 +899,23 @@
   "market_snapshots": {
     "ES=F": {
       "symbol": "ES=F",
-      "price": 7741.25,
-      "market_time_utc": "2026-08-20T00:51:37+00:00",
+      "price": 7740.75,
+      "market_time_utc": "2026-08-20T03:21:40+00:00",
       "exchange": "CME",
-      "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-20T01:01:42.152067+00:00",
-      "refetch_policy": "network_each_workflow_no_cache"
+      "retrieved_at_utc": "2026-08-20T03:31:46.140738+00:00",
+      "refetch_policy": "fast_market_2h"
     },
     "NQ=F": {
       "symbol": "NQ=F",
-      "price": 29656.75,
-      "market_time_utc": "2026-08-20T00:51:37+00:00",
+      "price": 29642.5,
+      "market_time_utc": "2026-08-20T03:21:38+00:00",
       "exchange": "CME",
-      "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-20T01:01:42.354907+00:00",
-      "refetch_policy": "network_each_workflow_no_cache"
+      "retrieved_at_utc": "2026-08-20T03:31:46.538975+00:00",
+      "refetch_policy": "fast_market_2h"
     },
     "RTY=F": {
       "symbol": "RTY=F",
@@ -976,47 +974,43 @@
     },
     "CL=F": {
       "symbol": "CL=F",
-      "price": 84.62,
-      "market_time_utc": "2026-08-20T00:51:41+00:00",
+      "price": 84.41,
+      "market_time_utc": "2026-08-20T03:21:41+00:00",
       "exchange": "NYM",
-      "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-20T01:01:43.618520+00:00",
-      "refetch_policy": "network_each_workflow_no_cache"
+      "retrieved_at_utc": "2026-08-20T03:31:46.939016+00:00",
+      "refetch_policy": "fast_market_2h"
     },
     "GC=F": {
       "symbol": "GC=F",
-      "price": 4563.3,
-      "market_time_utc": "2026-08-20T00:51:41+00:00",
+      "price": 4551.3,
+      "market_time_utc": "2026-08-20T03:21:34+00:00",
       "exchange": "CMX",
-      "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-20T01:01:43.857273+00:00",
-      "refetch_policy": "network_each_workflow_no_cache"
+      "retrieved_at_utc": "2026-08-20T03:31:47.348503+00:00",
+      "refetch_policy": "fast_market_2h"
     },
     "HG=F": {
       "symbol": "HG=F",
-      "price": 6.502,
-      "market_time_utc": "2026-08-20T00:51:40+00:00",
+      "price": 6.484,
+      "market_time_utc": "2026-08-20T03:21:19+00:00",
       "exchange": "CMX",
-      "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-20T01:01:44.094844+00:00",
-      "refetch_policy": "network_each_workflow_no_cache"
+      "retrieved_at_utc": "2026-08-20T03:31:47.761187+00:00",
+      "refetch_policy": "fast_market_2h"
     },
     "DX-Y.NYB": {
       "symbol": "DX-Y.NYB",
-      "price": 98.86,
-      "market_time_utc": "2026-08-20T00:51:42+00:00",
+      "price": 98.816,
+      "market_time_utc": "2026-08-20T03:21:43+00:00",
       "exchange": "NYB",
-      "exchange_timezone": "America/New_York",
       "market_state": null,
       "source": "Yahoo Finance chart metadata",
-      "retrieved_at_utc": "2026-08-20T01:01:44.402943+00:00",
-      "refetch_policy": "network_each_workflow_no_cache"
+      "retrieved_at_utc": "2026-08-20T03:31:45.268865+00:00",
+      "refetch_policy": "fast_market_2h"
     },
     "BTC=F": {
       "symbol": "BTC=F",
@@ -1041,5 +1035,10 @@
     "무료 지연 선물자료와 달러인덱스 대체신호를 사용하며 거래소 실시간 유료 시세를 대체하지 않습니다.",
     "선물가격은 미래 현물가격의 단순 예측값이 아닙니다.",
     "검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다."
-  ]
+  ],
+  "fast_market_refresh": {
+    "version": "V230",
+    "updated_at_utc": "2026-08-20T03:31:47.761274+00:00",
+    "model_forecasts_recomputed": false
+  }
 }
