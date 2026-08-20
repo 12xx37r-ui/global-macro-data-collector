@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "generated_at_utc": "2026-08-20T18:06:30.022564+00:00",
+  "generated_at_utc": "2026-08-20T18:15:57.590654+00:00",
   "engine": "Global macro engine",
   "entries": [
     {
@@ -71,7 +71,7 @@
       "label": "CARD9 3m",
       "horizon": "3m",
       "current": 43.9925529025267,
-      "forecast": 45.298874455769166,
+      "forecast": 45.41855174911013,
       "status": "REFERENCE_ONLY",
       "usable": false,
       "validation": {
@@ -103,7 +103,7 @@
       },
       "reason": "3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "STABLE",
       "confidence": 67.4
     },
@@ -117,7 +117,7 @@
       "usable": true,
       "reason": "target gate passed",
       "sample_count": 900,
-      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "NOT_APPLICABLE",
       "confidence": 75.0
     },
@@ -140,14 +140,14 @@
       "label": "Card8 DFII10 3m",
       "horizon": "3m",
       "current": 2.41,
-      "forecast": 2.35,
-      "status": "REFERENCE_ONLY",
-      "usable": false,
-      "reason": "지속성 대비 예측력 개선의 통계적 유의성 미확인",
+      "forecast": 2.3207,
+      "status": "VALIDATED",
+      "usable": true,
+      "reason": "target gate passed",
       "sample_count": 900,
-      "last_validated_at": null,
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "NOT_APPLICABLE",
-      "confidence": 40.0
+      "confidence": 75.0
     },
     {
       "id": "card8_T10Y2Y_3m",
@@ -171,7 +171,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -183,7 +183,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -195,7 +195,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -207,7 +207,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-20T18:06:30.022564+00:00",
+      "last_validated_at": "2026-08-20T18:15:57.590654+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -306,28 +306,28 @@
       "id": "card11_future_3m",
       "label": "Card11 future composite 3m",
       "horizon": "3m",
-      "current": -28.5,
+      "current": -27.3,
       "forecast": null,
       "status": "REFERENCE_ONLY",
       "usable": false,
       "input_gate": {
-        "passed": false,
-        "status": "REFERENCE_ONLY",
-        "display_status": "검증 제한",
-        "validated_input_count": 2,
-        "validated_weight_coverage": 0.4286,
+        "passed": true,
+        "status": "VALIDATED",
+        "display_status": "검증 통과",
+        "validated_input_count": 3,
+        "validated_weight_coverage": 0.7143,
         "minimum_validated_inputs": 3,
         "minimum_weight_coverage": 0.7,
         "validated_components": [
+          "card8",
           "card10",
           "card12"
         ],
         "persistence_components": [
-          "card8",
           "card9"
         ],
         "input_validation_checks": {
-          "card8_validation": false,
+          "card8_validation": true,
           "card9_validation": false,
           "card10_validation": true,
           "card12_validation": true
@@ -390,9 +390,9 @@
     }
   ],
   "summary": {
-    "validated": 6,
+    "validated": 7,
     "reconstructed_validated": 1,
-    "reference_only": 6,
+    "reference_only": 5,
     "degraded": 0
   },
   "policy": "Only horizon-specific forecasts that pass their own gate are promoted; rolling OOS deterioration automatically downgrades eligible forecast blocks. Composite signals may show reconstructed validation evidence, but production usability still requires realized published-snapshot OOS validation."

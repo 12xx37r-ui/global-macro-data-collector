@@ -1,16 +1,16 @@
 {
   "schema_version": "1.1",
-  "engine_version": "card9-2.6.0-oecd-cli-direct",
+  "engine_version": "card9-2.7.0-prequential-fixed-ensemble",
   "card": 9,
   "title": "글로벌 고용·소비 경기",
-  "generated_at_utc": "2026-08-20T18:06:12.866125+00:00",
+  "generated_at_utc": "2026-08-20T18:15:38.748066+00:00",
   "current": 43.9925529025267,
   "current_date": "2026-07-01",
-  "forecast_3m": 45.298874455769166,
+  "forecast_3m": 45.41855174911013,
   "forecast_6m": 47.08390518237548,
   "forecast_range80_3m": [
-    40.95055384121168,
-    49.64719507032665
+    41.11512911403316,
+    49.7219743841871
   ],
   "future_direction": "up",
   "market_signal": "good",
@@ -65,37 +65,38 @@
       }
     },
     "3m": {
-      "forecast": 45.298874455769166,
-      "model": "mean_reversion_24m",
+      "forecast": 45.41855174911013,
+      "model": "mean_reversion_blend",
       "samples": 180,
-      "rmse": 7.419918861870962,
+      "rmse": 7.400772511582794,
       "baseline_rmse": 7.836779057906693,
-      "skill_pct": 5.319279680535994,
-      "direction_accuracy": 0.6923076923076923,
+      "skill_pct": 5.5635937047887385,
+      "direction_accuracy": 0.7078651685393258,
       "fallback_used": false,
       "range80": [
-        40.95055384121168,
-        49.64719507032665
+        41.11512911403316,
+        49.7219743841871
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
         "persistence": 12,
-        "mean_reversion_12m": 109,
-        "mean_reversion_24m": 59
+        "mean_reversion_12m": 108,
+        "mean_reversion_24m": 1,
+        "mean_reversion_blend": 59
       },
       "recent_oos": {
         "samples": 24,
-        "rmse": 1.796239553059439,
+        "rmse": 1.77569666062842,
         "baseline_rmse": 1.9825574123095093,
-        "skill_pct": 9.397854412348439
+        "skill_pct": 10.434035876929004
       },
       "degradation_status": "STABLE",
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.5994137739461032,
-          "p_value": 0.10972869376781502,
+          "statistic": 1.617869143784632,
+          "p_value": 0.10569080132210962,
           "significant_5pct": false,
           "significant_10pct": false,
           "hac_lag": 2
@@ -114,9 +115,9 @@
       "forecast": 47.08390518237548,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 6.883341233528837,
+      "rmse": 6.892631468935718,
       "baseline_rmse": 7.987608894925541,
-      "skill_pct": 13.824758772280843,
+      "skill_pct": 13.70845068147305,
       "direction_accuracy": 0.725,
       "fallback_used": false,
       "range80": [
@@ -126,7 +127,8 @@
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
         "persistence": 12,
-        "mean_reversion_12m": 168
+        "mean_reversion_12m": 154,
+        "mean_reversion_blend": 14
       },
       "recent_oos": {
         "samples": 24,
@@ -139,8 +141,8 @@
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.7377104271095214,
-          "p_value": 0.0822618504931274,
+          "statistic": 1.7277004758519363,
+          "p_value": 0.08404193820573047,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 5
@@ -156,37 +158,39 @@
       }
     },
     "12m": {
-      "forecast": 47.47607704450662,
-      "model": "mean_reversion_24m",
+      "forecast": 47.27999111344105,
+      "model": "mean_reversion_blend",
       "samples": 180,
-      "rmse": 6.88188906108655,
+      "rmse": 6.920793414269857,
       "baseline_rmse": 8.121775157964404,
-      "skill_pct": 15.266195785560399,
-      "direction_accuracy": 0.7171717171717171,
+      "skill_pct": 14.787182855177116,
+      "direction_accuracy": 0.6990291262135923,
       "fallback_used": false,
       "range80": [
-        42.78029785498657,
-        52.17185623402666
+        42.77188586953954,
+        51.78809635734256
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
-        "persistence": 33,
-        "mean_reversion_12m": 83,
-        "mean_reversion_24m": 64
+        "persistence": 28,
+        "balanced_trend_reversion": 10,
+        "mean_reversion_12m": 58,
+        "mean_reversion_blend": 30,
+        "mean_reversion_24m": 54
       },
       "recent_oos": {
         "samples": 24,
-        "rmse": 2.35590164578171,
+        "rmse": 2.345725486569574,
         "baseline_rmse": 2.3096064720299343,
-        "skill_pct": -2.004461552754777
+        "skill_pct": -1.5638601197672575
       },
       "degradation_status": "DEGRADED",
       "quality_gate": {
         "passed": false,
         "level": "참고용/관망",
         "dm_test": {
-          "statistic": 1.7772037473089943,
-          "p_value": 0.0755347231364365,
+          "statistic": 1.7744840338739825,
+          "p_value": 0.07598312074063984,
           "significant_5pct": false,
           "significant_10pct": true,
           "hac_lag": 11

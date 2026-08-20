@@ -1,23 +1,23 @@
 {
   "schema_version": "1.2",
-  "engine_version": "card11-2.1.0-same-scale-quality-separated",
+  "engine_version": "card11-2.2.0-component-gated-card8-forward",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-20T18:06:25.610103+00:00",
-  "score": -21.6,
+  "generated_at_utc": "2026-08-20T18:15:52.941456+00:00",
+  "score": -21.9,
   "market_signal": "bad",
   "current_regime": "수축·위험회피",
-  "future_regime": "불리한 투자환경 예상 · 검증 제한",
-  "future_score": -28.5,
+  "future_regime": "불리한 투자환경",
+  "future_score": -27.3,
   "future_market_signal": "bad",
-  "future_validation_status": "REFERENCE_ONLY",
+  "future_validation_status": "VALIDATED",
   "future_inputs": {
     "card8": {
       "available": true,
-      "signal": -0.606,
+      "signal": -0.562,
       "current_state": -60.6,
-      "future_state": -60.6,
-      "validation": "3m gate failed; persistence used"
+      "future_state": -56.2,
+      "validation": "3m gate passed"
     },
     "card9": {
       "available": true,
@@ -36,29 +36,29 @@
     "card12": {
       "available": true,
       "signal": 0.135,
-      "current_state": 26.6,
+      "current_state": 25.0,
       "future_state": 13.5,
       "validation": "3m gate passed"
     }
   },
   "future_quality_gate": {
-    "passed": false,
-    "status": "REFERENCE_ONLY",
-    "display_status": "검증 제한",
-    "validated_input_count": 2,
-    "validated_weight_coverage": 0.4286,
+    "passed": true,
+    "status": "VALIDATED",
+    "display_status": "검증 통과",
+    "validated_input_count": 3,
+    "validated_weight_coverage": 0.7143,
     "minimum_validated_inputs": 3,
     "minimum_weight_coverage": 0.7,
     "validated_components": [
+      "card8",
       "card10",
       "card12"
     ],
     "persistence_components": [
-      "card8",
       "card9"
     ],
     "input_validation_checks": {
-      "card8_validation": false,
+      "card8_validation": true,
       "card9_validation": false,
       "card10_validation": true,
       "card12_validation": true
@@ -92,10 +92,10 @@
     "components": {
       "card8": {
         "current_state": -60.6,
-        "future_state": -60.6,
+        "future_state": -56.2,
         "base_weight": 1.2,
-        "forecast_validation_passed": false,
-        "forecast_treatment": "persistence_on_failed_3m_gate"
+        "forecast_validation_passed": true,
+        "forecast_treatment": "validated_3m_forecast"
       },
       "card9": {
         "current_state": -60.1,
@@ -112,7 +112,7 @@
         "forecast_treatment": "validated_3m_forecast"
       },
       "card12": {
-        "current_state": 26.6,
+        "current_state": 25.0,
         "future_state": 13.5,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
@@ -122,13 +122,13 @@
   },
   "asset_environment": {
     "global_equities": "불리(검증 제한)",
-    "long_treasuries": "중립(검증 제한)",
-    "gold": "중립(검증 제한)",
+    "long_treasuries": "중립",
+    "gold": "중립",
     "commodities": "중립(검증 제한)",
     "cash_short_duration": "우호(검증 제한)"
   },
   "asset_environment_validation": {
-    "status": "REFERENCE_ONLY",
+    "status": "VALIDATED",
     "note": "자산환경 문구는 관련 3개월 입력축이 모두 검증통과한 경우에만 확정형으로 표시하며, 그 외에는 검증 제한을 명시합니다."
   },
   "inputs": {
@@ -142,9 +142,10 @@
       "label": "미국채 금리·실질금리",
       "signal": "neutral",
       "validation": {
-        "passed": false,
+        "passed": true,
         "passed_targets": [
-          "DGS2"
+          "DGS2",
+          "DFII10"
         ],
         "required_targets": [
           "DGS2",
@@ -155,10 +156,10 @@
       },
       "state": {
         "current_state": -60.6,
-        "future_state": -60.6,
+        "future_state": -56.2,
         "base_weight": 1.2,
-        "forecast_validation_passed": false,
-        "forecast_treatment": "persistence_on_failed_3m_gate"
+        "forecast_validation_passed": true,
+        "forecast_treatment": "validated_3m_forecast"
       }
     },
     "card9": {
@@ -171,8 +172,8 @@
           "passed": false,
           "level": "참고용/관망",
           "dm_test": {
-            "statistic": 1.5994137739461032,
-            "p_value": 0.10972869376781502,
+            "statistic": 1.617869143784632,
+            "p_value": 0.10569080132210962,
             "significant_5pct": false,
             "significant_10pct": false,
             "hac_lag": 2
@@ -186,8 +187,8 @@
             "recent_oos_nonnegative_skill": true
           }
         },
-        "skill_pct": 5.319279680535994,
-        "direction_accuracy": 0.6923076923076923,
+        "skill_pct": 5.5635937047887385,
+        "direction_accuracy": 0.7078651685393258,
         "samples": 180
       },
       "state": {
@@ -208,8 +209,8 @@
           "passed": true,
           "level": "독립검증 통과",
           "dm_test": {
-            "statistic": 3.266296328085217,
-            "p_value": 0.0010896415981311858,
+            "statistic": 3.296317776196021,
+            "p_value": 0.0009796114122126998,
             "significant_5pct": true,
             "significant_10pct": true,
             "hac_lag": 2
@@ -223,7 +224,7 @@
             "recent_oos_nonnegative_skill": true
           }
         },
-        "skill_pct": 11.193852172900076,
+        "skill_pct": 11.20089284831236,
         "direction_accuracy": 0.7333333333333333,
         "samples": 180
       },
@@ -252,7 +253,7 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": 26.6,
+        "current_state": 25.0,
         "future_state": 13.5,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
@@ -275,7 +276,7 @@
     "passed": false,
     "level": "조건부 통합판정",
     "checks": {
-      "card8_validation": false,
+      "card8_validation": true,
       "card9_validation": false,
       "card10_validation": true,
       "card12_validation": true,
@@ -286,5 +287,5 @@
     },
     "scope": "backward_compatible_aggregate"
   },
-  "investment_conclusion": "현재와 3개월 향후를 같은 연속형 상태척도로 비교합니다. 향후 수치는 검증 미통과 축을 현재상태 유지로 처리한 참고 예상치이며, 검증커버리지 기준을 통과하지 못했습니다. 실제 발표자료 기반 OOS 검증은 별도 레지스트리 게이트를 추가로 통과해야 합니다."
+  "investment_conclusion": "현재와 3개월 향후를 같은 연속형 상태척도로 비교합니다. 향후 종합판정은 입력 검증커버리지 기준을 통과했습니다. 실제 발표자료 기반 OOS 검증은 별도 레지스트리 게이트를 추가로 통과해야 합니다."
 }

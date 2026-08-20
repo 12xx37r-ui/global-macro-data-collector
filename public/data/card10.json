@@ -3,11 +3,11 @@
   "engine_version": "card10-2.9.0-gscpi-column-profile-resilient",
   "card": 10,
   "title": "원자재·에너지·공급망 압력",
-  "generated_at_utc": "2026-08-20T18:06:20.611049+00:00",
+  "generated_at_utc": "2026-08-20T18:15:47.866676+00:00",
   "current": 46.69889789070262,
   "current_date": "2026-08-01",
   "forecast_3m": 48.57593670714972,
-  "forecast_6m": 48.37487853366649,
+  "forecast_6m": 49.41392702863166,
   "forecast_range80_3m": [
     41.922806592067914,
     55.22906682223153
@@ -22,34 +22,36 @@
       "forecast": 47.324577496184986,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 3.5427699963993438,
+      "rmse": 3.5401220047241497,
       "baseline_rmse": 3.653625426749002,
-      "skill_pct": 3.034121383600541,
+      "skill_pct": 3.1065971129352388,
       "direction_accuracy": 0.64,
       "fallback_used": false,
       "range80": [
-        43.597387764470675,
-        51.0517672278993
+        43.582548581233944,
+        51.06660641113603
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
-        "persistence": 13,
-        "mean_reversion_12m": 151,
-        "mean_reversion_24m": 16
+        "persistence": 12,
+        "mean_reversion_12m": 142,
+        "balanced_trend_reversion": 11,
+        "mean_reversion_blend": 5,
+        "mean_reversion_24m": 10
       },
       "recent_oos": {
         "samples": 24,
-        "rmse": 5.431218683084234,
+        "rmse": 5.432869035260437,
         "baseline_rmse": 5.690564732301792,
-        "skill_pct": 4.557474722067778
+        "skill_pct": 4.528473168551739
       },
       "degradation_status": "STABLE",
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 1.9819793003649944,
-          "p_value": 0.04748155743992233,
+          "statistic": 2.0915453027689974,
+          "p_value": 0.03647920983553976,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 0
@@ -68,9 +70,9 @@
       "forecast": 48.57593670714972,
       "model": "mean_reversion_12m",
       "samples": 180,
-      "rmse": 5.458678088477697,
+      "rmse": 5.45824531685612,
       "baseline_rmse": 6.14673445706192,
-      "skill_pct": 11.193852172900076,
+      "skill_pct": 11.20089284831236,
       "direction_accuracy": 0.7333333333333333,
       "fallback_used": false,
       "range80": [
@@ -80,8 +82,10 @@
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
         "persistence": 14,
-        "mean_reversion_24m": 21,
-        "mean_reversion_12m": 145
+        "mean_reversion_blend": 14,
+        "mean_reversion_12m": 143,
+        "mean_reversion_24m": 8,
+        "balanced_trend_reversion": 1
       },
       "recent_oos": {
         "samples": 24,
@@ -94,8 +98,8 @@
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 3.266296328085217,
-          "p_value": 0.0010896415981311858,
+          "statistic": 3.296317776196021,
+          "p_value": 0.0009796114122126998,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 2
@@ -111,37 +115,38 @@
       }
     },
     "6m": {
-      "forecast": 48.37487853366649,
-      "model": "mean_reversion_24m",
+      "forecast": 49.41392702863166,
+      "model": "mean_reversion_blend",
       "samples": 180,
-      "rmse": 5.367275256677621,
+      "rmse": 5.26626841491437,
       "baseline_rmse": 6.13273250672401,
-      "skill_pct": 12.481503949620043,
-      "direction_accuracy": 0.7698412698412699,
+      "skill_pct": 14.128515973257228,
+      "direction_accuracy": 0.8032786885245902,
       "fallback_used": false,
       "range80": [
-        41.95375655060877,
-        54.796000516724206
+        43.169801192622685,
+        55.65805286464064
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
         "persistence": 12,
-        "mean_reversion_24m": 107,
-        "mean_reversion_12m": 61
+        "mean_reversion_24m": 31,
+        "mean_reversion_blend": 135,
+        "balanced_trend_reversion": 2
       },
       "recent_oos": {
         "samples": 24,
-        "rmse": 5.975267225825436,
+        "rmse": 5.85757542904716,
         "baseline_rmse": 6.585158774628474,
-        "skill_pct": 9.261607345791711
+        "skill_pct": 11.048835274626512
       },
       "degradation_status": "STABLE",
       "quality_gate": {
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 2.508665319257779,
-          "p_value": 0.012118824522043603,
+          "statistic": 2.9418671111138535,
+          "p_value": 0.0032623989385802687,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 5
@@ -160,20 +165,20 @@
       "forecast": 48.93353874798778,
       "model": "mean_reversion_24m",
       "samples": 180,
-      "rmse": 5.3850659090983655,
+      "rmse": 5.375760943527433,
       "baseline_rmse": 6.18037788408484,
-      "skill_pct": 12.868338957630588,
-      "direction_accuracy": 0.7642276422764228,
+      "skill_pct": 13.018895537591401,
+      "direction_accuracy": 0.768595041322314,
       "fallback_used": false,
       "range80": [
-        41.9160331195166,
-        55.95104437645897
+        41.90641760317333,
+        55.960659892802234
       ],
       "selection_method": "online_prequential_candidate_selection",
       "selected_model_counts": {
         "persistence": 12,
-        "mean_reversion_24m": 163,
-        "mean_reversion_12m": 5
+        "mean_reversion_24m": 98,
+        "mean_reversion_blend": 70
       },
       "recent_oos": {
         "samples": 24,
@@ -186,8 +191,8 @@
         "passed": true,
         "level": "독립검증 통과",
         "dm_test": {
-          "statistic": 2.6533165276467883,
-          "p_value": 0.007970508865467796,
+          "statistic": 2.832046126615052,
+          "p_value": 0.004625117608896723,
           "significant_5pct": true,
           "significant_10pct": true,
           "hac_lag": 11
