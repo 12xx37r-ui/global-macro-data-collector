@@ -673,12 +673,23 @@ def candidates(train:list[float], h:int)->dict[str,float]:
     last=train[-1]
     def d(k): return (last-train[-1-k])/k if len(train)>k else 0
     m12=mean(train[-12:]); m24=mean(train[-24:]);
+    short=last+clamp(.65*d(1)+.35*d(3),-1.5,1.5)*h
+    medium=last+clamp(.25*d(1)+.45*d(3)+.30*d(6),-1.0,1.0)*h
+    mr12=last+clamp((m12-last)*.18,-1.2,1.2)*min(h,6)
+    mr24=last+clamp((m24-last)*.12,-1.0,1.0)*min(h,8)
+    # Fixed, coefficient-free ensembles.  Candidate expansion is safe because
+    # the online selector only sees losses available before each forecast origin
+    # and the same persistence/DM/recent-OOS gates remain mandatory.
+    mr_blend=.5*mr12+.5*mr24
+    balanced=.20*medium+.80*mr_blend
     return {
         'persistence':last,
-        'short_trend':last+clamp(.65*d(1)+.35*d(3),-1.5,1.5)*h,
-        'medium_trend':last+clamp(.25*d(1)+.45*d(3)+.30*d(6),-1.0,1.0)*h,
-        'mean_reversion_12m':last+clamp((m12-last)*.18,-1.2,1.2)*min(h,6),
-        'mean_reversion_24m':last+clamp((m24-last)*.12,-1.0,1.0)*min(h,8),
+        'short_trend':short,
+        'medium_trend':medium,
+        'mean_reversion_12m':mr12,
+        'mean_reversion_24m':mr24,
+        'mean_reversion_blend':mr_blend,
+        'balanced_trend_reversion':balanced,
     }
 
 def walk_forward(vals:list[float], h:int, min_samples:int=60)->dict[str,Any]:
@@ -743,7 +754,7 @@ def build_card9(session:requests.Session)->dict[str,Any]:
     f3=forecasts['3m']['forecast']; delta=f3-current
     signal='good' if delta>.8 else 'bad' if delta<-.8 else 'neutral'
     return {
-        'schema_version':'1.1','engine_version':'card9-2.6.0-oecd-cli-direct','card':9,'title':'글로벌 고용·소비 경기','generated_at_utc':now_iso(),
+        'schema_version':'1.1','engine_version':'card9-2.7.0-prequential-fixed-ensemble','card':9,'title':'글로벌 고용·소비 경기','generated_at_utc':now_iso(),
         'current':current,'current_date':hist[-1]['date'],'forecast_3m':f3,'forecast_6m':forecasts['6m']['forecast'],
         'forecast_range80_3m':forecasts['3m']['range80'],'future_direction':'up' if delta>.4 else 'down' if delta<-.4 else 'flat',
         'market_signal':signal,'current_regime':'고용·소비 강함' if current>=55 else '고용·소비 약함' if current<45 else '고용·소비 보통',
@@ -1175,8 +1186,10 @@ def _card11_card8_state(card8: dict[str, Any], use_forecast: bool=False) -> floa
     t3=((((card8.get('forecasts') or {}).get('3m') or {}).get('targets')) or {})
     def val(sid):
         if use_forecast:
-            x=(t3.get(sid) or {}).get('forecast')
-            if finite(x): return float(x)
+            target=t3.get(sid) or {}
+            x=target.get('forecast')
+            if bool((target.get('quality_gate') or {}).get('passed')) and finite(x):
+                return float(x)
         x=(cur.get(sid) or {}).get('value')
         return float(x) if finite(x) else None
     d10,real,curve=val('DGS10'),val('DFII10'),val('T10Y2Y')
@@ -1317,7 +1330,7 @@ def build_card11(card8, card9, card10, card12) -> dict[str, Any]:
                    for k in ('card8','card9','card10','card12')}
 
     return {
-        'schema_version':'1.2','engine_version':'card11-2.1.0-same-scale-quality-separated','card':11,
+        'schema_version':'1.2','engine_version':'card11-2.2.0-component-gated-card8-forward','card':11,
         'title':'글로벌 경기국면 최종판정·투자환경','generated_at_utc':now_iso(),
         'score':round(score,1) if score is not None else None,'market_signal':signal,
         'current_regime':'확장·위험선호' if signal=='good' else '수축·위험회피' if signal=='bad' else '혼합·중립' if signal=='neutral' else '판정불가',
