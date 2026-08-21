@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-21T09:01:29.579678+00:00",
+  "generated_at_utc": "2026-08-21T13:00:59.909876+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -72,8 +72,8 @@
       "date": "2026-08-19"
     },
     "SOFR": {
-      "value": 3.62,
-      "date": "2026-08-19"
+      "value": 3.63,
+      "date": "2026-08-20"
     },
     "PCEPILFE": {
       "value": 130.266,
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 103.0546875,
+        "value": 103.0390625,
         "date": "2026-08-21",
-        "return21d_pct": 0.36521342159323567,
-        "return63d_pct": -0.12870987280435564,
-        "realized_vol": 0.0783359865890307,
-        "score": 0.15574010437175792
+        "return21d_pct": 0.349996195693536,
+        "return63d_pct": -0.1438522107813478,
+        "realized_vol": 0.07829379850783046,
+        "score": 0.1434544678294627
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.4140625,
+        "value": 106.375,
         "date": "2026-08-21",
-        "return21d_pct": 0.47208084384451343,
-        "return63d_pct": -0.3948811700182797,
-        "realized_vol": 0.1746969811106477,
-        "score": 0.11065228077784436
+        "return21d_pct": 0.43519952791915006,
+        "return63d_pct": -0.43144424131627,
+        "realized_vol": 0.1745381244964654,
+        "score": 0.08655353413655023
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.578125,
+        "value": 108.515625,
         "date": "2026-08-21",
-        "return21d_pct": 0.4481063891297987,
-        "return63d_pct": -0.6007724216850252,
-        "realized_vol": 0.26125803979734413,
-        "score": 0.04540866719841038
+        "return21d_pct": 0.3902862098872584,
+        "return63d_pct": -0.6579888427978853,
+        "realized_vol": 0.2610698890829746,
+        "score": 0.013116764605445046
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 109.53125,
+        "value": 109.34375,
         "date": "2026-08-21",
-        "return21d_pct": 0.05709391949757503,
-        "return63d_pct": -1.2119503945885013,
-        "realized_vol": 0.4944755315290666,
-        "score": -0.1558619011635782
+        "return21d_pct": -0.11418783899515006,
+        "return63d_pct": -1.3810597519729462,
+        "realized_vol": 0.4945260178155605,
+        "score": -0.22451197286252284
       }
     },
-    "composite_score": 0.038984787796108616,
+    "composite_score": 0.004653198427233784,
     "yield_direction": "flat",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-21T08:21:35.172533+00:00",
+    "generated_at_utc": "2026-08-21T11:48:58.541539+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1314,8 +1314,8 @@
       "source": "Yahoo Finance DXY delayed market data",
       "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB",
       "observation_date": "2026-08-21",
-      "market_time_utc": "2026-08-21T08:11:30+00:00",
-      "current": 98.747,
+      "market_time_utc": "2026-08-21T11:38:54+00:00",
+      "current": 98.642,
       "history": [
         {
           "date": "2021-08-23",
@@ -6343,23 +6343,23 @@
         },
         {
           "date": "2026-08-21",
-          "value": 98.747
+          "value": 98.642
         }
       ],
-      "forecast_1m": 98.747,
-      "forecast_3m": 98.953471,
-      "forecast_change_3m_pct": 0.209091,
+      "forecast_1m": 98.642,
+      "forecast_3m": 98.887638,
+      "forecast_change_3m_pct": 0.249019,
       "forecast_range_80": [
-        95.165265,
-        102.741678
+        95.101927,
+        102.673349
       ],
       "direction_3m": "up",
       "confidence": 72,
       "selected_model_1m": "price_ensemble",
       "selected_model_3m": "price_mean_reversion",
       "backtest_1m": {
-        "rmse_pct": 1.776252059142236,
-        "baseline_rmse_pct": 1.776252059142236,
+        "rmse_pct": 1.7764765365771986,
+        "baseline_rmse_pct": 1.7764765365771986,
         "skill_pct": 0.0,
         "backtests": 760,
         "direction_accuracy": 47.94721407624634,
@@ -6368,11 +6368,11 @@
       },
       "backtest_3m": {
         "available": true,
-        "forecast_return_pct": 0.2090910265836632,
-        "rmse_pct": 2.987102363304552,
-        "baseline_rmse_pct": 3.2643676781761948,
-        "skill_pct": 8.493691342592612,
-        "raw_skill_pct": 8.493691342592612,
+        "forecast_return_pct": 0.2490194670497603,
+        "rmse_pct": 2.9871220865302752,
+        "baseline_rmse_pct": 3.264389317055609,
+        "skill_pct": 8.493693723254225,
+        "raw_skill_pct": 8.493693723254225,
         "direction_accuracy": 73.5080058224163,
         "direction_cases": 687,
         "backtests": 760,
@@ -6390,37 +6390,37 @@
             "lookback_days": 120.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.66030869700113,
-            "forecast": 99.11232347880045
+            "anchor": 99.65943369700113,
+            "forecast": 99.04897347880045
           },
           {
             "lookback_days": 180.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 99.12565014241537,
-            "forecast": 98.89846005696614
+            "anchor": 99.12506680908203,
+            "forecast": 98.83522672363281
           },
           {
             "lookback_days": 252.0,
             "strength": 0.4,
             "weight": 0.25,
-            "anchor": 98.99363913714696,
-            "forecast": 98.84565565485879
+            "anchor": 98.99322247048029,
+            "forecast": 98.78248898819211
           },
           {
             "lookback_days": 378.0,
             "strength": 0.3,
             "weight": 0.25,
-            "anchor": 99.44848424485626,
-            "forecast": 98.95744527345688
+            "anchor": 99.44820646707848,
+            "forecast": 98.88386194012354
           }
         ],
         "model": "fixed multi-window mean reversion with persistence benchmark"
       },
       "price_model_audit": {
         "1m": {
-          "rmse_pct": 1.776252059142236,
-          "baseline_rmse_pct": 1.776252059142236,
+          "rmse_pct": 1.7764765365771986,
+          "baseline_rmse_pct": 1.7764765365771986,
           "skill_pct": 0.0,
           "backtests": 760,
           "direction_accuracy": 47.94721407624634,
@@ -6428,8 +6428,8 @@
           "fallback_used": true
         },
         "3m": {
-          "rmse_pct": 3.2643676781761948,
-          "baseline_rmse_pct": 3.2643676781761948,
+          "rmse_pct": 3.264389317055609,
+          "baseline_rmse_pct": 3.264389317055609,
           "skill_pct": 0.0,
           "backtests": 760,
           "direction_accuracy": 36.24454148471616,
@@ -6440,11 +6440,11 @@
       "mean_reversion_model_audit": {
         "1m": {
           "available": true,
-          "forecast_return_pct": 0.06969700886121366,
-          "rmse_pct": 1.7455999152229176,
-          "baseline_rmse_pct": 1.776252059142236,
-          "skill_pct": 1.7256640892577169,
-          "raw_skill_pct": 1.7256640892577169,
+          "forecast_return_pct": 0.08300648901657937,
+          "rmse_pct": 1.7458047656254716,
+          "baseline_rmse_pct": 1.7764765365771986,
+          "skill_pct": 1.7265508617875347,
+          "raw_skill_pct": 1.7265508617875347,
           "direction_accuracy": 59.384164222873906,
           "direction_cases": 682,
           "backtests": 760,
@@ -6462,40 +6462,40 @@
               "lookback_days": 120.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.66030869700113,
-              "forecast": 98.86877449293348
+              "anchor": 99.65943369700113,
+              "forecast": 98.77765782626682
             },
             {
               "lookback_days": 180.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.12565014241537,
-              "forecast": 98.79748668565539
+              "anchor": 99.12506680908203,
+              "forecast": 98.7064089078776
             },
             {
               "lookback_days": 252.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 98.99363913714696,
-              "forecast": 98.77988521828627
+              "anchor": 98.99322247048029,
+              "forecast": 98.6888296627307
             },
             {
               "lookback_days": 378.0,
               "strength": 0.3,
               "weight": 0.25,
-              "anchor": 99.44848424485626,
-              "forecast": 98.81714842448562
+              "anchor": 99.44820646707848,
+              "forecast": 98.72262064670784
             }
           ],
           "model": "fixed multi-window mean reversion with persistence benchmark"
         },
         "3m": {
           "available": true,
-          "forecast_return_pct": 0.2090910265836632,
-          "rmse_pct": 2.987102363304552,
-          "baseline_rmse_pct": 3.2643676781761948,
-          "skill_pct": 8.493691342592612,
-          "raw_skill_pct": 8.493691342592612,
+          "forecast_return_pct": 0.2490194670497603,
+          "rmse_pct": 2.9871220865302752,
+          "baseline_rmse_pct": 3.264389317055609,
+          "skill_pct": 8.493693723254225,
+          "raw_skill_pct": 8.493693723254225,
           "direction_accuracy": 73.5080058224163,
           "direction_cases": 687,
           "backtests": 760,
@@ -6513,29 +6513,29 @@
               "lookback_days": 120.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.66030869700113,
-              "forecast": 99.11232347880045
+              "anchor": 99.65943369700113,
+              "forecast": 99.04897347880045
             },
             {
               "lookback_days": 180.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 99.12565014241537,
-              "forecast": 98.89846005696614
+              "anchor": 99.12506680908203,
+              "forecast": 98.83522672363281
             },
             {
               "lookback_days": 252.0,
               "strength": 0.4,
               "weight": 0.25,
-              "anchor": 98.99363913714696,
-              "forecast": 98.84565565485879
+              "anchor": 98.99322247048029,
+              "forecast": 98.78248898819211
             },
             {
               "lookback_days": 378.0,
               "strength": 0.3,
               "weight": 0.25,
-              "anchor": 99.44848424485626,
-              "forecast": 98.95744527345688
+              "anchor": 99.44820646707848,
+              "forecast": 98.88386194012354
             }
           ],
           "model": "fixed multi-window mean reversion with persistence benchmark"
@@ -11851,7 +11851,7 @@
           "available": true,
           "variant": "rates_inflation",
           "forecast": 2.2238617549651654,
-          "forecast_change_pctp": -0.1261382450348348,
+          "forecast_change_pctp": -0.12613824503483487,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -11885,7 +11885,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.2238617549651654,
-              "forecast_change_pctp": -0.1261382450348348,
+              "forecast_change_pctp": -0.12613824503483487,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -11919,7 +11919,7 @@
               "available": true,
               "variant": "financial_conditions",
               "forecast": 2.3667750392699975,
-              "forecast_change_pctp": 0.016775039269997315,
+              "forecast_change_pctp": 0.0167750392699973,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -11951,7 +11951,7 @@
               "available": true,
               "variant": "combined",
               "forecast": 2.229051330346139,
-              "forecast_change_pctp": -0.12094866965386109,
+              "forecast_change_pctp": -0.120948669653861,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -11990,8 +11990,8 @@
         "3m": {
           "available": true,
           "variant": "combined",
-          "forecast": 2.0764612661357615,
-          "forecast_change_pctp": -0.2735387338642384,
+          "forecast": 2.076461266135762,
+          "forecast_change_pctp": -0.2735387338642382,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -12028,7 +12028,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.132169175613947,
-              "forecast_change_pctp": -0.21783082438605306,
+              "forecast_change_pctp": -0.217830824386053,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12062,7 +12062,7 @@
               "available": true,
               "variant": "financial_conditions",
               "forecast": 2.3256179792814855,
-              "forecast_change_pctp": -0.02438202071851464,
+              "forecast_change_pctp": -0.02438202071851462,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12093,8 +12093,8 @@
             "combined": {
               "available": true,
               "variant": "combined",
-              "forecast": 2.0764612661357615,
-              "forecast_change_pctp": -0.2735387338642384,
+              "forecast": 2.076461266135762,
+              "forecast_change_pctp": -0.2735387338642382,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12185,7 +12185,7 @@
             4.04,
             4.340000000000001
           ],
-          "structural_overlay": 0.003460241964257627,
+          "structural_overlay": 0.003100241964257627,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -12252,7 +12252,7 @@
             4.5,
             4.800000000000001
           ],
-          "structural_overlay": 0.002666975562116246,
+          "structural_overlay": 0.002526975562116246,
           "current": 4.65,
           "direction": "flat",
           "investment_environment": {
@@ -12320,7 +12320,7 @@
             2.23,
             2.47
           ],
-          "structural_overlay": 0.0013168333333333365,
+          "structural_overlay": 0.0011968333333333362,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -12387,7 +12387,7 @@
             0.40157097505668937,
             0.5909067271352986
           ],
-          "structural_overlay": -0.0007024247024090539,
+          "structural_overlay": -0.0004824247024090536,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -12458,7 +12458,7 @@
             3.8450000000000006,
             4.495000000000001
           ],
-          "structural_overlay": 0.013840967857030508,
+          "structural_overlay": 0.012400967857030508,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -12523,7 +12523,7 @@
             4.32,
             4.940000000000001
           ],
-          "structural_overlay": 0.010667902248464985,
+          "structural_overlay": 0.010107902248464983,
           "current": 4.65,
           "direction": "flat",
           "investment_environment": {
@@ -12587,7 +12587,7 @@
             2.0718749206349205,
             2.5881250793650796
           ],
-          "structural_overlay": 0.005267333333333346,
+          "structural_overlay": 0.004787333333333345,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -12652,7 +12652,7 @@
             0.2946355555555555,
             0.6737707936507937
           ],
-          "structural_overlay": -0.0028096988096362155,
+          "structural_overlay": -0.0019296988096362145,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -12723,7 +12723,7 @@
             3.580000000000001,
             4.680000000000001
           ],
-          "structural_overlay": 0.04512290357109145,
+          "structural_overlay": 0.04332290357109149,
           "current": 4.19,
           "direction": "down",
           "investment_environment": {
@@ -12783,7 +12783,7 @@
             4.076598095238095,
             5.103401904761906
           ],
-          "structural_overlay": 0.033403706745394925,
+          "structural_overlay": 0.03270370674539494,
           "current": 4.65,
           "direction": "down",
           "investment_environment": {
@@ -12845,7 +12845,7 @@
             1.878142857142857,
             2.7018571428571434
           ],
-          "structural_overlay": 0.017002000000000014,
+          "structural_overlay": 0.016402000000000024,
           "current": 2.35,
           "direction": "down",
           "investment_environment": {
@@ -12948,7 +12948,7 @@
             0.21999999999999997,
             0.78
           ],
-          "structural_overlay": -0.010629096428908599,
+          "structural_overlay": -0.009529096428908623,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -13018,7 +13018,7 @@
             3.4979999999999998,
             4.8820000000000014
           ],
-          "structural_overlay": 0.18744580714218306,
+          "structural_overlay": 0.1838458071421828,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -13082,7 +13082,7 @@
             4.113013333333333,
             5.075037460317461
           ],
-          "structural_overlay": 0.1046074134907899,
+          "structural_overlay": 0.10320741349078981,
           "current": 4.65,
           "direction": "down",
           "investment_environment": {
@@ -13145,7 +13145,7 @@
             1.9300000000000002,
             2.77
           ],
-          "structural_overlay": 0.06640400000000009,
+          "structural_overlay": 0.065204,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -13208,7 +13208,7 @@
             0.0679999999999995,
             0.9320000000000005
           ],
-          "structural_overlay": -0.0806581928578173,
+          "structural_overlay": -0.07845819285781716,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -13278,7 +13278,7 @@
             2.9059999999999993,
             5.474000000000002
           ],
-          "structural_overlay": 0.29544580714218266,
+          "structural_overlay": 0.28824580714218284,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -13342,7 +13342,7 @@
             3.828,
             5.472000000000001
           ],
-          "structural_overlay": 0.14660741349078976,
+          "structural_overlay": 0.14380741349078982,
           "current": 4.65,
           "direction": "flat",
           "investment_environment": {
@@ -13407,7 +13407,7 @@
             1.4100000000000001,
             3.29
           ],
-          "structural_overlay": 0.10240399999999995,
+          "structural_overlay": 0.10000400000000001,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -13470,7 +13470,7 @@
             -0.28,
             1.28
           ],
-          "structural_overlay": -0.14665819285781706,
+          "structural_overlay": -0.14225819285781716,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -13751,8 +13751,8 @@
       "ok": true,
       "label": "SOFR",
       "latest": {
-        "value": 3.62,
-        "date": "2026-08-19"
+        "value": 3.63,
+        "date": "2026-08-20"
       },
       "url": "https://fred.stlouisfed.org/series/SOFR"
     },
