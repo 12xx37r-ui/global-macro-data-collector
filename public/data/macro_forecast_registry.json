@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "generated_at_utc": "2026-08-21T17:03:29.472037+00:00",
+  "generated_at_utc": "2026-08-21T21:06:05.392742+00:00",
   "engine": "Global macro engine",
   "entries": [
     {
@@ -103,7 +103,7 @@
       },
       "reason": "3개월 walk-forward가 persistence 대비 skill·방향·DM 검증을 모두 통과한 경우에만 상위 종합판정의 향후신호로 사용",
       "sample_count": 180,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "STABLE",
       "confidence": 67.4
     },
@@ -117,7 +117,7 @@
       "usable": true,
       "reason": "target gate passed",
       "sample_count": 900,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "NOT_APPLICABLE",
       "confidence": 75.0
     },
@@ -125,8 +125,8 @@
       "id": "card8_DGS10_3m",
       "label": "Card8 DGS10 3m",
       "horizon": "3m",
-      "current": 4.65,
-      "forecast": 4.590000000000001,
+      "current": 4.69,
+      "forecast": 4.630000000000001,
       "status": "REFERENCE_ONLY",
       "usable": false,
       "reason": "지속성 대비 예측력 개선의 통계적 유의성 미확인",
@@ -145,7 +145,7 @@
       "usable": true,
       "reason": "target gate passed",
       "sample_count": 900,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "NOT_APPLICABLE",
       "confidence": 75.0
     },
@@ -157,7 +157,7 @@
       "forecast": 0.5,
       "status": "REFERENCE_ONLY",
       "usable": false,
-      "reason": "지속성 대비 RMSE 개선 0.00%로 최소 1.50% 미달; 활성 방향 적중률 47.2%로 52% 미달; 지속성 대비 예측력 개선의 통계적 유의성 미확인; 지속성 안전모형으로 후퇴",
+      "reason": "지속성 대비 RMSE 개선 0.00%로 최소 1.50% 미달; 활성 방향 적중률 47.3%로 52% 미달; 지속성 대비 예측력 개선의 통계적 유의성 미확인; 지속성 안전모형으로 후퇴",
       "sample_count": 900,
       "last_validated_at": null,
       "degradation_status": "NOT_APPLICABLE",
@@ -171,7 +171,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -183,7 +183,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -195,7 +195,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -207,7 +207,7 @@
       "usable": true,
       "reason": "horizon gate passed; rolling OOS stable",
       "sample_count": 180,
-      "last_validated_at": "2026-08-21T17:03:29.472037+00:00",
+      "last_validated_at": "2026-08-21T21:06:05.392742+00:00",
       "degradation_status": "STABLE",
       "confidence": 80.0
     },
@@ -215,7 +215,7 @@
       "id": "forward_liquidity_3m",
       "label": "Forward liquidity composite 3m",
       "horizon": "3m",
-      "current": 7.21,
+      "current": 7.2,
       "forecast": null,
       "status": "RECONSTRUCTED_VALIDATED",
       "usable": false,
@@ -306,7 +306,7 @@
       "id": "card11_future_3m",
       "label": "Card11 future composite 3m",
       "horizon": "3m",
-      "current": -24.2,
+      "current": -24.8,
       "forecast": null,
       "status": "REFERENCE_ONLY",
       "usable": false,
