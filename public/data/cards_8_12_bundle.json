@@ -42025,11 +42025,11 @@
       "generated_at_utc": "2026-08-21T17:03:24.439894+00:00",
       "current": {
         "ES=F": {
-          "value": 7695.0,
+          "value": 7698.75,
           "date": "2026-08-21"
         },
         "NQ=F": {
-          "value": 29393.75,
+          "value": 29411.0,
           "date": "2026-08-21"
         },
         "RTY=F": {
@@ -42053,11 +42053,11 @@
           "date": "2026-08-21"
         },
         "CL=F": {
-          "value": 86.86,
+          "value": 86.79,
           "date": "2026-08-21"
         },
         "GC=F": {
-          "value": 4682.9,
+          "value": 4675.1,
           "date": "2026-08-21"
         },
         "HG=F": {
@@ -42065,7 +42065,7 @@
           "date": "2026-08-21"
         },
         "DX-Y.NYB": {
-          "value": 98.814,
+          "value": 98.829,
           "date": "2026-08-21"
         },
         "BTC=F": {
@@ -42934,25 +42934,23 @@
       "market_snapshots": {
         "ES=F": {
           "symbol": "ES=F",
-          "price": 7695.0,
-          "market_time_utc": "2026-08-21T16:53:16+00:00",
+          "price": 7698.75,
+          "market_time_utc": "2026-08-21T19:38:31+00:00",
           "exchange": "CME",
-          "exchange_timezone": "America/New_York",
           "market_state": null,
           "source": "Yahoo Finance chart metadata",
-          "retrieved_at_utc": "2026-08-21T17:03:19.280385+00:00",
-          "refetch_policy": "network_each_workflow_no_cache"
+          "retrieved_at_utc": "2026-08-21T19:48:35.206140+00:00",
+          "refetch_policy": "fast_market_2h"
         },
         "NQ=F": {
           "symbol": "NQ=F",
-          "price": 29393.75,
-          "market_time_utc": "2026-08-21T16:53:17+00:00",
+          "price": 29411.0,
+          "market_time_utc": "2026-08-21T19:38:32+00:00",
           "exchange": "CME",
-          "exchange_timezone": "America/New_York",
           "market_state": null,
           "source": "Yahoo Finance chart metadata",
-          "retrieved_at_utc": "2026-08-21T17:03:19.512578+00:00",
-          "refetch_policy": "network_each_workflow_no_cache"
+          "retrieved_at_utc": "2026-08-21T19:48:35.627873+00:00",
+          "refetch_policy": "fast_market_2h"
         },
         "RTY=F": {
           "symbol": "RTY=F",
@@ -43011,47 +43009,43 @@
         },
         "CL=F": {
           "symbol": "CL=F",
-          "price": 86.86,
-          "market_time_utc": "2026-08-21T16:53:19+00:00",
+          "price": 86.79,
+          "market_time_utc": "2026-08-21T19:38:33+00:00",
           "exchange": "NYM",
-          "exchange_timezone": "America/New_York",
           "market_state": null,
           "source": "Yahoo Finance chart metadata",
-          "retrieved_at_utc": "2026-08-21T17:03:21.068708+00:00",
-          "refetch_policy": "network_each_workflow_no_cache"
+          "retrieved_at_utc": "2026-08-21T19:48:36.079223+00:00",
+          "refetch_policy": "fast_market_2h"
         },
         "GC=F": {
           "symbol": "GC=F",
-          "price": 4682.9,
-          "market_time_utc": "2026-08-21T16:53:16+00:00",
+          "price": 4675.1,
+          "market_time_utc": "2026-08-21T19:38:31+00:00",
           "exchange": "CMX",
-          "exchange_timezone": "America/New_York",
           "market_state": null,
           "source": "Yahoo Finance chart metadata",
-          "retrieved_at_utc": "2026-08-21T17:03:21.286593+00:00",
-          "refetch_policy": "network_each_workflow_no_cache"
+          "retrieved_at_utc": "2026-08-21T19:48:36.494523+00:00",
+          "refetch_policy": "fast_market_2h"
         },
         "HG=F": {
           "symbol": "HG=F",
           "price": 6.582,
-          "market_time_utc": "2026-08-21T16:53:18+00:00",
+          "market_time_utc": "2026-08-21T19:38:30+00:00",
           "exchange": "CMX",
-          "exchange_timezone": "America/New_York",
           "market_state": null,
           "source": "Yahoo Finance chart metadata",
-          "retrieved_at_utc": "2026-08-21T17:03:21.540368+00:00",
-          "refetch_policy": "network_each_workflow_no_cache"
+          "retrieved_at_utc": "2026-08-21T19:48:36.945832+00:00",
+          "refetch_policy": "fast_market_2h"
         },
         "DX-Y.NYB": {
           "symbol": "DX-Y.NYB",
-          "price": 98.814,
-          "market_time_utc": "2026-08-21T16:53:19+00:00",
+          "price": 98.829,
+          "market_time_utc": "2026-08-21T19:38:32+00:00",
           "exchange": "NYB",
-          "exchange_timezone": "America/New_York",
           "market_state": null,
           "source": "Yahoo Finance chart metadata",
-          "retrieved_at_utc": "2026-08-21T17:03:21.858361+00:00",
-          "refetch_policy": "network_each_workflow_no_cache"
+          "retrieved_at_utc": "2026-08-21T19:48:34.368251+00:00",
+          "refetch_policy": "fast_market_2h"
         },
         "BTC=F": {
           "symbol": "BTC=F",
@@ -43076,7 +43070,92 @@
         "무료 지연 선물자료와 달러인덱스 대체신호를 사용하며 거래소 실시간 유료 시세를 대체하지 않습니다.",
         "선물가격은 미래 현물가격의 단순 예측값이 아닙니다.",
         "검증 미통과 기간은 현재신호 또는 참고값으로만 사용합니다."
-      ]
+      ],
+      "fast_market_refresh": {
+        "version": "V230",
+        "updated_at_utc": "2026-08-21T19:48:36.947687+00:00",
+        "model_forecasts_recomputed": false
+      }
     }
+  },
+  "fast_market_snapshot": {
+    "version": "V230",
+    "generated_at_utc": "2026-08-21T19:48:36.947698+00:00",
+    "quotes": {
+      "DX-Y.NYB": {
+        "symbol": "DX-Y.NYB",
+        "label": "DXY",
+        "price": 98.829,
+        "market_time_utc": "2026-08-21T19:38:32+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:34.368251+00:00",
+        "exchange": "NYB",
+        "source": "Yahoo Finance chart metadata"
+      },
+      "^VIX": {
+        "symbol": "^VIX",
+        "label": "VIX",
+        "price": 15.18,
+        "market_time_utc": "2026-08-21T19:33:31+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:34.786136+00:00",
+        "exchange": "CXI",
+        "source": "Yahoo Finance chart metadata"
+      },
+      "ES=F": {
+        "symbol": "ES=F",
+        "label": "S&P500 futures",
+        "price": 7698.75,
+        "market_time_utc": "2026-08-21T19:38:31+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:35.206140+00:00",
+        "exchange": "CME",
+        "source": "Yahoo Finance chart metadata"
+      },
+      "NQ=F": {
+        "symbol": "NQ=F",
+        "label": "Nasdaq100 futures",
+        "price": 29411.0,
+        "market_time_utc": "2026-08-21T19:38:32+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:35.627873+00:00",
+        "exchange": "CME",
+        "source": "Yahoo Finance chart metadata"
+      },
+      "CL=F": {
+        "symbol": "CL=F",
+        "label": "WTI futures",
+        "price": 86.79,
+        "market_time_utc": "2026-08-21T19:38:33+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:36.079223+00:00",
+        "exchange": "NYM",
+        "source": "Yahoo Finance chart metadata"
+      },
+      "GC=F": {
+        "symbol": "GC=F",
+        "label": "Gold futures",
+        "price": 4675.1,
+        "market_time_utc": "2026-08-21T19:38:31+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:36.494523+00:00",
+        "exchange": "CMX",
+        "source": "Yahoo Finance chart metadata"
+      },
+      "HG=F": {
+        "symbol": "HG=F",
+        "label": "Copper futures",
+        "price": 6.582,
+        "market_time_utc": "2026-08-21T19:38:30+00:00",
+        "retrieved_at_utc": "2026-08-21T19:48:36.945832+00:00",
+        "exchange": "CMX",
+        "source": "Yahoo Finance chart metadata"
+      }
+    },
+    "vix": {
+      "symbol": "^VIX",
+      "label": "VIX",
+      "price": 15.18,
+      "market_time_utc": "2026-08-21T19:33:31+00:00",
+      "retrieved_at_utc": "2026-08-21T19:48:34.786136+00:00",
+      "exchange": "CXI",
+      "source": "Yahoo Finance chart metadata"
+    },
+    "official_daily": {},
+    "full_models_recomputed": false
   }
 }
