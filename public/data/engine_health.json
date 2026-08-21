@@ -1,6 +1,6 @@
 {
   "schema_version": "1.1",
-  "generated_at_utc": "2026-08-20T21:06:08.360519+00:00",
+  "generated_at_utc": "2026-08-21T01:01:58.330232+00:00",
   "status": "HEALTHY_WITH_FALLBACKS",
   "pipeline_health": "HEALTHY",
   "forecast_health": "PARTIAL",
@@ -36,7 +36,7 @@
         "http_5xx": 0,
         "timeouts": 0,
         "retries": 0,
-        "last_success_utc": "2026-08-20T21:06:04.262790+00:00",
+        "last_success_utc": "2026-08-21T01:01:53.893413+00:00",
         "last_failure_utc": null,
         "cooldown": false,
         "final_status": "LIVE"
@@ -50,7 +50,7 @@
         "http_5xx": 0,
         "timeouts": 0,
         "retries": 0,
-        "last_success_utc": "2026-08-20T21:06:04.958461+00:00",
+        "last_success_utc": "2026-08-21T01:01:55.288662+00:00",
         "last_failure_utc": null,
         "cooldown": false,
         "final_status": "LIVE"
@@ -64,14 +64,14 @@
         "http_5xx": 0,
         "timeouts": 0,
         "retries": 0,
-        "last_success_utc": "2026-08-20T21:06:07.746717+00:00",
+        "last_success_utc": "2026-08-21T01:01:57.708905+00:00",
         "last_failure_utc": null,
         "cooldown": false,
         "final_status": "LIVE"
       }
     }
   },
-  "runtime_ms": 4928,
+  "runtime_ms": 5417,
   "model_degradation": [],
   "global_m2_composite_validation": {
     "available": false,
@@ -83,6 +83,6 @@
   },
   "composite_oos": {
     "status": "ACTIVE_ACCUMULATION",
-    "snapshot_count": 3
+    "snapshot_count": 4
   }
 }

@@ -3,20 +3,20 @@
   "engine_version": "card11-2.2.0-component-gated-card8-forward",
   "card": 11,
   "title": "글로벌 경기국면 최종판정·투자환경",
-  "generated_at_utc": "2026-08-20T21:06:03.042721+00:00",
-  "score": -20.3,
-  "market_signal": "bad",
-  "current_regime": "수축·위험회피",
+  "generated_at_utc": "2026-08-21T01:01:52.516014+00:00",
+  "score": -20.0,
+  "market_signal": "neutral",
+  "current_regime": "혼합·중립",
   "future_regime": "불리한 투자환경",
-  "future_score": -26.5,
+  "future_score": -25.8,
   "future_market_signal": "bad",
   "future_validation_status": "VALIDATED",
   "future_inputs": {
     "card8": {
       "available": true,
-      "signal": -0.5329999999999999,
+      "signal": -0.512,
       "current_state": -54.9,
-      "future_state": -53.3,
+      "future_state": -51.2,
       "validation": "3m gate passed"
     },
     "card9": {
@@ -35,9 +35,9 @@
     },
     "card12": {
       "available": true,
-      "signal": 0.133,
-      "current_state": 24.4,
-      "future_state": 13.3,
+      "signal": 0.136,
+      "current_state": 26.3,
+      "future_state": 13.6,
       "validation": "3m gate passed"
     }
   },
@@ -92,7 +92,7 @@
     "components": {
       "card8": {
         "current_state": -54.9,
-        "future_state": -53.3,
+        "future_state": -51.2,
         "base_weight": 1.2,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -112,8 +112,8 @@
         "forecast_treatment": "validated_3m_forecast"
       },
       "card12": {
-        "current_state": 24.4,
-        "future_state": 13.3,
+        "current_state": 26.3,
+        "future_state": 13.6,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -156,7 +156,7 @@
       },
       "state": {
         "current_state": -54.9,
-        "future_state": -53.3,
+        "future_state": -51.2,
         "base_weight": 1.2,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
@@ -253,8 +253,8 @@
         "horizon": "3m"
       },
       "state": {
-        "current_state": 24.4,
-        "future_state": 13.3,
+        "current_state": 26.3,
+        "future_state": 13.6,
         "base_weight": 0.8,
         "forecast_validation_passed": true,
         "forecast_treatment": "validated_3m_forecast"
