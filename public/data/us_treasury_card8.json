@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-22T09:01:34.501457+00:00",
+  "generated_at_utc": "2026-08-22T13:00:55.812082+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-22T05:03:32.337984+00:00",
+    "generated_at_utc": "2026-08-22T09:02:00.509302+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1312,7 +1312,7 @@
       "status": "LIVE",
       "symbol": "DX-Y.NYB",
       "source": "Yahoo Finance DXY delayed market data",
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787375004",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787389311",
       "observation_date": "2026-08-21",
       "market_time_utc": "2026-08-21T20:59:59+00:00",
       "current": 98.839,
@@ -6611,10 +6611,10 @@
               "available": true,
               "forecast": 97.20904937691259,
               "forecast_return_pct": -1.6628455989512942,
-              "rmse_pct": 2.0577048695502493,
+              "rmse_pct": 2.057704869550249,
               "baseline_rmse_pct": 1.3269323272778373,
               "skill_pct": 0.0,
-              "raw_skill_pct": -55.072329405944195,
+              "raw_skill_pct": -55.07232940594415,
               "direction_accuracy": 41.509433962264154,
               "direction_cases": 53,
               "backtests": 63,
@@ -6641,7 +6641,7 @@
             "combined": {
               "available": true,
               "forecast": 97.45697958425619,
-              "forecast_return_pct": -1.4081218110125915,
+              "forecast_return_pct": -1.4081218110125897,
               "rmse_pct": 2.1094069009582648,
               "baseline_rmse_pct": 1.3269323272778373,
               "skill_pct": 0.0,
@@ -6680,7 +6680,7 @@
         },
         "3m": {
           "available": true,
-          "forecast_return_pct": -6.417029022880865,
+          "forecast_return_pct": -6.417029022880866,
           "rmse_pct": 2.4210904379968254,
           "baseline_rmse_pct": 1.52192924499179,
           "skill_pct": 0.0,
@@ -6713,7 +6713,7 @@
             "domestic_financial": {
               "available": true,
               "forecast": 92.69568963431395,
-              "forecast_return_pct": -6.417029022880865,
+              "forecast_return_pct": -6.417029022880866,
               "rmse_pct": 2.4210904379968254,
               "baseline_rmse_pct": 1.52192924499179,
               "skill_pct": 0.0,
@@ -6746,11 +6746,11 @@
             "relative_policy_rates": {
               "available": true,
               "forecast": 94.48832396769471,
-              "forecast_return_pct": -4.501599273920834,
-              "rmse_pct": 4.514697124598059,
+              "forecast_return_pct": -4.501599273920833,
+              "rmse_pct": 4.514697124598058,
               "baseline_rmse_pct": 1.52192924499179,
               "skill_pct": 0.0,
-              "raw_skill_pct": -196.64303642594194,
+              "raw_skill_pct": -196.6430364259419,
               "direction_accuracy": 23.076923076923077,
               "direction_cases": 39,
               "backtests": 46,
@@ -6777,11 +6777,11 @@
             "combined": {
               "available": true,
               "forecast": 92.93926472339216,
-              "forecast_return_pct": -6.15460513864502,
-              "rmse_pct": 4.934451930134403,
+              "forecast_return_pct": -6.154605138645017,
+              "rmse_pct": 4.9344519301344025,
               "baseline_rmse_pct": 1.52192924499179,
               "skill_pct": 0.0,
-              "raw_skill_pct": -224.22347795550914,
+              "raw_skill_pct": -224.2234779555091,
               "direction_accuracy": 23.076923076923077,
               "direction_cases": 39,
               "backtests": 46,
@@ -12075,7 +12075,7 @@
           "available": true,
           "variant": "financial_conditions",
           "forecast": 2.3576107433677804,
-          "forecast_change_pctp": 0.0076107433677801775,
+          "forecast_change_pctp": 0.007610743367780179,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -12107,7 +12107,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.1985285952789484,
-              "forecast_change_pctp": -0.1514714047210517,
+              "forecast_change_pctp": -0.15147140472105172,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12141,7 +12141,7 @@
               "available": true,
               "variant": "financial_conditions",
               "forecast": 2.3576107433677804,
-              "forecast_change_pctp": 0.0076107433677801775,
+              "forecast_change_pctp": 0.007610743367780179,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12173,7 +12173,7 @@
               "available": true,
               "variant": "combined",
               "forecast": 2.207422762438939,
-              "forecast_change_pctp": -0.142577237561061,
+              "forecast_change_pctp": -0.14257723756106105,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12213,7 +12213,7 @@
           "available": true,
           "variant": "rates_inflation",
           "forecast": 2.1223460466355912,
-          "forecast_change_pctp": -0.2276539533644087,
+          "forecast_change_pctp": -0.22765395336440875,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -12247,7 +12247,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.1223460466355912,
-              "forecast_change_pctp": -0.2276539533644087,
+              "forecast_change_pctp": -0.22765395336440875,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
