@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-22T01:01:22.122274+00:00",
+  "generated_at_utc": "2026-08-22T05:02:58.354691+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -139,42 +139,42 @@
     "current": {
       "ZT=F": {
         "label": "2년 국채선물",
-        "value": 102.9453125,
+        "value": 102.953125,
         "date": "2026-08-21",
-        "return21d_pct": 0.2586928402952049,
-        "return63d_pct": -0.23470623864324525,
-        "realized_vol": 0.07901635306122,
-        "score": 0.06952283907277018
+        "return21d_pct": 0.2663014532450658,
+        "return63d_pct": -0.22713506965474917,
+        "realized_vol": 0.07889279832243194,
+        "score": 0.07568553846419046
       },
       "ZF=F": {
         "label": "5년 국채선물",
-        "value": 106.1875,
+        "value": 106.1953125,
         "date": "2026-08-21",
-        "return21d_pct": 0.25816921147745475,
-        "return63d_pct": -0.606946983546619,
-        "realized_vol": 0.17548053600599056,
-        "score": -0.02923233784154403
+        "return21d_pct": 0.26554547466253187,
+        "return63d_pct": -0.5996343692870165,
+        "realized_vol": 0.17538521510229302,
+        "score": -0.02441918085774032
       },
       "ZN=F": {
         "label": "10년 국채선물",
-        "value": 108.28125,
+        "value": 108.265625,
         "date": "2026-08-21",
-        "return21d_pct": 0.17346053772766545,
-        "return63d_pct": -0.8725504219711078,
-        "realized_vol": 0.26215859286492704,
-        "score": -0.10783426256046746
+        "return21d_pct": 0.15900549291703037,
+        "return63d_pct": -0.8868545272493256,
+        "realized_vol": 0.2623314191375021,
+        "score": -0.11586243955869649
       },
       "ZB=F": {
         "label": "30년 국채선물",
-        "value": 108.9375,
+        "value": 108.875,
         "date": "2026-08-21",
-        "return21d_pct": -0.48529831572937665,
-        "return63d_pct": -1.7474633596392342,
-        "realized_vol": 0.4978546021776584,
-        "score": -0.3717795705363544
+        "return21d_pct": -0.5423922352269517,
+        "return63d_pct": -1.8038331454340528,
+        "realized_vol": 0.49875390162876737,
+        "score": -0.3941479981339741
       }
     },
-    "composite_score": -0.10983083296639894,
+    "composite_score": -0.11468602002155512,
     "yield_direction": "flat",
     "errors": [],
     "limitation": "Yahoo Finance 무료 지연 국채선물 자료를 사용하며, 실시간 거래소 시세가 아닙니다. 방향·변동성 교차검증용으로만 사용합니다."
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-21T22:02:55.296429+00:00",
+    "generated_at_utc": "2026-08-22T01:01:56.707886+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1312,7 +1312,7 @@
       "status": "LIVE",
       "symbol": "DX-Y.NYB",
       "source": "Yahoo Finance DXY delayed market data",
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787349766",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787360507",
       "observation_date": "2026-08-21",
       "market_time_utc": "2026-08-21T20:59:59+00:00",
       "current": 98.839,

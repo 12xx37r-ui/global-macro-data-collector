@@ -1,8 +1,8 @@
 {
   "schema_version": "1.1.0",
   "patch_version": "V228-zero-call-freshness-unification",
-  "generated_at_utc": "2026-08-22T01:05:51.057312+00:00",
-  "bundle_generated_at_utc": "2026-08-22T01:01:50.970183+00:00",
+  "generated_at_utc": "2026-08-22T05:06:22.802415+00:00",
+  "bundle_generated_at_utc": "2026-08-22T05:03:28.222680+00:00",
   "compatibility": {
     "existing_keys_removed": false,
     "existing_field_semantics_changed": false,
@@ -22,110 +22,110 @@
     },
     {
       "source": "card12:ES=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 7687.75,
+      "value": 7691.25,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:NQ=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 29374.0,
+      "value": 29387.75,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:RTY=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:56+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 3021.1,
+      "value": 3022.1,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:ZT=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:58+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 102.94531,
+      "value": 102.95313,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:ZF=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 106.1875,
+      "value": 106.19531,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:ZN=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 108.281,
+      "value": 108.266,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:ZB=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:55+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 108.9375,
+      "value": 108.875,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:CL=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 86.64,
+      "value": 87.06,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:GC=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:58+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 4661.6,
+      "value": 4680.6,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:HG=F",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
-      "value": 6.58,
+      "value": 6.587,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "card12:DX-Y.NYB",
-      "status": "LIVE",
+      "status": "CACHE",
       "cadence": "intraday-market",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "market_state": null,
       "value": 98.839,
       "provider": "Yahoo Finance chart metadata"
@@ -134,90 +134,90 @@
       "source": "card12:BTC=F",
       "status": "LIVE",
       "cadence": "intraday-market",
-      "observation_at": "2026-08-22T00:42:26+00:00",
-      "age_hours": 0.39,
+      "observation_at": "2026-08-22T04:17:24+00:00",
+      "age_hours": 0.82,
       "market_state": null,
-      "value": 77975.0,
+      "value": 78495.0,
       "provider": "Yahoo Finance chart metadata"
     },
     {
       "source": "file:asset_oos_validation.json",
       "status": "LIVE",
       "cadence": "market/trading-day",
-      "observation_at": "2026-08-22T01:05:50.841657+00:00",
+      "observation_at": "2026-08-22T05:06:22.633832+00:00",
       "age_hours": 0.0,
       "max_age_hours": 96.0,
-      "generated_at": "2026-08-22T01:05:50.841657+00:00"
+      "generated_at": "2026-08-22T05:06:22.633832+00:00"
     },
     {
       "source": "file:card10.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
       "observation_at": "2026-08-18",
-      "age_hours": 97.1,
+      "age_hours": 101.11,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:40.579903+00:00"
+      "generated_at": "2026-08-22T05:03:17.986243+00:00"
     },
     {
       "source": "file:card11.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-22T01:01:46.087529+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:03:23.432821+00:00",
+      "age_hours": 0.05,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:46.087529+00:00"
+      "generated_at": "2026-08-22T05:03:23.432821+00:00"
     },
     {
       "source": "file:card12.json",
       "status": "LIVE",
       "cadence": "market/trading-day",
-      "observation_at": "2026-08-22T00:42:26+00:00",
-      "age_hours": 0.39,
+      "observation_at": "2026-08-22T04:17:24+00:00",
+      "age_hours": 0.82,
       "max_age_hours": 96.0,
-      "generated_at": "2026-08-22T01:01:46.085040+00:00"
+      "generated_at": "2026-08-22T05:03:23.430207+00:00"
     },
     {
       "source": "file:card9.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
       "observation_at": "2026-08-15",
-      "age_hours": 169.1,
+      "age_hours": 173.11,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:32.081546+00:00"
+      "generated_at": "2026-08-22T05:03:09.898198+00:00"
     },
     {
       "source": "file:cards_8_12_bundle.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-22T00:42:26+00:00",
-      "age_hours": 0.39,
+      "observation_at": "2026-08-22T04:17:24+00:00",
+      "age_hours": 0.82,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:50.970183+00:00"
+      "generated_at": "2026-08-22T05:03:28.222680+00:00"
     },
     {
       "source": "file:engine_health.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-22T01:01:50.953163+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:03:28.206909+00:00",
+      "age_hours": 0.05,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:50.953163+00:00"
+      "generated_at": "2026-08-22T05:03:28.206909+00:00"
     },
     {
       "source": "file:equity_fundamentals.json",
       "status": "LIVE",
       "cadence": "market/trading-day",
-      "observation_at": "2026-08-22T01:01:53.928159+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:03:29.261206+00:00",
+      "age_hours": 0.05,
       "max_age_hours": 96.0,
-      "generated_at": "2026-08-22T01:01:53.928159+00:00"
+      "generated_at": "2026-08-22T05:03:29.261206+00:00"
     },
     {
       "source": "file:fast_market_refresh_status.json",
       "status": "LIVE",
       "cadence": "mixed",
       "observation_at": "2026-08-21T23:50:58.528465+00:00",
-      "age_hours": 1.25,
+      "age_hours": 5.26,
       "max_age_hours": 1080.0,
       "generated_at": "2026-08-21T23:50:58.528465+00:00"
     },
@@ -226,77 +226,77 @@
       "status": "LIVE",
       "cadence": "mixed",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:50.907811+00:00"
+      "generated_at": "2026-08-22T05:03:28.158808+00:00"
     },
     {
       "source": "file:ism_manufacturing.json",
       "status": "CACHE",
       "cadence": "monthly/mixed-release",
       "observation_at": "2026-07",
-      "age_hours": 1249.1,
+      "age_hours": 1253.11,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:00:58.164258+00:00"
+      "generated_at": "2026-08-22T05:02:35.252900+00:00"
     },
     {
       "source": "file:macro_composite_oos.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
-      "observation_at": "2026-08-22T01:01:50.952990+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:03:28.206779+00:00",
+      "age_hours": 0.05,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:50.952990+00:00"
+      "generated_at": "2026-08-22T05:03:28.206779+00:00"
     },
     {
       "source": "file:macro_forecast_audit.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
-      "observation_at": "2026-08-22T01:01:50.968346+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:03:28.220980+00:00",
+      "age_hours": 0.05,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:50.968346+00:00"
+      "generated_at": "2026-08-22T05:03:28.220980+00:00"
     },
     {
       "source": "file:macro_forecast_registry.json",
       "status": "LIVE",
       "cadence": "monthly/mixed-release",
-      "observation_at": "2026-08-22T01:01:50.953009+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:03:28.206792+00:00",
+      "age_hours": 0.05,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:50.953009+00:00"
+      "generated_at": "2026-08-22T05:03:28.206792+00:00"
     },
     {
       "source": "file:source_status.json",
       "status": "CACHE",
       "cadence": "mixed",
       "observation_at": "2026-07",
-      "age_hours": 1249.1,
+      "age_hours": 1253.11,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:00:58.164258+00:00"
+      "generated_at": "2026-08-22T05:02:35.252900+00:00"
     },
     {
       "source": "file:us_treasury_card8.json",
       "status": "LIVE",
       "cadence": "mixed",
       "observation_at": "2026-08-21T20:59:59+00:00",
-      "age_hours": 4.1,
+      "age_hours": 8.11,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:22.122274+00:00"
+      "generated_at": "2026-08-22T05:02:58.354691+00:00"
     },
     {
       "source": "file:us_treasury_card8_status.json",
       "status": "LIVE",
       "cadence": "mixed",
-      "observation_at": "2026-08-22T01:01:22.122274+00:00",
-      "age_hours": 0.07,
+      "observation_at": "2026-08-22T05:02:58.354691+00:00",
+      "age_hours": 0.06,
       "max_age_hours": 1080.0,
-      "generated_at": "2026-08-22T01:01:22.122274+00:00"
+      "generated_at": "2026-08-22T05:02:58.354691+00:00"
     }
   ],
   "summary": {
-    "LIVE": 27,
-    "CACHE": 3,
+    "LIVE": 16,
+    "CACHE": 14,
     "LKG": 0,
     "FALLBACK": 0,
     "UNAVAILABLE": 0

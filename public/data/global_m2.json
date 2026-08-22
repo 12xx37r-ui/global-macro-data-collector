@@ -3,7 +3,7 @@
   "metric": "global_m2",
   "available": true,
   "label": "Global M2 broad-money growth composite",
-  "generated_at_utc": "2026-08-22T01:01:50.907811+00:00",
+  "generated_at_utc": "2026-08-22T05:03:28.158808+00:00",
   "observation_date": "2026-07-01",
   "value": 5.385196,
   "current": 5.385196,
@@ -297,7 +297,7 @@
     "status": "LIVE",
     "symbol": "DX-Y.NYB",
     "source": "Yahoo Finance DXY delayed market data",
-    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787349766",
+    "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787360507",
     "observation_date": "2026-08-21",
     "market_time_utc": "2026-08-21T20:59:59+00:00",
     "current": 98.839,
@@ -11866,7 +11866,7 @@
       "status": "LIVE",
       "source": "Fed policy engine · FRED M2SL / Federal Reserve H.6",
       "source_url": "https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=%5BREDACTED%5D&file_type=json&sort_order=asc",
-      "upstream_generated_at_utc": "2026-08-21T22:02:55.296429+00:00",
+      "upstream_generated_at_utc": "2026-08-22T01:01:56.707886+00:00",
       "age_days": 82,
       "fetch_ms": 2
     },
@@ -12290,7 +12290,7 @@
       "source_url": "https://data-api.ecb.europa.eu/service/data/BSI/M.U2.Y.V.M20.X.I.U2.2300.Z01.A?format=csvdata&startPeriod=2018-01",
       "status": "LIVE",
       "age_days": 82,
-      "fetch_ms": 1125
+      "fetch_ms": 1052
     },
     "JP": {
       "date": "2026-07-01",
@@ -13581,7 +13581,7 @@
       "source_url": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html",
       "status": "LIVE",
       "age_days": 52,
-      "fetch_ms": 685
+      "fetch_ms": 718
     },
     "CN": {
       "region": "CN",
@@ -13687,7 +13687,7 @@
       },
       "status": "LIVE",
       "age_days": 52,
-      "fetch_ms": 2615
+      "fetch_ms": 2558
     }
   },
   "statuses": {
@@ -13697,7 +13697,7 @@
     "CN": "LIVE"
   },
   "errors": {},
-  "runtime_ms": 4431,
+  "runtime_ms": 4334,
   "api_health": {
     "ECB": {
       "provider": "ECB",
@@ -13708,7 +13708,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-22T01:01:47.215789+00:00",
+      "last_success_utc": "2026-08-22T05:03:24.488519+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -13722,7 +13722,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-22T01:01:47.648949+00:00",
+      "last_success_utc": "2026-08-22T05:03:24.914196+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
@@ -13736,7 +13736,7 @@
       "http_5xx": 0,
       "timeouts": 0,
       "retries": 0,
-      "last_success_utc": "2026-08-22T01:01:50.315921+00:00",
+      "last_success_utc": "2026-08-22T05:03:27.532888+00:00",
       "last_failure_utc": null,
       "cooldown": false,
       "final_status": "LIVE"
