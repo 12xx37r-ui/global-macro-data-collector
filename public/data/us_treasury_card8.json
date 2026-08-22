@@ -4,7 +4,7 @@
   "status": "ok",
   "card": 8,
   "title": "미국채 금리·실질금리·수익률곡선",
-  "generated_at_utc": "2026-08-22T05:02:58.354691+00:00",
+  "generated_at_utc": "2026-08-22T09:01:34.501457+00:00",
   "official_source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
   "current": {
     "DGS3MO": {
@@ -182,7 +182,7 @@
   "upstream_us_macro_context": {
     "schema_version": "1.0",
     "metric": "us_liquidity_dxy",
-    "generated_at_utc": "2026-08-22T01:01:56.707886+00:00",
+    "generated_at_utc": "2026-08-22T05:03:32.337984+00:00",
     "available": true,
     "m2": {
       "available": true,
@@ -1312,7 +1312,7 @@
       "status": "LIVE",
       "symbol": "DX-Y.NYB",
       "source": "Yahoo Finance DXY delayed market data",
-      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787360507",
+      "source_url": "https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=5y&interval=1d&events=history&_ts=1787375004",
       "observation_date": "2026-08-21",
       "market_time_utc": "2026-08-21T20:59:59+00:00",
       "current": 98.839,
@@ -6611,10 +6611,10 @@
               "available": true,
               "forecast": 97.20904937691259,
               "forecast_return_pct": -1.6628455989512942,
-              "rmse_pct": 2.057704869550249,
+              "rmse_pct": 2.0577048695502493,
               "baseline_rmse_pct": 1.3269323272778373,
               "skill_pct": 0.0,
-              "raw_skill_pct": -55.07232940594415,
+              "raw_skill_pct": -55.072329405944195,
               "direction_accuracy": 41.509433962264154,
               "direction_cases": 53,
               "backtests": 63,
@@ -6641,7 +6641,7 @@
             "combined": {
               "available": true,
               "forecast": 97.45697958425619,
-              "forecast_return_pct": -1.4081218110125897,
+              "forecast_return_pct": -1.4081218110125915,
               "rmse_pct": 2.1094069009582648,
               "baseline_rmse_pct": 1.3269323272778373,
               "skill_pct": 0.0,
@@ -6680,7 +6680,7 @@
         },
         "3m": {
           "available": true,
-          "forecast_return_pct": -6.417029022880866,
+          "forecast_return_pct": -6.417029022880865,
           "rmse_pct": 2.4210904379968254,
           "baseline_rmse_pct": 1.52192924499179,
           "skill_pct": 0.0,
@@ -6713,7 +6713,7 @@
             "domestic_financial": {
               "available": true,
               "forecast": 92.69568963431395,
-              "forecast_return_pct": -6.417029022880866,
+              "forecast_return_pct": -6.417029022880865,
               "rmse_pct": 2.4210904379968254,
               "baseline_rmse_pct": 1.52192924499179,
               "skill_pct": 0.0,
@@ -6746,11 +6746,11 @@
             "relative_policy_rates": {
               "available": true,
               "forecast": 94.48832396769471,
-              "forecast_return_pct": -4.501599273920833,
-              "rmse_pct": 4.514697124598058,
+              "forecast_return_pct": -4.501599273920834,
+              "rmse_pct": 4.514697124598059,
               "baseline_rmse_pct": 1.52192924499179,
               "skill_pct": 0.0,
-              "raw_skill_pct": -196.6430364259419,
+              "raw_skill_pct": -196.64303642594194,
               "direction_accuracy": 23.076923076923077,
               "direction_cases": 39,
               "backtests": 46,
@@ -6777,11 +6777,11 @@
             "combined": {
               "available": true,
               "forecast": 92.93926472339216,
-              "forecast_return_pct": -6.154605138645017,
-              "rmse_pct": 4.9344519301344025,
+              "forecast_return_pct": -6.15460513864502,
+              "rmse_pct": 4.934451930134403,
               "baseline_rmse_pct": 1.52192924499179,
               "skill_pct": 0.0,
-              "raw_skill_pct": -224.2234779555091,
+              "raw_skill_pct": -224.22347795550914,
               "direction_accuracy": 23.076923076923077,
               "direction_cases": 39,
               "backtests": 46,
@@ -12075,7 +12075,7 @@
           "available": true,
           "variant": "financial_conditions",
           "forecast": 2.3576107433677804,
-          "forecast_change_pctp": 0.007610743367780179,
+          "forecast_change_pctp": 0.0076107433677801775,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -12107,7 +12107,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.1985285952789484,
-              "forecast_change_pctp": -0.15147140472105172,
+              "forecast_change_pctp": -0.1514714047210517,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12141,7 +12141,7 @@
               "available": true,
               "variant": "financial_conditions",
               "forecast": 2.3576107433677804,
-              "forecast_change_pctp": 0.007610743367780179,
+              "forecast_change_pctp": 0.0076107433677801775,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12173,7 +12173,7 @@
               "available": true,
               "variant": "combined",
               "forecast": 2.207422762438939,
-              "forecast_change_pctp": -0.14257723756106105,
+              "forecast_change_pctp": -0.142577237561061,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12213,7 +12213,7 @@
           "available": true,
           "variant": "rates_inflation",
           "forecast": 2.1223460466355912,
-          "forecast_change_pctp": -0.22765395336440875,
+          "forecast_change_pctp": -0.2276539533644087,
           "features": [
             "10Y real yield 21d change",
             "10Y real yield 63d change",
@@ -12247,7 +12247,7 @@
               "available": true,
               "variant": "rates_inflation",
               "forecast": 2.1223460466355912,
-              "forecast_change_pctp": -0.22765395336440875,
+              "forecast_change_pctp": -0.2276539533644087,
               "features": [
                 "10Y real yield 21d change",
                 "10Y real yield 63d change",
@@ -12404,7 +12404,7 @@
             4.04,
             4.340000000000001
           ],
-          "structural_overlay": 0.0037527419642576208,
+          "structural_overlay": 0.0034527419642576274,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -12471,7 +12471,7 @@
             4.54,
             4.840000000000001
           ],
-          "structural_overlay": 0.00277764222878291,
+          "structural_overlay": 0.002660975562116246,
           "current": 4.69,
           "direction": "flat",
           "investment_environment": {
@@ -12539,7 +12539,7 @@
             2.23,
             2.47
           ],
-          "structural_overlay": 0.0014048333333333343,
+          "structural_overlay": 0.0013048333333333367,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -12607,7 +12607,7 @@
             0.4015770219198791,
             0.5909127739984883
           ],
-          "structural_overlay": -0.0008857580357423832,
+          "structural_overlay": -0.0007024247024090539,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -12678,7 +12678,7 @@
             3.858,
             4.522000000000001
           ],
-          "structural_overlay": 0.015010967857030483,
+          "structural_overlay": 0.01381096785703051,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -12744,7 +12744,7 @@
             4.36,
             4.980000000000001
           ],
-          "structural_overlay": 0.01111056891513164,
+          "structural_overlay": 0.010643902248464983,
           "current": 4.69,
           "direction": "flat",
           "investment_environment": {
@@ -12808,7 +12808,7 @@
             2.0718749206349205,
             2.5881250793650796
           ],
-          "structural_overlay": 0.005619333333333337,
+          "structural_overlay": 0.005219333333333347,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -12873,7 +12873,7 @@
             0.29466095238095236,
             0.6737961904761905
           ],
-          "structural_overlay": -0.0035430321429695327,
+          "structural_overlay": -0.0028096988096362155,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -12944,7 +12944,7 @@
             3.580000000000001,
             4.680000000000001
           ],
-          "structural_overlay": 0.04863290357109153,
+          "structural_overlay": 0.04683290357109141,
           "current": 4.19,
           "direction": "down",
           "investment_environment": {
@@ -13004,7 +13004,7 @@
             4.116598095238095,
             5.143401904761906
           ],
-          "structural_overlay": 0.03473170674539495,
+          "structural_overlay": 0.03403170674539491,
           "current": 4.69,
           "direction": "down",
           "investment_environment": {
@@ -13066,7 +13066,7 @@
             1.878142857142857,
             2.7018571428571434
           ],
-          "structural_overlay": 0.01805800000000004,
+          "structural_overlay": 0.017458,
           "current": 2.35,
           "direction": "down",
           "investment_environment": {
@@ -13169,7 +13169,7 @@
             0.21999999999999997,
             0.78
           ],
-          "structural_overlay": -0.012829096428908652,
+          "structural_overlay": -0.011729096428908575,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -13239,7 +13239,7 @@
             3.4979999999999998,
             4.8820000000000014
           ],
-          "structural_overlay": 0.21246580714218286,
+          "structural_overlay": 0.20526580714218304,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -13303,7 +13303,7 @@
             4.124419047619048,
             5.094869841269842
           ],
-          "structural_overlay": 0.11426341349078982,
+          "structural_overlay": 0.11146341349078988,
           "current": 4.69,
           "direction": "down",
           "investment_environment": {
@@ -13366,7 +13366,7 @@
             1.9300000000000002,
             2.77
           ],
-          "structural_overlay": 0.07451600000000001,
+          "structural_overlay": 0.07211600000000007,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -13429,7 +13429,7 @@
             0.06999999999999995,
             0.93
           ],
-          "structural_overlay": -0.09605819285781717,
+          "structural_overlay": -0.09165819285781726,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
@@ -13499,7 +13499,7 @@
             2.91,
             5.470000000000001
           ],
-          "structural_overlay": 0.338465807142183,
+          "structural_overlay": 0.33486580714218306,
           "current": 4.19,
           "direction": "flat",
           "investment_environment": {
@@ -13563,7 +13563,7 @@
             3.8700000000000006,
             5.510000000000001
           ],
-          "structural_overlay": 0.1632634134907899,
+          "structural_overlay": 0.16186341349078995,
           "current": 4.69,
           "direction": "flat",
           "investment_environment": {
@@ -13628,7 +13628,7 @@
             1.4100000000000001,
             3.29
           ],
-          "structural_overlay": 0.11651600000000008,
+          "structural_overlay": 0.11531600000000011,
           "current": 2.35,
           "direction": "flat",
           "investment_environment": {
@@ -13691,7 +13691,7 @@
             -0.28,
             1.28
           ],
-          "structural_overlay": -0.17305819285781726,
+          "structural_overlay": -0.17085819285781734,
           "current": 0.5,
           "direction": "flat",
           "investment_environment": {
